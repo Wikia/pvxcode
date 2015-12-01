@@ -21,7 +21,7 @@ class PvXCode {
      * @param [type] $parser [description]
      * @param [type] $frame  [description]
      */
-    public function ParserRender($input, $args, $parser, $frame) {
+    public static function ParserRender($input, $args, $parser, $frame) {
         $parsed_input = $parser->parse($input, $parser->getTitle(), $parser->getOptions(), true, false);
         $title = $parser->getTitle()->getText();
         $results = parse_gwbbcode($parsed_input->getText(), $title);

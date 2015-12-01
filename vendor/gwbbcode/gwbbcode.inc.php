@@ -26,7 +26,7 @@ if (!isset($gwbbcode_tpl))
    $gwbbcode_tpl = load_gwbbcode_template();
 
 // Array of PvP -> PvE IDs
-$pvpSkillIds = array( 	
+$pvpSkillIds = array(
 	2657 => 415,
 	2856 => 229,
 	2857 => 257,
@@ -166,7 +166,7 @@ $pvpSkillIds = array(
 	3365 => 1754,
 	3366 => 1762,
 	3367 => 1536,
-	3368 => 2146, 
+	3368 => 2146,
 );
 
 //Transforms gwBBCode text to HTML
@@ -538,7 +538,8 @@ function build_replace($reg) {
          unset($attr_list_raw[gws_main_attribute($secondary)]);
          $att .= ' ' . gws_attribute_name(gws_main_attribute($secondary)) . '=0';
       }
-      $prof_imgs = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $prof_imgs);
+      //$prof_imgs = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $prof_imgs);
+      $prof_imgs = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $prof_imgs);
    }
    else {
       $showimg = ' ;display: none';
@@ -550,7 +551,8 @@ function build_replace($reg) {
    //Attributes
    $attributes = '';
    foreach($attr_list_raw as $attribute_name => $attribute_value) {
-      $attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
+      //$attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
+      $attributes .= preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $gwbbcode_tpl['attribute']);
    }
    $attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
    $skills = str_replace('[skill', '[skill '.$att, $skills);
@@ -803,9 +805,12 @@ function build_replace($reg) {
    //Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
    do {
       $prev_tpl = $tpl;
-      $tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+      //$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
          //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
-      $tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+      //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+      $tpl = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $tpl);
+
          //"{desc}" is replaced by $desc
    } while ($prev_tpl != $tpl);
    return $tpl;
@@ -1877,4 +1882,3 @@ function getSkillIdPvE( $pvp )
 	global $pvpSkillIds;
 	return ( isset( $pvpSkillIds[ $pvp ] ) ? $pvpSkillIds[ $pvp ] : $pvp );
 }
-
