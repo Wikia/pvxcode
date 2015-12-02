@@ -13,7 +13,6 @@
 **/
 
 class PvXCode {
-
     /**
      * Parser Renderer
      * @param [type] $input  [description]

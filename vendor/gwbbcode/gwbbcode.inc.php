@@ -552,7 +552,7 @@ function build_replace($reg) {
    $attributes = '';
    foreach($attr_list_raw as $attribute_name => $attribute_value) {
       //$attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
-      $attributes .= preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $gwbbcode_tpl['attribute']);
+      $attributes .= preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[0])?$m[0]:0; } , $gwbbcode_tpl['attribute']);
    }
    $attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
    $skills = str_replace('[skill', '[skill '.$att, $skills);
@@ -806,10 +806,16 @@ function build_replace($reg) {
    do {
       $prev_tpl = $tpl;
       //$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
-      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
-         //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
-      //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
-      $tpl = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $tpl);
+      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:$m[0]; } , $tpl);
+      //$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
+    //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
+
+    //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+    preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
+    foreach($matches[0] as $r => $find) {
+        $replace = $$matches[1][$r];
+        $tpl = str_replace($find, $replace, $tpl);
+    }
 
          //"{desc}" is replaced by $desc
    } while ($prev_tpl != $tpl);
@@ -988,9 +994,16 @@ function skill_replace($reg) {
    //Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
    do {
       $prev_tpl = $tpl;
-      $tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+      //$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[0]])?$gwbbcode_tpl[$m[0]]:0; } , $tpl);
+      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
          //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
-      $tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+      //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+      preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
+      foreach($matches[0] as $r => $find) {
+          $replace = $$matches[1][$r];
+          $tpl = str_replace($find, $replace, $tpl);
+      }
          //"{desc}" is replaced by $desc
    } while ($prev_tpl != $tpl);
 

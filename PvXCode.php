@@ -11,41 +11,15 @@
  * @link		http://www.curse.com/
  *
 **/
-
-/******************************************/
-/* Credits                                */
-/******************************************/
-$wgExtensionCredits['specialpage'][] = [
-	'path'           => __FILE__,
-	'name'           => 'PvX Code',
-	'author'         => 'Curse Wiki Team',
-	'descriptionmsg' => 'pvxcode_description',
-	'version'        => '1.0' //Must be a string or Mediawiki will turn it into an integer.
-];
-
-//$wgAvailableRights[] = 'pvxcode';
-
-/******************************************/
-/* Language Strings, Page Aliases, Hooks  */
-/******************************************/
-$wgMessagesDirs['PvXCode'] = __DIR__.'/i18n';
-
-
-define('GWBBCODE_ROOT', __DIR__.'/vendor/gwbbcode');
-require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
-
-// Classes
-$wgAutoloadClasses['PvXCode'] = __DIR__.'/classes/PvXCode.php';
-$wgAutoloadClasses['PvXCodeHooks'] = __DIR__.'/PvXCode.hooks.php';
-$wgAutoloadClasses['SpecialPvXConvert'] = __DIR__."/specials/SpecialPvXConvert.php";
-$wgAutoloadClasses['SpecialPvXDecode'] = __DIR__."/specials/SpecialPvXDecode.php";
-$wgAutoloadClasses["SpecialPvXDownloadTemplate"] = __DIR__."/specials/SpecialPvXDownloadTemplate.php";
-
-
-// Special Pages
-$wgSpecialPages['PvXConvert'] = 'SpecialPvXConvert';
-$wgSpecialPages['PvXDecode'] = 'SpecialPvXDecode';
-$wgSpecialPages['DownloadTemplate'] = "SpecialPvXDownloadTemplate";
-
-// Hooks
-$wgHooks['ParserFirstCallInit'][]			= 'PvXCodeHooks::onParserFirstCallInit';
+if ( function_exists( 'wfLoadExtension' ) ) {
+   wfLoadExtension( 'PvXCode' );
+   // Keep i18n globals so mergeMessageFileList.php doesn't break
+   $wgMessagesDirs['PvXCode'] = __DIR__ . '/i18n';
+   wfWarn(
+	   'Deprecated PHP entry point used for PvX Vote extension. Please use wfLoadExtension instead, ' .
+	   'see https://www.mediawiki.org/wiki/Extension_registration for more details.'
+   );
+   return;
+} else {
+   die( 'This version of the PvXCode extension requires MediaWiki 1.25+' );
+}

@@ -29,6 +29,8 @@ class SpecialPvXConvert extends SpecialPage {
 		$this->output		= $this->getOutput();
 
 		$this->DB = wfGetDB(DB_MASTER);
+
+		//require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
 	function execute($par = null) {
@@ -36,7 +38,7 @@ class SpecialPvXConvert extends SpecialPage {
 		$build = $this->wgRequest->getText('wpBuild');
 
 		if ($build) {
-			$rout = formatBuild($build, $name);
+			$rout = $this->formatBuild($build, $name);
 			$this->output->addWikiText("== Preview ==");
 			$this->output->addWikiText($rout);
 			$this->output->addHtml("<br>");
@@ -64,58 +66,58 @@ class SpecialPvXConvert extends SpecialPage {
 
 		$this->output->addHtml($out);
 	}
-}
 
-function formatBuild($build, $name) {
-	$build = explode("skill", $build);
-	$att   = $build[0];
-	$skl   = $build[1];
-	return (cnv_attributes($att, $name) . cnv_skils($skl));
-}
+	function formatBuild($build, $name) {
+		$build = explode("skill", $build);
+		$att   = $build[0];
+		$skl   = $build[1];
+		return ($this->cnv_attributes($att, $name) . $this->cnv_skils($skl));
+	}
 
-function cnv_skils($skl) {
-	$var    = preg_replace("/\r\n|\n|\r/", "", $skl);
-	$var    = str_replace("'", "", $var);
-	$var    = str_replace("\"", "", $var);
-	$var    = str_replace("!", "", $var);
-	$var    = str_replace("{{", "", $var);
-	$var    = str_replace("}}", "", $var);
-	$skills = explode("|", $var);
-	$out    = array();
-	$i      = 0;
-	while ($i <= count($out)) {
-		if (isset($skills[$i + 1])) {
-			$out[$i] = "[" . $skills[$i + 1] . "]";
+	function cnv_skils($skl) {
+		$var    = preg_replace("/\r\n|\n|\r/", "", $skl);
+		$var    = str_replace("'", "", $var);
+		$var    = str_replace("\"", "", $var);
+		$var    = str_replace("!", "", $var);
+		$var    = str_replace("{{", "", $var);
+		$var    = str_replace("}}", "", $var);
+		$skills = explode("|", $var);
+		$out    = array();
+		$i      = 0;
+		while ($i <= count($out)) {
+			if (isset($skills[$i + 1])) {
+				$out[$i] = "[" . $skills[$i + 1] . "]";
+			}
+			$i++;
 		}
-		$i++;
+		$skills = strtolower(implode("", $out)) . "[/build]\n</pvxbig>";
+		return $skills;
 	}
-	$skills = strtolower(implode("", $out)) . "[/build]\n</pvxbig>";
-	return $skills;
-}
 
-function cnv_attributes($att, $name) {
-	$var        = preg_replace("/\r\n|\n|\r/", "", $att);
-	$var        = str_replace(" ", "", $var);
-	$var        = str_replace("{{", "", $var);
-	$var        = str_replace("}}", "", $var);
-	$attributes = explode("|", $var);
-	$out        = array();
-	if ($name) {
-		$out[0] = '<pvxbig>
-[build name="' . $name . '" prof=' . substr($attributes[1], 0, 5) . '/' . substr($attributes[2], 0, 5);
-	} else {
-		$out[0] = "<pvxbig>
-[build prof=" . substr($attributes[1], 0, 5) . "/" . substr($attributes[2], 0, 5);
-	}
-	$i = 3;
-	$y = 1;
-	while ($i <= count($attributes)) {
-		if ($attributes[$i + 1]) {
-			$out[$y] = substr($attributes[$i], 0, 6) . "=" . substr($attributes[$i + 1], 0, 12);
+	function cnv_attributes($att, $name) {
+		$var        = preg_replace("/\r\n|\n|\r/", "", $att);
+		$var        = str_replace(" ", "", $var);
+		$var        = str_replace("{{", "", $var);
+		$var        = str_replace("}}", "", $var);
+		$attributes = explode("|", $var);
+		$out        = array();
+		if ($name) {
+			$out[0] = '<pvxbig>
+	[build name="' . $name . '" prof=' . substr($attributes[1], 0, 5) . '/' . substr($attributes[2], 0, 5);
+		} else {
+			$out[0] = "<pvxbig>
+	[build prof=" . substr($attributes[1], 0, 5) . "/" . substr($attributes[2], 0, 5);
 		}
-		$y++;
-		$i = $i + 2;
+		$i = 3;
+		$y = 1;
+		while ($i <= count($attributes)) {
+			if ($attributes[$i + 1]) {
+				$out[$y] = substr($attributes[$i], 0, 6) . "=" . substr($attributes[$i + 1], 0, 12);
+			}
+			$y++;
+			$i = $i + 2;
+		}
+		$attributes = strtolower(implode(" ", $out) . "]");
+		return $attributes;
 	}
-	$attributes = strtolower(implode(" ", $out) . "]");
-	return $attributes;
 }

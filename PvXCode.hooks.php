@@ -23,4 +23,9 @@ class PvXCodeHooks {
 	    return true;
 	}
 
+	public static function onRegistration() {
+		define('GWBBCODE_ROOT', __DIR__.'/vendor/gwbbcode');
+		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
+	}
+
 }

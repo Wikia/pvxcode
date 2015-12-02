@@ -29,6 +29,9 @@ class SpecialPvXDecode extends SpecialPage {
 		$this->output		= $this->getOutput();
 
 		$this->DB = wfGetDB(DB_MASTER);
+
+
+		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
 	function execute($par = null) {
