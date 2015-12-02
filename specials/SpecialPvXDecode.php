@@ -34,6 +34,11 @@ class SpecialPvXDecode extends SpecialPage {
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
+	/**
+	 * Main Execute for the Specil Page
+	 * @param  $par Not used, but expected to be there by mediawiki.
+	 * @return void, echos to page.
+	 */
 	function execute($par = null) {
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');

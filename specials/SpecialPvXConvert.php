@@ -29,10 +29,13 @@ class SpecialPvXConvert extends SpecialPage {
 		$this->output		= $this->getOutput();
 
 		$this->DB = wfGetDB(DB_MASTER);
-
-		//require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
+	/**
+	 * Main Execute for the Specil Page
+	 * @param  $par Not used, but expected to be there by mediawiki.
+	 * @return void, echos to page.
+	 */
 	function execute($par = null) {
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');
@@ -67,6 +70,12 @@ class SpecialPvXConvert extends SpecialPage {
 		$this->output->addHtml($out);
 	}
 
+	/**
+	 * Takes gw code and parses it into pvx code.
+	 * @param  string $build
+	 * @param  string $name
+	 * @return string
+	 */
 	function formatBuild($build, $name) {
 		$build = explode("skill", $build);
 		$att   = $build[0];
@@ -74,6 +83,11 @@ class SpecialPvXConvert extends SpecialPage {
 		return ($this->cnv_attributes($att, $name) . $this->cnv_skils($skl));
 	}
 
+	/**
+	 * Converts Skills section of gw code into pvx code.
+	 * @param  $skl gw code for skills
+	 * @return string
+	 */
 	function cnv_skils($skl) {
 		$var    = preg_replace("/\r\n|\n|\r/", "", $skl);
 		$var    = str_replace("'", "", $var);
@@ -94,6 +108,12 @@ class SpecialPvXConvert extends SpecialPage {
 		return $skills;
 	}
 
+	/**
+	 * Converts gw code for attributes into pvx code.
+	 * @param  string $att  gw code for attributes
+	 * @param  string $name build name
+	 * @return string
+	 */
 	function cnv_attributes($att, $name) {
 		$var        = preg_replace("/\r\n|\n|\r/", "", $att);
 		$var        = str_replace(" ", "", $var);

@@ -15,10 +15,10 @@
 class PvXCode {
     /**
      * Parser Renderer
-     * @param [type] $input  [description]
-     * @param [type] $args   [description]
-     * @param [type] $parser [description]
-     * @param [type] $frame  [description]
+     * @param string $input  inpuit into parser
+     * @param array $args  parsing arguements, not used in this function, but neaded by mediawiki.
+     * @param Parser $parser reference to the parser
+     * @param string $frame  not used in this function, but needed by mediawiki.
      */
     public static function ParserRender($input, $args, $parser, $frame) {
         $parsed_input = $parser->parse($input, $parser->getTitle(), $parser->getOptions(), true, false);

@@ -19,8 +19,7 @@
 		"PvXCodeHooks": "PvXCode.hooks.php",
 		"SpecialPvXConvert": "specials/SpecialPvXConvert.php",
 		"SpecialPvXDecode": "specials/SpecialPvXDecode.php",
-		"SpecialPvXDownloadTemplate": "specials/SpecialPvXDownloadTemplate.php",
-		"gwBBCode": "vendor/gwbbcode/gwbbcode.inc.php"
+		"SpecialPvXDownloadTemplate": "specials/SpecialPvXDownloadTemplate.php"
 	},
 	"Hooks": {
 		"ParserFirstCallInit": [

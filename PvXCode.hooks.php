@@ -23,6 +23,10 @@ class PvXCodeHooks {
 	    return true;
 	}
 
+	/**
+	 * Include the third party gwbbcode library on extension regiation.
+	 * @return void
+	 */
 	public static function onRegistration() {
 		define('GWBBCODE_ROOT', __DIR__.'/vendor/gwbbcode');
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
