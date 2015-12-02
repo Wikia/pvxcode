@@ -297,7 +297,13 @@ function pickup_replace($reg) {
 
       $gwbbcode_root_path = GWBBCODE_ROOT;
       $gwbbcode_img_path = GWBBCODE_IMG_PATH;
-      return preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['pickup']);
+      unset($matches);
+      preg_match_all("#\{(.*?)\}#is",$gwbbcode_tpl['pickup'],$matches);
+      foreach($matches[0] as $r => $find) {
+          $replace = $$matches[1][$r];
+          $gwbbcode_tpl['pickup'] = str_replace($find, $replace, $gwbbcode_tpl['pickup']);
+      }
+      return $gwbbcode_tpl['pickup'];
    }
    else
       return "<script>alert('No id found for [pickup]; Please give one as in [pickup=\"75578\"]')</script>";
@@ -540,7 +546,13 @@ function build_replace($reg) {
          $att .= ' ' . gws_attribute_name(gws_main_attribute($secondary)) . '=0';
       }
       //$prof_imgs = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $prof_imgs);
-      $prof_imgs = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $prof_imgs);
+      unset($matches);
+      preg_match_all("#\{(.*?)\}#is",$prof_imgs,$matches);
+      foreach($matches[0] as $r => $find) {
+          $replace = $$matches[1][$r];
+          $prof_imgs = str_replace($find, $replace, $prof_imgs);
+      }
+      //$prof_imgs = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $prof_imgs);
    }
    else {
       $showimg = ' ;display: none';
@@ -553,7 +565,14 @@ function build_replace($reg) {
    $attributes = '';
    foreach($attr_list_raw as $attribute_name => $attribute_value) {
       //$attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
-      $attributes .= preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[0])?$m[0]:0; } , $gwbbcode_tpl['attribute']);
+      unset($matches);
+      $att = $gwbbcode_tpl['attribute'];
+      preg_match_all("#\{(.*?)\}#is",$att,$matches);
+      foreach($matches[0] as $r => $find) {
+          $replace = $$matches[1][$r];
+          $att = str_replace($find, $replace, $att);
+      }
+      $attributes .= $att;
    }
    $attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
    $skills = str_replace('[skill', '[skill '.$att, $skills);
@@ -812,6 +831,7 @@ function build_replace($reg) {
     //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
 
     //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+    unset($matches);
     preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
     foreach($matches[0] as $r => $find) {
         $replace = $$matches[1][$r];
@@ -997,9 +1017,10 @@ function skill_replace($reg) {
       $prev_tpl = $tpl;
       //$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
       $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[0]])?$gwbbcode_tpl[$m[0]]:0; } , $tpl);
-      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
+      //$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
          //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
       //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+      unset($matches);
       preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
       foreach($matches[0] as $r => $find) {
           $replace = $$matches[1][$r];

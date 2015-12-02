@@ -67,6 +67,7 @@ class SpecialPvXConvert extends SpecialPage {
 		}
 		$this->setHeaders();
 
+
 		$this->output->addHtml($out);
 	}
 

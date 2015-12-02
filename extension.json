@@ -21,6 +21,22 @@
 		"SpecialPvXDecode": "specials/SpecialPvXDecode.php",
 		"SpecialPvXDownloadTemplate": "specials/SpecialPvXDownloadTemplate.php"
 	},
+	"ResourceModules": {
+		"ext.pvxcode": {
+			"styles": [
+				"css/pvxcode.css"
+			],
+			"scripts": [
+				"js/pvxcode.js",
+				"js/overlib.js"
+			],
+			"dependencies": []
+		}
+	},
+	"ResourceFileModulePaths": {
+	
+		"remoteExtPath": "PvXCode"
+	},
 	"Hooks": {
 		"ParserFirstCallInit": [
 			"PvXCodeHooks::onParserFirstCallInit"
