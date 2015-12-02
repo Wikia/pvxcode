@@ -26,6 +26,7 @@ if (!isset($gwbbcode_tpl))
    $gwbbcode_tpl = load_gwbbcode_template();
 
 // Array of PvP -> PvE IDs
+global $pvpSkillIds;
 $pvpSkillIds = array(
 	2657 => 415,
 	2856 => 229,
