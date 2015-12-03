@@ -20,12 +20,10 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return	void
 	 */
 	public function __construct() {
-		global $wgRequest, $wgUser, $wgOut;
-
 		parent::__construct('PvXConvert');
 
-		$this->wgRequest	= $wgRequest;
-		$this->wgUser		= $wgUser;
+		$this->wgRequest	= $this->getRequest();
+		$this->wgUser		= $this->getUser();
 		$this->output		= $this->getOutput();
 
 		$this->DB = wfGetDB(DB_MASTER);
@@ -37,6 +35,8 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return void, echos to page.
 	 */
 	function execute($par = null) {
+		$this->output->addModules('ext.PvXCode');
+
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');
 

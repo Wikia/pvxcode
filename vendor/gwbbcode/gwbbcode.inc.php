@@ -566,13 +566,13 @@ function build_replace($reg) {
    foreach($attr_list_raw as $attribute_name => $attribute_value) {
       //$attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
       unset($matches);
-      $att = $gwbbcode_tpl['attribute'];
-      preg_match_all("#\{(.*?)\}#is",$att,$matches);
+      $attr = $gwbbcode_tpl['attribute'];
+      preg_match_all("#\{(.*?)\}#is",$attr,$matches);
       foreach($matches[0] as $r => $find) {
           $replace = $$matches[1][$r];
-          $att = str_replace($find, $replace, $att);
+          $attr = str_replace($find, $replace, $attr);
       }
-      $attributes .= $att;
+      $attributes .= $attr;
    }
    $attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
    $skills = str_replace('[skill', '[skill '.$att, $skills);
@@ -1016,9 +1016,16 @@ function skill_replace($reg) {
    do {
       $prev_tpl = $tpl;
       //$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
-      $tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[0]])?$gwbbcode_tpl[$m[0]]:0; } , $tpl);
-      //$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
-         //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
+      unset($matches);
+      preg_match_all("#\{\{(.*?)\}\}#is",$tpl,$matches);
+      foreach($matches[0] as $r => $find) {
+          if (isset($gwbbcode_tpl[$matches[1][$r]])) {
+              $replace = $gwbbcode_tpl[$matches[1][$r]];
+              $tpl = str_replace($find, $replace, $tpl);
+          }
+      }
+      //$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ echo $m[1]; return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:"Not Found: ".$m[1].""; } , $tpl);
+      //"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
       //$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
       unset($matches);
       preg_match_all("#\{(.*?)\}#is",$tpl,$matches);

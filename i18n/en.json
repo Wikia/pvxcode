@@ -3,6 +3,8 @@
 		"authors": ["Cameron Chunn"]
 	},
 	"pvxcode": "PvX Code",
+	"pvxconvert": "PvX Convert",
+	"pvxdecode": "PvX Decode",
 	"action-pvxcode": "perform PvX Code actions",
 	"pvxcode_description": "Guildwiki / Guild Wars Template to PvXCode Handling"
 }

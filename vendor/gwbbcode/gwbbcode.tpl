@@ -4,7 +4,7 @@
     <div class="type"><a href="http://wiki.guildwars.com/wiki/{primary}"><img src="http://hydra-images.cursecdn.com/gwpvx.gamepedia.com/img_skin/{primary}.gif" border="0" /></a><a href="http://wiki.guildwars.com/wiki/{secondary}"><img src="http://hydra-images.cursecdn.com/gwpvx.gamepedia.com/img_skin/{secondary}.gif" border="0" /></a><span><a href="http://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="http://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
     <div class="profession">
         {attributes}
-    </div>
+    </div><div style="clear: both;">
     {skills}
        <div class="template">
         <div class="template_name">Template code</div><div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/template.php?build={template_code}&name={build_name}"><img src="http://hydra-images.cursecdn.com/gwpvx.gamepedia.com/img_skin/save.png" border="0" alt="save" /></a></div>
@@ -16,7 +16,6 @@
 <!-- BEGIN prof_icon -->
 
 <!-- END prof_icon -->
-
 <!-- BEGIN icon -->
 <div class="skill_box"><div class="skill_icon" onmouseover="return overlib(div('load{load}').innerHTML);" onmouseout="return nd(200);"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="http://wiki.guildwars.com/wiki/{name_link}"><img src="http://hydra-images.cursecdn.com/gwpvx.gamepedia.com/img_skills/{id}.jpg" border="0" /></a></div><a href="http://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
 <!-- END icon -->
@@ -42,13 +41,13 @@
             <div class="pvx_{elite_or_normal}">{name}</div>
             <div class="pvx_type">{type}</div>
             <div class="pvx_skill_info">{{tpl_desc}}{extra_desc}</div>
-        </div> 
+        </div>
         <div class="pvx_attrib_list">
             <div class="pvx_attrib_bg">
                 <img src="http://hydra-images.cursecdn.com/gwpvx.gamepedia.com/img_thumb/{id}.jpg" height="40" width="40" border="0"><div id="pvx_attributes">{required}</div>
             </div>
         </div>
-    </div> 
+    </div>
 </div>
 <!-- END skill -->
 

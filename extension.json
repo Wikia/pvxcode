@@ -22,7 +22,7 @@
 		"SpecialPvXDownloadTemplate": "specials/SpecialPvXDownloadTemplate.php"
 	},
 	"ResourceModules": {
-		"ext.pvxcode": {
+		"ext.PvXCode": {
 			"styles": [
 				"css/pvxcode.css"
 			],
@@ -34,7 +34,7 @@
 		}
 	},
 	"ResourceFileModulePaths": {
-	
+		"localBasePath": "/",
 		"remoteExtPath": "PvXCode"
 	},
 	"Hooks": {
