@@ -77,4 +77,14 @@ class SpecialPvXDecode extends SpecialPage {
 
 		$this->output->addHtml($out);
 	}
+	
+	/**
+	 * Return the group name for this special page.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getGroupName() {
+		return 'pvx'; //Change to display in a different category on Special:SpecialPages.
+	}
 }

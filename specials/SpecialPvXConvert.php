@@ -141,4 +141,14 @@ class SpecialPvXConvert extends SpecialPage {
 		$attributes = strtolower(implode(" ", $out) . "]");
 		return $attributes;
 	}
+
+	/**
+	 * Return the group name for this special page.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function getGroupName() {
+		return 'pvx'; //Change to display in a different category on Special:SpecialPages.
+	}
 }
