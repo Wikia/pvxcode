@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": ["Cameron Chunn"]
+	},
+	"pvxcode": "PvX Code",
+	"pvxconvert": "PvX Convert",
+	"pvxdecode": "PvX Decode",
+	"action-pvxcode": "perform PvX Code actions",
+	"specialpages-group-pvx": "PvX",
+	"pvxcode_description": "Guildwiki / Guild Wars Template to PvXCode Handling"
+}
