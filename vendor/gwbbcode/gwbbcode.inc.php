@@ -300,7 +300,7 @@ function pickup_replace($reg) {
       unset($matches);
       preg_match_all("#\{(.*?)\}#is",$gwbbcode_tpl['pickup'],$matches);
       foreach($matches[0] as $r => $find) {
-          $replace = $$matches[1][$r];
+          $replace = ($$matches)[1][$r];
           $gwbbcode_tpl['pickup'] = str_replace($find, $replace, $gwbbcode_tpl['pickup']);
       }
       return $gwbbcode_tpl['pickup'];
@@ -549,7 +549,7 @@ function build_replace($reg) {
       unset($matches);
       preg_match_all("#\{(.*?)\}#is",$prof_imgs,$matches);
       foreach($matches[0] as $r => $find) {
-          $replace = $$matches[1][$r];
+          $replace = ($$matches)[1][$r];
           $prof_imgs = str_replace($find, $replace, $prof_imgs);
       }
       //$prof_imgs = preg_replace_callback("#\{(.*?)\}#is", function($m){ return isset($m[1])?$m[1]:0; } , $prof_imgs);
@@ -569,7 +569,7 @@ function build_replace($reg) {
       $attr = $gwbbcode_tpl['attribute'];
       preg_match_all("#\{(.*?)\}#is",$attr,$matches);
       foreach($matches[0] as $r => $find) {
-          $replace = $$matches[1][$r];
+          $replace = ($$matches)[1][$r];
           $attr = str_replace($find, $replace, $attr);
       }
       $attributes .= $attr;
@@ -834,7 +834,7 @@ function build_replace($reg) {
     unset($matches);
     preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
     foreach($matches[0] as $r => $find) {
-        $replace = $$matches[1][$r];
+        $replace = ($$matches)[1][$r];
         $tpl = str_replace($find, $replace, $tpl);
     }
 
@@ -1030,7 +1030,7 @@ function skill_replace($reg) {
       unset($matches);
       preg_match_all("#\{(.*?)\}#is",$tpl,$matches);
       foreach($matches[0] as $r => $find) {
-          $replace = $$matches[1][$r];
+          $replace = ($$matches)[1][$r];
           $tpl = str_replace($find, $replace, $tpl);
       }
          //"{desc}" is replaced by $desc
