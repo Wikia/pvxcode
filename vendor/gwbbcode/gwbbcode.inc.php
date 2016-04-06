@@ -1081,6 +1081,7 @@ function gws_skill_id($skill_name) {
       if (isset($list[$name_id])) {
          $ret = $list[$name_id];
       }
+
       //Check if name could be a partial match
       else if (strlen($name_id) >= 4) {
          $name_id_length = strlen($name_id);
@@ -1096,6 +1097,10 @@ function gws_skill_id($skill_name) {
 
    else {
    //SQL DB
+
+   /*
+     CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
       $query = "SELECT id,attr FROM `skills` WHERE name_id "
             . ((strlen($name_id) >= 4) ? "like '$name_id%'" : "= '$name_id'") //Allows the use of partial skill names longer than 4 chars
             . ' ORDER BY name_id';
@@ -1104,7 +1109,7 @@ function gws_skill_id($skill_name) {
       mysql_free_result($result);
       if (!empty($ret)) {
          $ret = $ret['id'];   //Directly return the id, not an array
-      }
+     }*/
    }
    return $ret;
 }
@@ -1125,6 +1130,9 @@ function gws_skill_id_list() {
    }
    else {
    //SQL DB
+   /*
+     CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
       //TODO: check if the attribute order is the same as the one from SKILLNAMES_PATH
       $result = mysql_query("SELECT name, id FROM `skills` ORDER BY profession, attribute")
          or die('Query failed: ' . mysql_error());
@@ -1133,6 +1141,7 @@ function gws_skill_id_list() {
          $list[preg_replace('@["\'!]@', '', strtolower($ret['name']))] = $ret['id'];
       }
       mysql_free_result($result);
+      */
       return $list;
    }
 }
@@ -1167,10 +1176,14 @@ function gws_details($skill_id, $db_suffix='') {
    //SQL DB
       preg_match('@^[0-9]+$@', $skill_id)
          or die('Unsafe skill id');
+    /*
+      CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
       $result = mysql_query("SELECT * FROM `skills` WHERE id=$skill_id")
          or die('Query failed: ' . mysql_error());
       $ret = mysql_fetch_assoc($result);
       mysql_free_result($result);
+      */
    }
    return $ret;
 }

@@ -56,7 +56,7 @@ function sub_from_file($step, $where, $what, $filename, $regexp=false) {
    echo "Step $step: ";
    if ($content = @file_get_contents($filename)) {
       $content = str_replace("\r\n", "\n", $content);
-      
+
       //If $what isn't in the file
       if (strpos($content, $what) === false) {
          //Say it
@@ -65,7 +65,7 @@ function sub_from_file($step, $where, $what, $filename, $regexp=false) {
       else {
          //else remove it
          $content = str_replace("\n".$what, '', $content);   //UNSAFE TODO
-         
+
          //If $what is no longer in the file
          if (strpos($content, $what) === false) {
             //Try to save the file
@@ -77,7 +77,7 @@ function sub_from_file($step, $where, $what, $filename, $regexp=false) {
             else
                failure("Error 1: '$filename' couldn't be opened for modification.\n".
                        'Please change its access rights (chmod 777) and try again, then change access rights back to normal.');
-            
+
          }
          else
             failure("Error 2: '$what' was found in '$filename' but couldn't be removed.\n".
@@ -93,7 +93,7 @@ function add_to_file($step, $where, $what, $filename, $regexp=false) {
    echo "Step $step: ";
    if ($content = @file_get_contents($filename)) {
       $content = str_replace("\r\n", "\n", $content);
-      
+
       //If $what isn't in the file
       if (strpos($content, $what) === false) {
          //Add it
@@ -109,6 +109,7 @@ function add_to_file($step, $where, $what, $filename, $regexp=false) {
                fclose($f);
                success("hooked");
             }
+
             else
                failure("Error 3: '$filename' couldn't be opened for modification.\n".
                        'Please change its access rights (chmod 777) and try again, then change access rights back to normal.');
@@ -126,6 +127,10 @@ function add_to_file($step, $where, $what, $filename, $regexp=false) {
 
 //Recreate and fill the sql 'skills' table
 function add_skills_to_sql(){
+
+    /*
+      CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
    if (!mysql_query('DROP TABLE IF EXISTS skills;')) {
       die('Query failed: ' . mysql_error());
    }
@@ -164,10 +169,14 @@ function add_skills_to_sql(){
    insert_skills_from(SKILLS_PATH_1, $i);
    insert_skills_from(SKILLS_PATH_2, $i);
    echo 'Inserted skills: ' . success($i, true);
+   */
 }
 
 //Insert in the 'skills' table skills from database $filename
 function insert_skills_from($filename, &$i) {
+    /*
+      CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
    $skills = include ($filename);
    foreach ($skills as $id => $s) {
       extract($s, EXTR_OVERWRITE);
@@ -180,6 +189,7 @@ function insert_skills_from($filename, &$i) {
       }
       $i++;
    }
+   */
 }
 
 
@@ -214,12 +224,12 @@ function get_hashes() {
    unset($hashes[basename(PICKUP_PATH)]);   //And pickup DB
    return $hashes;
 }
-   
+
 //Output dir content infos
 function compare_hashes($current_hashes, $version_hashes) {
    $current_diff = array_diff_assoc($current_hashes, $version_hashes);
    $version_diff = array_diff_assoc($version_hashes, $current_hashes);
-   
+
    $version_html = '';
    foreach ($version_diff as $version_name => $version_content) {
       $current_name = isset($current_hashes[$version_name]) ? $version_name : 'No file';
@@ -227,7 +237,7 @@ function compare_hashes($current_hashes, $version_hashes) {
       $version_html .= "<tr style=\"color: blue;\"><td>$current_name</td><td>$current_content</td><td>$version_content</td><td>$version_name</td></tr>";
       unset($current_diff[$version_name]);
    }
-   
+
    if (!empty($version_html) || !empty($current_html)) {
       echo "<table border=\"1\"><tbody>\n";
       echo "<tr><td colspan=\"2\"><b>Your files</b></td><td colspan=\"2\"><b>Official {$version_hashes['version']} files</b></td></tr>\n";
@@ -282,7 +292,7 @@ function template_list($dirname) {
    while (false !== ($filename = readdir($dh)))
       if (is_dir($dir.$filename) && substr($filename, 0, 1) != '.')
          $list[] = $dir.$filename;
-   
+
    return $list;
 }
 ?>

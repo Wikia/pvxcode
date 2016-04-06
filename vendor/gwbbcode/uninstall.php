@@ -35,20 +35,20 @@ if (   $forced_software == 'phpBB3'
     || (file_exists(GWBBCODE_ROOT.'/../index.php') && strpos(file_get_contents(GWBBCODE_ROOT.'/../index.php'), 'phpBB3') !== false)) {
    define('IN_PHPBB', 1);
    define('NEED_SID', true);
-   
+
    // Include files
    $phpbb_root_path = './../';
    $phpEx = substr(strrchr(__FILE__, '.'), 1);
    require($phpbb_root_path . 'common.' . $phpEx);
    require($phpbb_root_path . 'includes/functions_admin.' . $phpEx);
    require($phpbb_root_path . 'includes/functions_module.' . $phpEx);
-   
+
    // Start session management
    $user->session_begin();
    $auth->acl($user->data);
    $user->setup('acp/common');
    // End session management
-   
+
    // Did user forget to login? Give 'em a chance to here ...
    // Is user any type of admin? No, then stop here, each script needs to
    // check specific permissions but this is a catchall
@@ -76,14 +76,14 @@ if (   $forced_software == 'phpBB3'
    sub_from_file($step++, "		'L_ONLINE_EXPLAIN'	=> \$l_online_time,",
                "   'GWBBCODE_HEAD' => include('gwbbcode/header.php'),",
                GWBBCODE_ROOT.'/../includes/functions.php');
-   
-   
+
+
    //Hook all templates
    $templates = template_list('styles');
    foreach ($templates as $template) {
       if (in_array($template, $not_to_hook))
          continue;
-         
+
       echo "\nProcessing template " . basename($template) . "...\n";
       sub_from_file($step++, '@<body[^>]*>@Uis',
                   '{GWBBCODE_BODY}',
@@ -108,11 +108,11 @@ else if (   $forced_software == 'phpBB2'
    $phpbb_root_path = './../';
    require($phpbb_root_path . 'extension.inc');
    include($phpbb_root_path . 'common.'.$phpEx);
-   
+
    //Check that user is admin
    $userdata = session_pagestart($user_ip, PAGE_INDEX);
    init_userprefs($userdata);
-   
+
    //Logged?
    if (!$userdata['session_logged_in'])
    	redirect(append_sid("login.$phpEx?redirect=gwbbcode/uninstall.php", true));
@@ -132,7 +132,7 @@ else if (   $forced_software == 'phpBB2'
    sub_from_file($step++, "'T_SPAN_CLASS3' => \$theme['span_class3'],",
                "   'GWBBCODE_HEAD' => file_get_contents('gwbbcode/overall_header.tpl'),",
                GWBBCODE_ROOT.'/../includes/page_header.php');
-   
+
    sub_from_file($step++, "'T_SPAN_CLASS3' => \$theme['span_class3'],",
                "   'GWBBCODE_BODY' => include('gwbbcode/body.php'),",
                GWBBCODE_ROOT.'/../includes/page_header.php');
@@ -143,8 +143,8 @@ else if (   $forced_software == 'phpBB2'
    sub_from_file($step++, "// Remove our padding from the string..\n\t\$text = substr(\$text, 1);",
                "include('gwbbcode/gwbbcode.php');",
                GWBBCODE_ROOT.'/../includes/bbcode.php');
-   
-   
+
+
    //Clean all templates
    $templates = template_list('templates');
    foreach ($templates as $template) {
@@ -165,12 +165,16 @@ else if (   $forced_software == 'phpBB2'
    //Remove the sql skill table
    if (GWBBCODE_SQL) {
       echo "\n\nMySQL skill table status: ";
+      /*
+        CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
+
       if (mysql_query('DROP TABLE IF EXISTS skills;')) {
          success('removed');
       }
       else {
          failure('couldn\'t be removed');
       }
+      */
    }
 }
 
@@ -185,7 +189,7 @@ else if (   $forced_software == 'vBulletin'
    $_SERVER['HTTP_REFERER'] = '';      //To avoid a silly notice from init.php
    require_once(CWD . '/includes/init.php');
    $permissions = cache_permissions($vbulletin->userinfo);
-   
+
    //Logged and admin?
    echo '<html><head></head><body><pre>';
    install_header();
@@ -223,8 +227,8 @@ else if (   $forced_software == 'PunBB'
    	echo "<br/>Please login as admin <a href=\"../login.php\">here</a>.";
    	die();
    }
-   
-   
+
+
    echo "\nUnhooking PunBB...\n";
    sub_from_file($step++, "echo '<meta name=\"ROBOTS\" content=\"NOINDEX, FOLLOW\" />'.\"\\n\";",
                "echo include('gwbbcode/header.php');",
@@ -247,7 +251,7 @@ else if (   $forced_software == 'MyBB'
    require_once MYBB_ROOT."inc/class_session.php";
    $session = new session;
    $session->init();
-   
+
    echo '<html><head></head><body><pre>';
    install_header();
    if ($mybb->usergroup['cancp'] != "yes") {
