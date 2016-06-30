@@ -21,6 +21,7 @@ class PvXCode {
      * @param string $frame  not used in this function, but needed by mediawiki.
      */
     public static function ParserRender($input, $args, $parser, $frame) {
+        $parser->getOutput()->addModules( 'ext.PvXCode' );
         $parsed_input = $parser->parse($input, $parser->getTitle(), $parser->getOptions(), true, false);
         $title = $parser->getTitle()->getText();
         $results = parse_gwbbcode($parsed_input->getText(), $title);
