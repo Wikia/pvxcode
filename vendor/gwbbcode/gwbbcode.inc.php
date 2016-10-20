@@ -646,7 +646,7 @@ function build_replace($reg) {
 
       //Primary attributes
       if ($prof_attr_list[$attr] == $primary) {
-         $bonus_level = @eval('return '.$bonus.';');
+         $bonus_level = array_sum(explode('+', $bonus));
          //Invalid attribute level bonus
          if ($bonus_level > 4 || $bonus_level < 0 || ($bonus_level == 4 && !$available_helmet)) {
             $invalid_template = "Invalid attribute level bonus";
@@ -1321,11 +1321,11 @@ function attribute_list_raw($att) {
 
 //Returns a list of attributes and their numeric values (e.g "12+1+3" will return 16)
 function attribute_list($att) {
-   $list = attribute_list_raw($att);
-   foreach ($list as $attr_name => $attr_lvl) {
-      $list[$attr_name] = @eval('return '.$attr_lvl.';');
-   }
-   return $list;
+	$list = attribute_list_raw($att);
+	foreach ($list as $attr_name => $attr_lvl) {
+		$list[$attr_name] = array_sum(explode('+', $attr_lvl));
+	}
+	return $list;
 }
 
 //Return the number of necessary attribute points for given attribute levels
@@ -1425,29 +1425,30 @@ Probably pukes all over the place if there's something really screwed
 with the gwbbcode.tpl file.
 Modification of Nathan Codding's load_bbcode_template.*/
 function load_gwbbcode_template() {
-   $tpl_array = file(TEMPLATE_PATH);
+	$tpl_array = file(TEMPLATE_PATH);
 
-   //Trim each line
-   $tpl = '';
-   foreach ($tpl_array as $line)
-      $tpl .= trim($line);
+	//Trim each line
+	$tpl = '';
+	foreach ($tpl_array as $line) {
+		$tpl .= trim($line);
+	}
 
 
-   //Replace \ with \\ and then ' with \'.
-   $tpl = str_replace('\\', '\\\\', $tpl);
-   $tpl  = str_replace('\'', '\\\'', $tpl);
+	//Replace \ with \\ and then ' with \'.
+	$tpl = str_replace('\\', '\\\\', $tpl);
+	$tpl = str_replace('\'', '\\\'', $tpl);
 
-   //Strip newlines.
-   $tpl  = str_replace("\n", '', $tpl);
+	//Strip newlines.
+	$tpl = str_replace("\n", '', $tpl);
 
-   //Turn template blocks into PHP assignment statements for the values of $gwbbcode_tpls..
-   $tpl = preg_replace('#<!-- BEGIN (.*?) -->(.*?)<!-- END (.*?) -->#', "\n" . '$gwbbcode_tpls[\'\\1\'] = clean_tpl(\'\\2\');', $tpl);
+	//Turn template blocks into PHP assignment statements for the values of $gwbbcode_tpls..
+	$tpl = preg_replace('#<!-- BEGIN (.*?) -->(.*?)<!-- END (.*?) -->#', "\n" . '$gwbbcode_tpls[\'\\1\'] = clean_tpl(\'\\2\');', $tpl);
 
-   $gwbbcode_tpls = array();
+	$gwbbcode_tpls = array();
 
-   eval($tpl);
+	eval($tpl);
 
-   return $gwbbcode_tpls;
+	return $gwbbcode_tpls;
 }
 
 

@@ -199,7 +199,7 @@ else if (   $forced_software == 'vBulletin'
    }
 
    echo "\nUnhooking vBulletin...\n";
-   sub_from_file($step++, "eval('\$headinclude = \"' . fetch_template('headinclude') . '\";');",
+/*   sub_from_file($step++, "eval('\$headinclude = \"' . fetch_template('headinclude') . '\";');",
                "\$headinclude .= include('gwbbcode/header.php');",
                GWBBCODE_ROOT.'/../global.php');
    sub_from_file($step++, "eval('\$header = \"' . fetch_template('header') . '\";');",
@@ -209,7 +209,7 @@ else if (   $forced_software == 'vBulletin'
                "include('gwbbcode/gwbbcode.php');\n\$input_text = parse_gwbbcode(\$input_text);",
                GWBBCODE_ROOT.'/../includes/class_bbcode.php');
    echo "\nYou can change the number of images allowed in a post back to normal.";
-   echo "\nTo do that, go to vBulletin Options/Message Posting and Editing Options and change Maximum Images Per Post";
+   echo "\nTo do that, go to vBulletin Options/Message Posting and Editing Options and change Maximum Images Per Post";*/
 }
 
 
@@ -260,13 +260,13 @@ else if (   $forced_software == 'MyBB'
    	die();
    }
 
-   echo "\nUnhooking MyBB...\n";
+/*   echo "\nUnhooking MyBB...\n";
    sub_from_file($step++, '$message = $this->mycode_parse_quotes($message);',
                "\t\tinclude('gwbbcode/gwbbcode.php');\n\t\t\$message = parse_gwbbcode(\$message);",
                GWBBCODE_ROOT.'/../inc/class_parser.php');
    sub_from_file($step++, 'eval("\\$header = \\"".$templates->get("header")."\\";");',
                "\$headerinclude .= include('gwbbcode/header.php');\n\$header = (include('gwbbcode/body.php')) . \$header;",
-               GWBBCODE_ROOT.'/../global.php');
+               GWBBCODE_ROOT.'/../global.php');*/
 }
 
 

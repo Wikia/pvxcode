@@ -234,7 +234,7 @@ else if (   ($forced_software == 'phpBB2' || $forced_software == 'PHP-Nuke')
                "   'GWBBCODE_HEAD' => file_get_contents('".GWBB_ROOT."gwbbcode/overall_header.tpl'),",
                INCL_ROOT.'includes/page_header.php');
    if (file_exists(OLD_PICKUP_PATH)) {
-      $pickup = eval('return '.file_get_contents(OLD_PICKUP_PATH).';');
+      //$pickup = eval('return '.file_get_contents(OLD_PICKUP_PATH).';');
       if (save(PICKUP_PATH, $pickup)) {
          echo 'Transfering ' . OLD_PICKUP_PATH . ' to ' . PICKUP_PATH . ': ' . success('done', true);
          rm(OLD_PICKUP_PATH, false);
@@ -289,7 +289,7 @@ else if (   ($forced_software == 'phpBB2' || $forced_software == 'PHP-Nuke')
 //TODO
 else if (   $forced_software == 'vBulletin'
          || (file_exists(GWBBCODE_ROOT.'/../index.php') && strpos(file_get_contents(GWBBCODE_ROOT.'/../index.php'), 'vBulletin') !== false)) {
-   echo "\nHooking vBulletin...\n";
+/*   echo "\nHooking vBulletin...\n";
    add_to_file($step++, "eval('\$headinclude = \"' . fetch_template('headinclude') . '\";');",
                "\$headinclude .= include('gwbbcode/header.php');",
                GWBBCODE_ROOT.'/../global.php');
@@ -300,7 +300,7 @@ else if (   $forced_software == 'vBulletin'
                "include('gwbbcode/gwbbcode.php');\n\$input_text = parse_gwbbcode(\$input_text);",
                GWBBCODE_ROOT.'/../includes/class_bbcode.php');
    echo "\nYou need to change the number of images allowed in a post otherwise gwBBCode's images won't show :(";
-   echo "\nTo do that, go to vBulletin Options/Message Posting and Editing Options and change Maximum Images Per Post";
+   echo "\nTo do that, go to vBulletin Options/Message Posting and Editing Options and change Maximum Images Per Post";*/
 }
 
 
@@ -325,13 +325,13 @@ else if (   $forced_software == 'PunBB'
 //MyBB
 else if (   $forced_software == 'MyBB'
          || (file_exists(GWBBCODE_ROOT.'/../index.php') && strpos(file_get_contents(GWBBCODE_ROOT.'/../index.php'), 'MyBB') !== false)) {
-   echo "\nHooking MyBB...\n";
+/*   echo "\nHooking MyBB...\n";
    add_to_file($step++, 'eval("\\$header = \\"".$templates->get("header")."\\";");',
                "\$headerinclude .= include('gwbbcode/header.php');\n\$header = (include('gwbbcode/body.php')) . \$header;",
                GWBBCODE_ROOT.'/../global.php');
    add_to_file($step++, '$message = $this->mycode_parse_quotes($message);',
                "\t\tinclude('gwbbcode/gwbbcode.php');\n\t\t\$message = parse_gwbbcode(\$message);",
-               GWBBCODE_ROOT.'/../inc/class_parser.php');
+               GWBBCODE_ROOT.'/../inc/class_parser.php');*/
 }
 
 
