@@ -354,7 +354,6 @@ if ($successful)
 else
    failure('Installation failed! If you can\'t resolve the issue(s), please contact me.');
 ?>
-
 <form name="shack" method="post" action="http://gwshack.us/installed_gwbbcode.php" target="form_result">
 <br/>To be informed of new versions of gwBBCode, just send me your email! (no ads, no spam)
 <input name="email" type="text" value="" size="50"/> <input name="post" value="Send email" type="submit"/></form>
