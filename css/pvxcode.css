@@ -124,7 +124,7 @@
   right: 6px;
 }
 .pvx-type-en {
-  background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Enchantment-Spell.png);
+  background-image: url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
   height: 20px;
   width: 20px;
 }
@@ -209,22 +209,22 @@ span.variable {color: #88FF88; font-weight: bold;}
 }
 
 /* Border declarations for Build tooltips by Kills Less */
-.gwborder_topleft {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/topleft.gif); width: 3px; height: 3px;}
-.gwborder_top {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/top.gif); height: 3px;}
-.gwborder_topright {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/topright.gif); width: 3px; height: 3px;}
-.gwborder_left {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/left.gif); width: 3px;}
-.gwborder_right {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/right.gif); width: 3px;}
-.gwborder_bottomleft {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/bottomleft.gif); width: 3px; height: 3px;}
-.gwborder_bottom {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/bottom.gif); height: 3px;}
-.gwborder_bottomright {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/bottomright.gif); width: 3px; height: 3px;}
+.gwborder_topleft {background-image: url(/extensions/PvXCode/images/img_border/topleft.gif); width: 3px; height: 3px;}
+.gwborder_top {background-image: url(/extensions/PvXCode/images/img_border/top.gif); height: 3px;}
+.gwborder_topright {background-image: url(/extensions/PvXCode/images/img_border/topright.gif); width: 3px; height: 3px;}
+.gwborder_left {background-image: url(/extensions/PvXCode/images/img_border/left.gif); width: 3px;}
+.gwborder_right {background-image: url(/extensions/PvXCode/images/img_border/right.gif); width: 3px;}
+.gwborder_bottomleft {background-image: url(/extensions/PvXCode/images/img_border/bottomleft.gif); width: 3px; height: 3px;}
+.gwborder_bottom {background-image: url(/extensions/PvXCode/images/img_border/bottom.gif); height: 3px;}
+.gwborder_bottomright {background-image: url(/extensions/PvXCode/images/img_border/bottomright.gif); width: 3px; height: 3px;}
 
 /* Build Box declarations by Kills Less */
 table.gwbuildbox {height: 50px;}
-.gwbuildbox_left {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/buildbox_left.png'); width:20px; height: 50px;}
-.gwbuildbox_right {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/buildbox_right.png'); width:20px; height: 50px;}
-.gwbuildbox_left[class] {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/buildbox_left.png); background-repeat: no-repeat; width: 20px; height: 50px}
-.gwbuildbox_center {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/buildbox_center.png); height: 50px}
-.gwbuildbox_right[class] {background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_border/buildbox_right.png); background-repeat: no-repeat; width: 20px; height: 50px}
+.gwbuildbox_left {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='/extensions/PvXCode/images/img_border/buildbox_left.png'); width:20px; height: 50px;}
+.gwbuildbox_right {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='/extensions/PvXCode/images/img_border/buildbox_right.png'); width:20px; height: 50px;}
+.gwbuildbox_left[class] {background-image: url(/extensions/PvXCode/images/img_border/buildbox_left.png); background-repeat: no-repeat; width: 20px; height: 50px}
+.gwbuildbox_center {background-image: url(/extensions/PvXCode/images/img_border/buildbox_center.png); height: 50px}
+.gwbuildbox_right[class] {background-image: url(/extensions/PvXCode/images/img_border/buildbox_right.png); background-repeat: no-repeat; width: 20px; height: 50px}
 
 
 /* Needed otherwise Nosebleed blows the popup up */
@@ -348,7 +348,7 @@ span.expert {
 div.pvx_attrib_list {
 	position: absolute;
 	background-color:#fafaf7;
-	background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/skillbg.jpg);
+	background-image:url(/extensions/PvXCode/images/img_skin/skillbg.jpg);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 	height:149px;
@@ -397,35 +397,35 @@ div.pvx_attrib_bg img {
 
 #pvx_attributes #pvx_ener
 {
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/energy.gif);
+	background-image: url(/extensions/PvXCode/images/img_skin/energy.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
 #pvx_attributes #pvx_rech
 {
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/recharge.gif);
+	background-image: url(/extensions/PvXCode/images/img_skin/recharge.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
 #pvx_attributes #pvx_cast
 {
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/activation.gif);
+	background-image: url(/extensions/PvXCode/images/img_skin/activation.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
 #pvx_attributes #pvx_eregen
 {
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/upkeep.gif);
+	background-image: url(/extensions/PvXCode/images/img_skin/upkeep.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
 #pvx_attributes #pvx_adre
 {
-	background-image: url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/adrenaline.gif);
+	background-image: url(/extensions/PvXCode/images/img_skin/adrenaline.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
@@ -609,46 +609,46 @@ div.main {
 
 
 .pvx-type-du {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Dual-Attack.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Dual-Attack.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-en
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Enchantment-Spell.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-he
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Hex-Spell.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Hex-Spell.png);
     height:20px;
     width:20px;
 }
 .pvx-type-le
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Lead-Attack.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Lead-Attack.png);
     height:20px;
     width:20px;
 }
 .pvx-type-of
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Off-Hand-Attack.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Off-Hand-Attack.png);
     height:20px;
     width:20px;
 }
 .pvx-type-wea
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Weapon-Spell.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Weapon-Spell.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-fl
 {
-    background-image:url(http://hydra-media.cursecdn.com/gwpvx.gamepedia.com/img_skin/Enchantment-Spell.png);
+    background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
