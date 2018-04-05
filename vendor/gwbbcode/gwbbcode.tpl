@@ -7,7 +7,7 @@
     </div><div style="clear: both;">
     {skills}
        <div class="template">
-        <div class="template_name">Template code</div><div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/template.php?build={template_code}&name={build_name}"><img src="/extensions/PvXCode/images/img_skin/save.png" border="0" alt="save" /></a></div>
+        <div class="template_name">Template code</div><div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/template.php?build={template_code}&amp;name={build_name}"><img src="/extensions/PvXCode/images/img_skin/save.png" border="0" alt="save" /></a></div>
     </div>
 </div>
 </td></tr></table>

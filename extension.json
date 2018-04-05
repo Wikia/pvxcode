@@ -22,15 +22,16 @@
 		"SpecialPvXDownloadTemplate": "specials/SpecialPvXDownloadTemplate.php"
 	},
 	"ResourceModules": {
-		"ext.PvXCode": {
+		"ext.PvXCode.css": {
 			"styles": [
 				"css/pvxcode.css"
-			],
+			]
+		},
+		"ext.PvXCode.js": {
 			"scripts": [
 				"js/pvxcode.js",
 				"js/overlib.js"
-			],
-			"dependencies": []
+			]
 		}
 	},
 	"ResourceFileModulePaths": {

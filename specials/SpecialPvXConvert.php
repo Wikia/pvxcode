@@ -31,11 +31,13 @@ class SpecialPvXConvert extends SpecialPage {
 
 	/**
 	 * Main Execute for the Specil Page
+	 *
 	 * @param  $par Not used, but expected to be there by mediawiki.
 	 * @return void, echos to page.
 	 */
 	function execute($par = null) {
-		$this->output->addModules('ext.PvXCode');
+		$this->getOutput()->addModuleStyles('ext.PvXCode.css');
+		$this->getOutput()->addModuleScripts('ext.PvXCode.js');
 
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');
@@ -90,15 +92,15 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return string
 	 */
 	function cnv_skils($skl) {
-		$var    = preg_replace("/\r\n|\n|\r/", "", $skl);
-		$var    = str_replace("'", "", $var);
-		$var    = str_replace("\"", "", $var);
-		$var    = str_replace("!", "", $var);
-		$var    = str_replace("{{", "", $var);
-		$var    = str_replace("}}", "", $var);
+		$var	= preg_replace("/\r\n|\n|\r/", "", $skl);
+		$var	= str_replace("'", "", $var);
+		$var	= str_replace("\"", "", $var);
+		$var	= str_replace("!", "", $var);
+		$var	= str_replace("{{", "", $var);
+		$var	= str_replace("}}", "", $var);
 		$skills = explode("|", $var);
-		$out    = array();
-		$i      = 0;
+		$out	= array();
+		$i		= 0;
 		while ($i <= count($out)) {
 			if (isset($skills[$i + 1])) {
 				$out[$i] = "[" . $skills[$i + 1] . "]";
@@ -111,17 +113,17 @@ class SpecialPvXConvert extends SpecialPage {
 
 	/**
 	 * Converts gw code for attributes into pvx code.
-	 * @param  string $att  gw code for attributes
+	 * @param  string $att	gw code for attributes
 	 * @param  string $name build name
 	 * @return string
 	 */
 	function cnv_attributes($att, $name) {
-		$var        = preg_replace("/\r\n|\n|\r/", "", $att);
-		$var        = str_replace(" ", "", $var);
-		$var        = str_replace("{{", "", $var);
-		$var        = str_replace("}}", "", $var);
+		$var		= preg_replace("/\r\n|\n|\r/", "", $att);
+		$var		= str_replace(" ", "", $var);
+		$var		= str_replace("{{", "", $var);
+		$var		= str_replace("}}", "", $var);
 		$attributes = explode("|", $var);
-		$out        = array();
+		$out		= array();
 		if ($name) {
 			$out[0] = '<pvxbig>
 	[build name="' . $name . '" prof=' . substr($attributes[1], 0, 5) . '/' . substr($attributes[2], 0, 5);

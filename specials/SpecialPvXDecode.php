@@ -58,7 +58,7 @@ class SpecialPvXDecode extends SpecialPage {
 
 		} else {
 			$out = '<p>
-					This decoder can process Guild Wars template and return PvXcode style template.	Sample input:<br>
+					This decoder can process Guild Wars template and return PvXcode style template. Sample input:<br>
 					<code>
 					Hard Mode Farming;OQMU0QnEZpKpF4rUQl/MSik8AA
 					<br>-- OR --<br>
