@@ -1,9 +1,13 @@
 {
 	"name": "PvX Code",
-	"version": "1.0",
-	"author": "Curse Wiki Team",
+	"version": "1.0.0",
+	"author": "Hydra Wiki Platform Team",
 	"descriptionmsg": "pvxcode_description",
+	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
 	"SpecialPages": {
 		"PvXConvert": "SpecialPvXConvert",
 		"PvXDecode": "SpecialPvXDecode",
