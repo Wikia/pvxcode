@@ -14619,7 +14619,7 @@ array (
 'recharge'=>15,
 'pve_only'=>0,
 'elite'=>0,
-'desc'=>"If Distracting Strike hits, it deals no damage and interrupts target foe\'s action. If target foe has Cracked Armor, that skill is disabled for 20 seconds.",
+'desc'=>'If Distracting Strike hits, it deals no damage and interrupts target foe\'s action. If target foe has Cracked Armor, that skill is disabled for 20 seconds.',
 'name_id'=>'distracting strike',
 ),
 344=>
