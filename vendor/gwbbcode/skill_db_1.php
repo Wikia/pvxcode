@@ -5386,7 +5386,7 @@ array (
 'recharge'=>10,
 'pve_only'=>0,
 'elite'=>0,
-'desc'=>'Target touched foe and all adjacent foes are struck for 5..60 lightning damage, are Blinded for 1..4 seconds, and have Cracked Armor for 1..10 seconds. This skill has 25% armor penetration.',
+'desc'=>'Target touched foe and all adjacent foes are struck for 10..60 lightning damage, are Blinded for 1..4 seconds, and have Cracked Armor for 1..10 seconds. This skill has 25% armor penetration.',
 'name_id'=>'lightning touch',
 ),
 226=>
@@ -7270,7 +7270,7 @@ array (
 'attr'=>'fir',
 'type'=>'Spell',
 'ty'=>'sp',
-'energy'=>15,
+'energy'=>10,
 'adrenaline'=>0,
 'eregen'=>0,
 'sacrifice'=>0,
@@ -7609,7 +7609,7 @@ array (
 'recharge'=>15,
 'pve_only'=>0,
 'elite'=>0,
-'desc'=>'You cause a Deep Freeze at target foe\'s location. All foes in this location are struck for 10..85 cold damage, and for 10 seconds, they move 66% slower.',
+'desc'=>'You cause a Deep Freeze at target foe\'s location. All foes in this area are struck for 10..85 cold damage, and for 10 seconds, they move 66% slower.',
 'name_id'=>'deep freeze',
 ),
 1382=>
@@ -7741,7 +7741,7 @@ array (
 'recharge'=>0,
 'pve_only'=>0,
 'elite'=>0,
-'desc'=>'Send out an Ice Spear, striking target foe for 10..70 cold damage if it hits. Ice Spear has half the normal Spell range. If you are Overcast, you gain +1..4 Health regeneration for 5 seconds.',
+'desc'=>'Send out an Ice Spear, striking target foe for 10..60 cold damage if it hits. If you are Overcast, you gain +1..4 Health regeneration for 5 seconds.',
 'name_id'=>'ice spear',
 ),
 211=>
@@ -8313,7 +8313,7 @@ array (
 'recharge'=>25,
 'pve_only'=>0,
 'elite'=>1,
-'desc'=>'Your next 1..3 spell does not cause Exhaustion and costs 10..25 less Energy to cast. Your elemental attributes are increased by 1..2',
+'desc'=>'Your next 1..3 spell does not cause Overcast and costs 10..25 less Energy to cast. Your elemental attributes are increased by 1..2',
 'name_id'=>'glyph of energy',
 ),
 1096=>
@@ -8401,7 +8401,7 @@ array (
 'recharge'=>5,
 'pve_only'=>0,
 'elite'=>1,
-'desc'=>'You gain 1 Energy and 5 Health for each point of energy restricted by Exhaustion. You lose all enchantments.',
+'desc'=>'You gain 1 Energy and 5 Health for each point of energy restricted by Overcast. You lose all enchantments.',
 'name_id'=>'second wind',
 ),
 2055=>
@@ -15111,7 +15111,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>0,
-'desc'=>'For 2..5 seconds, whenever target other ally takes damage, all party members are healed for 2 Health for each rank in Divine Favor.{self}',
+'desc'=>'For 2..5 seconds, whenever target other ally takes damage, all party members are healed for 2 Health for each rank in Divine Favor.{target}',
 'name_id'=>'seed of life',
 ),
 1126=>
@@ -15243,7 +15243,7 @@ array (
 'recharge'=>20,
 'pve_only'=>0,
 'elite'=>0,
-'desc'=>'Remove all Conditions (Poison, Disease, Blindness, Dazed, Bleeding, Crippled, Burning, Weakness, and Deep Wound) from target ally.{target}',
+'desc'=>'Remove all Conditions (Poison, Disease, Blindness, Dazed, Bleeding, Crippled, Burning, Weakness, Cracked Armor, and Deep Wound) from target ally.{target}',
 'name_id'=>'purge conditions',
 ),
 295=>
