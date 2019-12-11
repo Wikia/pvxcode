@@ -37,7 +37,7 @@ class SpecialPvXConvert extends SpecialPage {
 	 */
 	function execute($par = null) {
 		$this->getOutput()->addModuleStyles('ext.PvXCode.css');
-		$this->getOutput()->addModuleScripts('ext.PvXCode.js');
+		$this->getOutput()->addModules('ext.PvXCode.js');
 
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');
