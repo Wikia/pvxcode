@@ -22,7 +22,7 @@ class PvXCode {
 	 */
 	public static function ParserRender($input, $args, $parser, $frame) {
 		$parser->getOutput()->addModuleStyles('ext.PvXCode.css');
-		$parser->getOutput()->addModuleScripts('ext.PvXCode.js');
+		$parser->getOutput()->addModules('ext.PvXCode.js');
 		$parsed_input = $parser->parse($input, $parser->getTitle(), $parser->getOptions(), true, false);
 		$title = $parser->getTitle()->getText();
 		$results = parse_gwbbcode($parsed_input->getText(), $title);
