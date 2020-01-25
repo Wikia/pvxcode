@@ -1,241 +1,8 @@
-.translucent
-{
-  background:#161411;   /* Needed there so that following background classes can overide it */
-  filter:alpha(opacity=93,style=0);
-  -moz-opacity:.93;
-  opacity:.93;
-  padding: 5px;
-  width: 460px;   /* Needed otherwise Nosebleed blows the popup up */
-  height: auto;
-}
-
-.skill_link {color: #0000FF;}
-
-.template {
-  width: 596px;
-  float: left;
-  background-color: rgb(250, 250, 250);
-  border-bottom-width: 1px;
-  border-bottom-color: rgb(221, 221, 221);
-  border-bottom-style: solid;
-  border-right-width: 1px;
-  border-right-color: rgb(221, 221, 221);
-  border-right-style: solid;
-  margin-top: 3px;
-  padding-top: 2px;
-  padding-bottom: 3px;
-  height: 22px;
-}
-.template_name {
-  font-family: Arial;
-  font-weight: bold;
-  font-size: 12px;
-  float: left;
-  margin-left: 5px;
-  margin-right: 5px;
-  letter-spacing: 1px;
-  margin-top: 2px;
-  color: rgb(102, 102, 102);
-}
-.template_input {
-  float: right;
-  margin-right: 4px;
-}
-.template input {
-  font-family: courier;
-  font-weight: normal;
-  font-size: 12px;
-  background-color: rgb(255, 255, 255);
-  height: 15px;
-  border-top-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-top-style: solid;
-  border-right-style: solid;
-  border-bottom-style: solid;
-  border-left-style: solid;
-  border-top-color: rgb(221, 221, 221);
-  border-right-color: rgb(221, 221, 221);
-  border-bottom-color: rgb(221, 221, 221);
-  border-left-color: rgb(221, 221, 221);
-  border-image-source: initial;
-  border-image-slice: initial;
-  border-image-width: initial;
-  border-image-outset: initial;
-  border-image-repeat: initial;
-  color: rgb(51, 51, 51);
-  margin-top: 2px;
-  width: 368px;
-  padding-left: 2px;
-}
-.template img {
-  display: inline;
-  vertical-align: top;
-  margin-top: 2px;
-  margin-left: 0px;
-  margin-right: 0px;
-  width: 66px;
-  height: 19px;
-}
-.skill_box {
-  width: 70px;
-  height: 127px;
-  background-color: rgb(246, 246, 246);
-  border-bottom-width: 1px;
-  border-bottom-color: rgb(221, 221, 221);
-  border-bottom-style: solid;
-  border-right-width: 1px;
-  border-right-color: rgb(221, 221, 221);
-  border-right-style: solid;
-  border-top-width: 1px;
-  border-top-color: rgb(250, 250, 250);
-  border-top-style: solid;
-  border-left-width: 1px;
-  border-left-color: rgb(250, 250, 250);
-  border-left-style: solid;
-  float: left;
-  margin-right: 3px;
-  margin-top: 3px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 10px;
-  text-align: center;
-  vertical-align: text-bottom;
-  line-height: 13px;
-  position: relative;
-}
-.skill_icon {
-  height: 64px;
-  width: 64px;
-  background-color: rgb(255, 255, 255);
-  margin-top: 3px;
-  margin-right: 3px;
-  margin-left: 3px;
-  margin-bottom: 7px;
-}
-.pvx_icon-normal_skill {
-  position: absolute;
-  top: 3px;
-  right: 4px;
-}
-.pvx_icon-elite_skill {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-}
-.pvx-type-en {
-  background-image: url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
-  height: 20px;
-  width: 20px;
-}
-.profession {
-  width: 597px;
-  float: left;
-}
-.profession::after {
-
-}
-.attribute_rank {
-  background-color: rgb(250, 250, 250);
-  border-bottom-width: 1px;
-  border-bottom-color: rgb(221, 221, 221);
-  border-bottom-style: solid;
-  border-right-width: 1px;
-  border-right-color: rgb(221, 221, 221);
-  border-right-style: solid;
-  margin-top: 3px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  padding-top: 2px;
-  padding-right: 2px;
-  padding-bottom: 2px;
-  padding-left: 5px;
-  float: right;
-}
-.attribute_name {
-  background-color: rgb(250, 250, 250);
-  border-bottom-width: 1px;
-  border-bottom-color: rgb(221, 221, 221);
-  border-bottom-style: solid;
-  border-right-width: 1px;
-  border-right-color: rgb(221, 221, 221);
-  border-right-style: solid;
-  margin-top: 3px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  padding-top: 2px;
-  padding-right: 2px;
-  padding-bottom: 2px;
-  padding-left: 5px;
-}
-.type {
-  width: 597px;
-  float: left;
-}
-.type span {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 15px;
-  position: relative;
-  bottom: 0px;
-  left: 5px;
-}
-
-
-.gwno_border {padding: 0; margin: 0;}
-table.gwborder {width: 466px;}
-img.no_link {border: none;}
-.table_image {vertical-align: top; text-align: center; font-size: 10pt; padding-right: 10px;}
-.skill_text {vertical-align: top;}
-.skill_name {font-size: 15px; font-weight: 700; color: #bfb38b; float: left;}
-.skill_desc {text-align: left; font-size: 11px; color: white; line-height: 20px; clear: both; display: block; padding-top: 5px;}
-.skill_camp {font-weight: bold; color: #aad38b; font-size: 9px;}
-.skill_pve {color: #b0b080; font-size: 9px;}
-.expert {color: #A1AEFF; padding-left: 2px;}
-.elite_skill {background-color: #6B6226;}
-.normal_skill {background-color: #161411;}
-
-.build_name {text-align: left; font-size: 11pt; font-weight: 700; color: #bfb38b; padding-bottom: 5px;}
-.build_desc {text-align: left; font-size: 11px; color: white; line-height: 20px;}
-.build_lilname {font-size: 10px; padding: 0px; line-height: 12px;}
-.attribute {padding-left: 20px; font-size: 12px; color: white; line-height: 20px;}
-
-.skill_requirements {display: inline; padding: 0; margin: 0; list-style-type: none;}
-.skill_requirements li {display: inline; float: right; margin-right: 5px; font-weight: bold; font-size: 12px; color: white;}
-span.variable {color: #88FF88; font-weight: bold;}
-
-
-.table_image, .skill_name, .skill_desc, .skill_camp, .expert, .build_name, .build_desc, .attribute, .skill_requirements, .skill_requirements li, span.variable {
-   font-family: verdana, Helvetica, sans-serif;
-}
-
-/* Border declarations for Build tooltips by Kills Less */
-.gwborder_topleft {background-image: url(/extensions/PvXCode/images/img_border/topleft.gif); width: 3px; height: 3px;}
-.gwborder_top {background-image: url(/extensions/PvXCode/images/img_border/top.gif); height: 3px;}
-.gwborder_topright {background-image: url(/extensions/PvXCode/images/img_border/topright.gif); width: 3px; height: 3px;}
-.gwborder_left {background-image: url(/extensions/PvXCode/images/img_border/left.gif); width: 3px;}
-.gwborder_right {background-image: url(/extensions/PvXCode/images/img_border/right.gif); width: 3px;}
-.gwborder_bottomleft {background-image: url(/extensions/PvXCode/images/img_border/bottomleft.gif); width: 3px; height: 3px;}
-.gwborder_bottom {background-image: url(/extensions/PvXCode/images/img_border/bottom.gif); height: 3px;}
-.gwborder_bottomright {background-image: url(/extensions/PvXCode/images/img_border/bottomright.gif); width: 3px; height: 3px;}
-
-/* Build Box declarations by Kills Less */
-table.gwbuildbox {height: 50px;}
-.gwbuildbox_left {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='/extensions/PvXCode/images/img_border/buildbox_left.png'); width:20px; height: 50px;}
-.gwbuildbox_right {filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='scale', src='/extensions/PvXCode/images/img_border/buildbox_right.png'); width:20px; height: 50px;}
-.gwbuildbox_left[class] {background-image: url(/extensions/PvXCode/images/img_border/buildbox_left.png); background-repeat: no-repeat; width: 20px; height: 50px}
-.gwbuildbox_center {background-image: url(/extensions/PvXCode/images/img_border/buildbox_center.png); height: 50px}
-.gwbuildbox_right[class] {background-image: url(/extensions/PvXCode/images/img_border/buildbox_right.png); background-repeat: no-repeat; width: 20px; height: 50px}
-
-
-/* Needed otherwise Nosebleed blows the popup up */
-table.gwborders {width: 470px;}
-
-/* This is where you can customize the appearance of the tooltip */
+/* pvxbuild.css */
+/* TOOLTIPS */
 div#overDiv {
   position:absolute; visibility:hidden; z-index:10000;
 }
-
-/* pvxbuild.css -- coppied here by TOR */
 
 div.pvx_overlib {
     position:relative;
@@ -248,6 +15,7 @@ div.pvx_overlib {
 	padding:1px;
 }
 
+/* Tooltips - Bottom right text */
 div.pvx_campaign {
 	bottom: 0px;
 	right:-1px;
@@ -268,6 +36,7 @@ div.pvx_campaign {
 	padding-right:9px;
 }
 
+/* Tooltips - Text after description (profession, attribute, rank) */
 div.pvx_mastery {
 	bottom: 13px;
 	left:65px;
@@ -282,8 +51,7 @@ div.pvx_mastery {
 	vertical-align:bottom;
 }
 
-/* SKILL INFO, NAME, TYPE, PROFF. */
-
+/* Tooltips - Skill name, type, description. */
 div.pvx_description {
 	position: relative;
 	background-color:#fafaf7;
@@ -325,8 +93,6 @@ div.pvx_type {
 	margin-top:6px;
 }
 
-/* SKILL INFO, FULL TEXT DESCRIPTION */
-
 div.pvx_skill_info {
 	font-family:Tahoma;
 	font-size:12px;
@@ -337,14 +103,14 @@ div.pvx_skill_info {
 
 span.variable {
 	color: #299900; font-weight: bold;
+	font-family: verdana, Helvetica, sans-serif;
 }
 
 span.expert {
 	color: #025577;
 }
 
-/* A T T R I B U T E S */
-
+/* Tooltips - Left column - Box, icon */
 div.pvx_attrib_list {
 	position: absolute;
 	background-color:#fafaf7;
@@ -375,15 +141,13 @@ div.pvx_attrib_bg img {
 	width:40px;
 }
 
-#pvx_attributes
-{
+#pvx_attributes {
 	margin: 0;
 	padding: 0;
 	padding-left: 7px;
 }
 
-#pvx_attributes div
-{
+#pvx_attributes div {
 	width:18px;
 	height:18px;
 	font-size:11px;
@@ -393,65 +157,73 @@ div.pvx_attrib_bg img {
 	margin-top:4px;
 }
 
-/* 5 SKILL ATTRIBUTE TO CHOOSE */
+/* Tooltips - Left column - sacrifice, energy, overcast, recharge, activation, adrenaline. */
+#pvx_attributes #pvx_sacr {
+	background-image: url(/extensions/PvXCode/images/img_skin/sacrifice.gif);
+	background-repeat: no-repeat;
+	background-position:0 1px;
+}
 
-#pvx_attributes #pvx_ener
-{
+#pvx_attributes #pvx_ener {
 	background-image: url(/extensions/PvXCode/images/img_skin/energy.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
-#pvx_attributes #pvx_rech
-{
+#pvx_attributes #pvx_over {
+	background-image: url(/extensions/PvXCode/images/img_skin/overcast.gif);
+	background-repeat: no-repeat;
+	background-position:0 1px;
+}
+
+#pvx_attributes #pvx_rech {
 	background-image: url(/extensions/PvXCode/images/img_skin/recharge.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
-#pvx_attributes #pvx_cast
-{
+#pvx_attributes #pvx_cast {
 	background-image: url(/extensions/PvXCode/images/img_skin/activation.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
-#pvx_attributes #pvx_eregen
-{
+#pvx_attributes #pvx_eregen {
 	background-image: url(/extensions/PvXCode/images/img_skin/upkeep.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
-#pvx_attributes #pvx_adre
-{
+#pvx_attributes #pvx_adre {
 	background-image: url(/extensions/PvXCode/images/img_skin/adrenaline.gif);
 	background-repeat: no-repeat;
 	background-position:0 1px;
 }
 
-#pvx_attributes #pvx_cast span
-{
+/* Ranger expertise energy reduction / Mesmer fast casting activation reduction recieve additional spans */
+#pvx_attributes #pvx_cast span {
 	color:#770077;
 	text-decoration:underline;
 }
 
-#pvx_attributes #pvx_ener span
-{
+#pvx_attributes #pvx_ener span {
 	color:#448800;
 	text-decoration:underline;
 }
 
 
-/* ---------------------------------------------------------- */
-
+/* BUILDS */
+/* Builds - Container */
 div.main {
 	width:650px;
 	margin: 0;
 	padding: 0;
 }
 
-.type{
+/* Builds - Name */
+// FIXME: At some point some nitwit named these the wrong way around on the SMARTY .tpl template file
+/* the profession */
+.type {
 	width:597px;
 	float: left;
 }
@@ -464,12 +236,14 @@ div.main {
     left: 5px;
 }
 
+/* the attribute list */
 .profession {
 	width:597px;
 	float: left;
 }
 
-.attribute_name {
+/* Builds - Attribute list */
+.attribute_rank, .attribute_name {
 	background-color:#fafafa;
 	border-bottom:1px;
 	border-bottom-color:#dddddd;
@@ -485,78 +259,10 @@ div.main {
 }
 
 .attribute_rank {
-	background-color:#fafafa;
-	border-bottom:1px;
-	border-bottom-color:#dddddd;
-	border-bottom-style:solid;
-	border-right:1px;
-	border-right-color:#dddddd;
-	border-right-style:solid;
-	margin-top:3px;
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:13px;
-	padding:2px;
-	padding-left:5px;
 	float:right;
 }
 
-.template {
-	width:596px;
-	float: left;
-	background-color:#fafafa;
-	border-bottom:1px;
-	border-bottom-color:#dddddd;
-	border-bottom-style:solid;
-	border-right:1px;
-	border-right-color:#dddddd;
-	border-right-style:solid;
-	margin-top:3px;
-	padding-top:2px;
-	padding-bottom:3px;
-	height:22px;
-}
-
-.template input {
-	font-family: courier;
-	font-weight:normal;
-	font-size:12px;
-	background-color:#ffffff;
-	height:15px;
-	border:1px solid #dddddd;
-    color:#333333;
-    margin-top:2px;
-	width:368px;
-    padding-left:2px;
-}
-
-.template img {
-    display:inline;
-    vertical-align: top;
-    margin-top:2px;
-    margin-left:0px;
-    margin-right:0px;
-    width: 66px;
-    height: 19px;
-}
-
-
-.template_name {
-	font-family: Arial;
-	font-weight:bold;
-	font-size:12px;
-	float:left;
-	margin-left:5px;
-	margin-right:5px;
-	letter-spacing:1px;
-	margin-top:2px;
-	color:#666666;
-}
-
-.template_input {
-	float:right;
-	margin-right:4px;
-}
-
+/* Builds - Skills */
 .skill_box {
 	width:70px;
 	height:127px;
@@ -592,9 +298,7 @@ div.main {
 	margin-bottom:7px;
 }
 
-
-/* ------------------------------------------------------------------------- */
-
+/* Builds - Skills - Extra div to move the type icons if elite, to avoid the elite border */
 .pvx_icon-normal_skill {
     position:absolute;
     top: 3px;
@@ -607,56 +311,126 @@ div.main {
     right: 6px;
 }
 
-
+/* Builds - Skills - Type icons */
 .pvx-type-du {
     background-image:url(/extensions/PvXCode/images/img_skin/Dual-Attack.png);
     height:20px;
     width:20px;
 }
 
-.pvx-type-en
-{
+.pvx-type-en {
     background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
 
-.pvx-type-he
-{
+.pvx-type-he {
     background-image:url(/extensions/PvXCode/images/img_skin/Hex-Spell.png);
     height:20px;
     width:20px;
 }
-.pvx-type-le
-{
+.pvx-type-le {
     background-image:url(/extensions/PvXCode/images/img_skin/Lead-Attack.png);
     height:20px;
     width:20px;
 }
-.pvx-type-of
-{
+.pvx-type-of {
     background-image:url(/extensions/PvXCode/images/img_skin/Off-Hand-Attack.png);
     height:20px;
     width:20px;
 }
-.pvx-type-wea
-{
+.pvx-type-wea {
     background-image:url(/extensions/PvXCode/images/img_skin/Weapon-Spell.png);
     height:20px;
     width:20px;
 }
 
-.pvx-type-fl
-{
+.pvx-type-fl {
     background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
 
+/* Builds - Template link at the bottom */
+.template {
+	width:596px;
+	float: left;
+	background-color:#fafafa;
+	border-bottom:1px;
+	border-bottom-color:#dddddd;
+	border-bottom-style:solid;
+	border-right:1px;
+	border-right-color:#dddddd;
+	border-right-style:solid;
+	margin-top:3px;
+	padding-top:2px;
+	padding-bottom:3px;
+	height:22px;
+}
 
-/* pvxrating.css -- imported by TOR */
-div.rating_input
-{
+.template_name {
+	font-family: Arial;
+	font-weight:bold;
+	font-size:12px;
+	float:left;
+	margin-left:5px;
+	margin-right:5px;
+	letter-spacing:1px;
+	margin-top:2px;
+	color:#666666;
+}
+
+.template_input {
+	float:right;
+	margin-right:4px;
+}
+
+.template input {
+	font-family: courier;
+	font-weight:normal;
+	font-size:12px;
+	background-color:#ffffff;
+	height:15px;
+	border:1px solid #dddddd;
+    color:#333333;
+    margin-top:2px;
+	width:368px;
+    padding-left:2px;
+}
+
+.template img {
+    display:inline;
+    vertical-align: top;
+    margin-top:2px;
+    margin-left:0px;
+    margin-right:0px;
+    width: 66px;
+    height: 19px;
+}
+
+
+/* pvxrating.css */
+
+/* NEW RATING */
+/* Container */
+.ratingform {
+	border:1px;
+	border-style:dashed;
+	border-color:#aaaaaa;
+	padding: 14px;
+}
+
+table.rating_table {
+	border:0px;
+	border-style:solid;
+}
+
+table.rating_table td {
+	padding:6px;
+}
+
+/* Ratio buttons and labels for the 0-5 score options */
+div.rating_input {
 	background:#ffffff;
 	padding: 6px;
 	border-color:#e5e5e5;
@@ -669,6 +443,18 @@ div.rating_input
 	display:inline;
 }
 
+.ratingform input.button {
+	margin-left: 120px;
+}
+
+div.rating_input span {
+	padding: 6px;
+	font-size:14px;
+	font-weight:bold;
+	display:inline;
+}
+
+/* Rating categories: Effectiveness, Universality, Innovation, Comments */
 span.rating_cat {
 	font-weight:bold;
 	font-family:Verdana, Arial, Helvetica, sans-serif;
@@ -678,32 +464,7 @@ span.rating_cat {
 	border-bottom:1px; border-bottom-color:#786143; border-bottom-style:dashed; border-bottom-width:1px;
 }
 
-div.rating_input span {
-	padding: 6px;
-	font-size:14px;
-	font-weight:bold;
-	display:inline;
-}
-table.rating_table {
-	border:0px;
-	border-style:solid;
-}
-table.rating_table td {
-	padding:6px;
-}
-
-.ratingform {
-	border:1px;
-	border-style:dashed;
-	border-color:#aaaaaa;
-	padding: 14px;
-}
-
-.ratingform input.button {
-	margin-left: 120px;
-}
-
-
+/* Comments box */
 .rating_text {
 	width:312px;
 	border-color:#e5e5e5;
@@ -711,19 +472,20 @@ table.rating_table td {
 	border-width:1px;
 }
 
+/* Links to edit or delete the current user's rating */
 .aedit {
 	font-size: x-small;
 	float: right;
 }
 
-
+/* EXISTING RATINGS */
+/* Rating row */
 .rating {
 	border:1px;
 	border-style:solid;
 	border-color:#f5f5f5;
 	width:100%;
 }
-
 
 .rating table {
 	border:0px;
@@ -740,6 +502,7 @@ table.rating_table td {
 	letter-spacing:1px;
 	padding-left:3px;
 }
+
 .rating td.tdrating {
 	width:170px;
 	background-position:bottom;
@@ -764,7 +527,6 @@ table.rating_table td {
 	vertical-align:middle;
 	text-align:center;
 	width:35px;
-
 }
 
 .rating td.tdcomment {
@@ -773,7 +535,6 @@ table.rating_table td {
 	border-color:#f5f5f5;
 	vertical-align:top;
 	padding-left:5px;
-
 }
 
 .rating td.tduser {
