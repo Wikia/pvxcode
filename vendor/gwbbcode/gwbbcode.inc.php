@@ -1394,7 +1394,20 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 			$desc = preg_replace_callback('|([0-9]+)\.\.([0-9]+)|', 'desc_replace', $desc);
 		}
 	}
-	//and for PvE skills, leave it
+	//For PvE skills
+	else {
+		//Adapt the fork to the build's attribute level..
+		if (isset($attr_list[$attribute])) {
+			$attr_lvl = $attr_list[$attribute];
+			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
+				foreach ($regs as $fork) {
+					list($all, $val_0, $val_10) = $fork;
+					$desc = str_replace($all, fork_val_pveonly($val_0, $val_10, $attr_lvl), $desc);
+				}
+			}
+		}
+		//.. or show its 0..10 values (no action required)
+	}
 
 	//Specify a Spirit health and armor
 	$desc = add_spirit_health($desc, $attr_list);
@@ -1413,6 +1426,12 @@ function desc_replace($reg) {
 function fork_val($val_0, $val_15, $attr_lvl) {
 	return $val_0 + round(($val_15 - $val_0) * $attr_lvl / 15);
 }
+
+//Return value at a given attribute level for a pve only skill
+function fork_val_pveonly($val_0, $val_10, $attr_lvl) {
+	return $val_0 + round(($val_10 - $val_0) * $attr_lvl / 10);
+}
+
 //Put some green around the fork
 function fork_replace($reg) {
 	list($all, $fork) = $reg;
