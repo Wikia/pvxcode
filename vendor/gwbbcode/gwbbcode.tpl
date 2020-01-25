@@ -25,7 +25,7 @@
 <!-- END blank_icon -->
 
 <!-- BEGIN noicon -->
-<a href="javascript:void()" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
+<a href="http://wiki.guildwars.com/wiki/{name_link}" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
 <!-- END noicon -->
 
 <!-- BEGIN noicon_gwshack -->

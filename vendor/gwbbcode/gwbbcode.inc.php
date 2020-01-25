@@ -881,6 +881,7 @@ function skill_replace($reg) {
 		$attr_value = isset($attr_list[$attribute]) ? $attr_list[$attribute] : '';
 
 		//Skill name or image on which to move cursor
+		$name_link = str_replace("\"", "&quot;", $name);
 		if (gws_noicon($att)) {
 			if (GWSHACK) {
 				$tpl = $gwbbcode_tpl['noicon_gwshack'];
@@ -888,10 +889,7 @@ function skill_replace($reg) {
 				$tpl = $gwbbcode_tpl['noicon'];
 			}
 		} else {
-			$name_link = str_replace("\"", "&quot;", $name);
-			$name_link = str_replace(" (Kurzick)", "", $name_link);
-			$name_link = str_replace(" (Luxon)", "", $name_link);
-			$tpl       = $gwbbcode_tpl['icon'];
+			$tpl = $gwbbcode_tpl['icon'];
 		}
 		$tpl .= $gwbbcode_tpl['skill'];
 
