@@ -1382,8 +1382,8 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
 				foreach ($regs as $fork) {
-					list($all, $val_0, $val_15) = $fork;
-					$desc = str_replace($all, fork_val($val_0, $val_15, $attr_lvl), $desc);
+					$pos = strpos($desc, $all);
+					$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($all));
 				}
 			}
 		}
@@ -1399,8 +1399,8 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
 				foreach ($regs as $fork) {
-					list($all, $val_0, $val_10) = $fork;
-					$desc = str_replace($all, fork_val_pveonly($val_0, $val_10, $attr_lvl), $desc);
+					$pos = strpos($desc, $all);
+					$desc = substr_replace($desc, fork_val_pveonly($val_0, $val_10, $attr_lvl), $pos, strlen($all));
 				}
 			}
 		}
