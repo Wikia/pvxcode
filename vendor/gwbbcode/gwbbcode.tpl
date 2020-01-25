@@ -17,7 +17,7 @@
 
 <!-- END prof_icon -->
 <!-- BEGIN icon -->
-<div class="skill_box"><div class="skill_icon" onmouseover="return overlib(div('load{load}').innerHTML);" onmouseout="return nd(200);"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="http://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="http://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
+<div class="skill_box"><div class="skill_icon" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="http://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="http://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
 <!-- END icon -->
 
 <!-- BEGIN blank_icon -->
@@ -25,11 +25,11 @@
 <!-- END blank_icon -->
 
 <!-- BEGIN noicon -->
-<a href="javascript:void()" onmouseover="return overlib(div('load{load}').innerHTML);" onmouseout="return nd();" style="text-decoration: none">{name}</a>
+<a href="javascript:void()" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
 <!-- END noicon -->
 
 <!-- BEGIN noicon_gwshack -->
-<span class="skill_link" onmouseover="return overlib(div('load{load}').innerHTML);" onmouseout="return nd();" style="text-decoration: none">{name}</span>
+<span class="skill_link" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</span>
 <!-- END noicon -->
 
 <!-- BEGIN skill -->
