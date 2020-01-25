@@ -1,3 +1,5 @@
+// FIXME: Suspect most of this file can be deleted, cannot find any useful functions in here...
+
 var prevX, prevY, prevId=0, clicked=false, new_click=true, sav_event, d=document;
 
 function switchDiv(id, frame, load) {
