@@ -1173,15 +1173,10 @@ function gws_details($skill_id, $db_suffix = '') {
 				$db_suffix = '_' . $db_suffix;
 			}
 			$skills_path_1 = str_replace('.php', $db_suffix . '.php', SKILLS_PATH_1);
-			$skills_path_2 = str_replace('.php', $db_suffix . '.php', SKILLS_PATH_2);
-			if (!file_exists($skills_path_1) || !file_exists($skills_path_2))
+			if ( !file_exists($skills_path_1) ) {
 				return false;
-			else
-				$skill_list = load($skills_path_1); //Can't use array_merge here otherwise keys get lost
-			$add_list = load($skills_path_2);
-			foreach ($add_list as $key => $val) {
-				$skill_list[$key] = $val;
 			}
+			$skill_list = load($skills_path_1);
 		}
 		$ret = isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false;
 	} else {
