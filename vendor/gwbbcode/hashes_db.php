@@ -1,7 +1,6 @@
 <?php return Array(
 'version'=>'1.7.4.7',
 'abbr_db.php'=>'1c46e',
-'checkup.php'=>'91e4b',
 'common.inc.php'=>'cc8fd',
 'config_default.inc.php'=>'82720',
 'constants.inc.php'=>'f3235',
