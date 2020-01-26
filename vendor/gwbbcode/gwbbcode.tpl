@@ -1,7 +1,7 @@
 <!-- BEGIN build -->
 <table><tr><td>
 <div class="main">
-    <div class="type"><a href="http://wiki.guildwars.com/wiki/{primary}"><img src="/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="http://wiki.guildwars.com/wiki/{secondary}"><img src="/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="http://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="http://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
+    <div class="type"><a href="https://wiki.guildwars.com/wiki/{primary}"><img src="/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="https://wiki.guildwars.com/wiki/{secondary}"><img src="/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="https://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="https://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
     <div class="profession">
         {attributes}
     </div><div style="clear: both;">
@@ -17,7 +17,7 @@
 
 <!-- END prof_icon -->
 <!-- BEGIN icon -->
-<div class="skill_box"><div class="skill_icon" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="http://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="http://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
+<div class="skill_box"><div class="skill_icon" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="https://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="https://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
 <!-- END icon -->
 
 <!-- BEGIN blank_icon -->
@@ -25,7 +25,7 @@
 <!-- END blank_icon -->
 
 <!-- BEGIN noicon -->
-<a href="http://wiki.guildwars.com/wiki/{name_link}" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
+<a href="https://wiki.guildwars.com/wiki/{name_link}" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
 <!-- END noicon -->
 
 <!-- BEGIN skill -->
@@ -48,7 +48,7 @@
 <!-- END skill -->
 
 <!-- BEGIN attribute -->
-        <div class="attribute_rank">{attribute_value}</div><div class="attribute_name"><a href="http://wiki.guildwars.com/wiki/{attribute_name}">{attribute_name}</a></div>
+        <div class="attribute_rank">{attribute_value}</div><div class="attribute_name"><a href="https://wiki.guildwars.com/wiki/{attribute_name}">{attribute_name}</a></div>
 <!-- END attribute -->
 
 <!-- BEGIN requirement -->
