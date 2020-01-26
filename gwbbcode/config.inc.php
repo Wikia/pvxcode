@@ -22,8 +22,7 @@ require_once (GWBBCODE_ROOT.'/constants.inc.php');
 
 //Change "false" to "true" in the following line if you want gwBBCode
 //to store/access skills from your SQL database. Then run install.php again.
-define('GWBBCODE_SQL', false);
-define('GWBBCODE_VERSION', $gwbbcode_version . (GWBBCODE_SQL ? '-sql' : ''));
+define('GWBBCODE_VERSION', $gwbbcode_version);
 
 //Chose between Kurzick and Luxon in order to adapt allegiance skills
 define('GWBBCODE_ALLEGIANCE', 'Kurzick');

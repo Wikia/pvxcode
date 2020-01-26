@@ -869,7 +869,7 @@ function skill_replace($reg) {
 
 
 
-//Returns either the id of a $skill_name, or false
+//Returns either the id of a $skill_name, or false, from the /databases/ folder
 //Also works if $skill_name is an abbreviation
 function gws_skill_id($skill_name) {
 	$ret = false;
@@ -885,89 +885,47 @@ function gws_skill_id($skill_name) {
 		$name_id = preg_replace('|[\'"!]|', '', strtolower($abbr_db[$name_id]));
 	}
 
-	//Retreive the id
-	if (!GWBBCODE_SQL) {
-		//File DB
-		//Load the name to id listing from a file (only once)
-		static $list = Array();
-		if (empty($list)) {
-			if (($list = @load(SKILLNAMES_PATH)) === false) {
-				die("Missing skillname database.");
-			}
+	//Load the name to id listing from a file (only once)
+	static $list = Array();
+	if (empty($list)) {
+		if (($list = @load(SKILLNAMES_PATH)) === false) {
+			die("Missing skillname database.");
 		}
-		$name_id = preg_replace('|[\'"!]|', '', strtolower($name_id));
-		if (isset($list[$name_id])) {
-			$ret = $list[$name_id];
-		}
-
-		//Check if name could be a partial match
-		else if (strlen($name_id) >= 4) {
-			$name_id_length = strlen($name_id);
-			foreach ($list as $name => $id) {
-				if ($name_id == substr($name, 0, $name_id_length)) {
-					$ret = $id;
-					break;
-				}
-			}
-		}
-		//else false
 	}
 
-	else {
-		//SQL DB
-
-		/*
-		CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
-
-		$query = "SELECT id,attr FROM `skills` WHERE name_id "
-		. ((strlen($name_id) >= 4) ? "like '$name_id%'" : "= '$name_id'") //Allows the use of partial skill names longer than 4 chars
-		. ' ORDER BY name_id';
-		$result = mysql_query($query) or die('Query failed: ' . mysql_error());
-		$ret = mysql_fetch_assoc($result);
-		mysql_free_result($result);
-		if (!empty($ret)) {
-		$ret = $ret['id'];   //Directly return the id, not an array
-		}*/
+	$name_id = preg_replace('|[\'"!]|', '', strtolower($name_id));
+	if (isset($list[$name_id])) {
+		$ret = $list[$name_id];
+	}
+	//Check if name could be a partial match
+	else if (strlen($name_id) >= 4) {
+		$name_id_length = strlen($name_id);
+		foreach ($list as $name => $id) {
+			if ($name_id == substr($name, 0, $name_id_length)) {
+				$ret = $id;
+				break;
+			}
+		}
 	}
 	return $ret;
 }
 
 
-//Return a list of skill names and corresponding id
+//Return a list of skill names and corresponding id, from the /databases/ folder
 function gws_skill_id_list() {
-	if (!GWBBCODE_SQL) {
-		//File DB
-		//Load the name to id listing from a file (only once)
-		static $list = Array();
-		if (empty($list)) {
-			if (($list = @load(SKILLNAMES_PATH)) === false) {
-				die("Missing skillname database.");
-			}
+	//Load the name to id listing from a file (only once)
+	static $list = Array();
+	if (empty($list)) {
+		if (($list = @load(SKILLNAMES_PATH)) === false) {
+			die("Missing skillname database.");
 		}
-		return $list;
-	} else {
-		//SQL DB
-		/*
-		CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
-
-		//TODO: check if the attribute order is the same as the one from SKILLNAMES_PATH
-		$result = mysql_query("SELECT name, id FROM `skills` ORDER BY profession, attribute")
-		or die('Query failed: ' . mysql_error());
-		$list = Array();
-		while ($ret = mysql_fetch_assoc($result)) {
-		$list[preg_replace('@["\'!]@', '', strtolower($ret['name']))] = $ret['id'];
-		}
-		mysql_free_result($result);
-		*/
-		return $list;
 	}
+	return $list;
 }
 
-//Returns either the skill information array of a $skill_id, or false
+//Returns either the skill information array of a $skill_id, or false, from the /databases/ folder
 //if $db_suffix is specified, used database files are suffixed with it
 function gws_details($skill_id, $db_suffix = '') {
-	if (!GWBBCODE_SQL) {
-		//File DB
 		//(Re)load skill list (can't have two in memory, it'd be too big)
 		static $skill_list = Array();
 		static $list_suffix = false;
@@ -983,18 +941,6 @@ function gws_details($skill_id, $db_suffix = '') {
 			$skill_list = load($skills_path);
 		}
 		$ret = isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false;
-	} else {
-		//SQL DB
-		preg_match('@^[0-9]+$@', $skill_id) or die('Unsafe skill id');
-		/*
-		CURSE: mysql_* function depricated in PHP7. Removing them because we don't need them.
-
-		$result = mysql_query("SELECT * FROM `skills` WHERE id=$skill_id")
-		or die('Query failed: ' . mysql_error());
-		$ret = mysql_fetch_assoc($result);
-		mysql_free_result($result);
-		*/
-	}
 	return $ret;
 }
 
