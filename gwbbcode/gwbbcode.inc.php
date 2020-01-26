@@ -204,12 +204,9 @@ function skill_name_replace($reg) {
 	} else
 		$noicon = false;
 
-	//"name@attr_value:db_suffix|shown_name" -> $name, $attr_val, $db_suffix and $shown_name
+	//"name@attr_value|shown_name" -> $attr_val, $shown_name and $name
 	if (preg_match('/@([^\]:\|]+)/', $name, $reg)) {
 		$attr_val = preg_replace('@[^0-9+-]@', '', $reg[1]);
-	}
-	if (preg_match('/:([^\]@\|]+)/', $name, $reg)) {
-		$db_suffix = preg_replace('@[\] <>/\\":*?|]@', '', $reg[1]); //Play it safe
 	}
 	if (preg_match('/\|([^\]@:]+)/', $name, $reg)) {
 		$shown_name = html_safe_decode($reg[1]); //Play it safe
@@ -222,14 +219,9 @@ function skill_name_replace($reg) {
 		//Handle [shock@8]
 		$attr = '';
 		if (isset($attr_val)) {
-			$skill = gws_details($id, $db_suffix);
+			$skill = gws_details($id);
 			$attr  = gws_attribute_name($skill['attribute']);
 			$attr  = " $attr=$attr_val";
-		}
-		//Handle [shock:2007.10.12]
-		$db_attr = '';
-		if (!empty($db_suffix)) {
-			$db_attr = " db=$db_suffix";
 		}
 
 		//Handle [shock|a knockdown]
@@ -241,9 +233,9 @@ function skill_name_replace($reg) {
 
 		//Handle the difference between [[shock] and [shock]
 		if ($noicon)
-			return "[skill noicon$attr$db_attr$show]" . $name . '[/skill]';
+			return "[skill noicon$attr$show]" . $name . '[/skill]';
 		else
-			return "[skill$attr$db_attr]" . $name . '[/skill]';
+			return "[skill$attr]" . $name . '[/skill]';
 	} else
 		return $all;
 }
@@ -596,13 +588,6 @@ function skill_replace($reg) {
 	$att  = html_safe_decode($att);
 	$name = html_safe_decode($name);
 
-	//Handle specified db
-	$db_suffix = '';
-	if (preg_match('/db=([^\] ]*)/', $att, $reg)) {
-		$db_suffix = preg_replace('@[\] <>/\\":*?|]@', '', $reg[1]); //Play it safe
-		$att       = preg_replace('/[ ]*db=[^\] ]*/', '', $att);
-	}
-
 	//Handle alternative text
 	$shown_name = $name;
 	if (preg_match('/show="([^\]]*)"/', $att, $reg)) {
@@ -890,22 +875,14 @@ function gws_skill_id_list() {
 
 // Database function 3:
 // Returns either the skill information array of a $skill_id, or false
-// if $db_suffix is specified, used database files are suffixed with it
-function gws_details($skill_id, $db_suffix = '') {
+function gws_details($skill_id) {
 		//(Re)load skill list (can't have two in memory, it'd be too big)
 		static $skill_list = Array();
-		static $list_suffix = false;
-		if ($list_suffix !== $db_suffix) {
-			$list_suffix = $db_suffix;
-			if (!empty($db_suffix) && $db_suffix{0} !== '_') {
-				$db_suffix = '_' . $db_suffix;
-			}
-			$skills_path = str_replace('.php', $db_suffix . '.php', SKILLS_PATH);
-			if ( !file_exists($skills_path) ) {
-				return false;
-			}
-			$skill_list = load($skills_path);
+		if ( !file_exists(SKILLS_PATH) ) {
+			return false;
 		}
+		$skill_list = load(SKILLS_PATH);
+		
 		$ret = isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false;
 	return $ret;
 }
