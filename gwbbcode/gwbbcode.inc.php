@@ -20,102 +20,112 @@
 
 require_once(GWBBCODE_ROOT . '/constants.inc.php');
 
-// Load the gwbbcode template
+/***************************************************************************
+ * GLOBALS
+ ***************************************************************************/
+
+// Load the gwbbcode smarty syntax template (*.TPL)
 global $gwbbcode_tpl;
 if (!isset($gwbbcode_tpl))
-	$gwbbcode_tpl = load_gwbbcode_template();
+	$gwbbcode_tpl = load_gwbbcode_smarty_template();
 
 // Array of PvP -> PvE IDs
+//  @ sign just means it suppresses errors if they occur
 global $pvpSkillIds = Array();
 if (empty($pvpSkillIds)) {
 	if (($pvpSkillIds = @load(SKILLIDSPVP_PATH)) === false) {
 		die("Missing pvp skill id database.");
 	}
 }
-
 // Array of PvE -> PvP IDs (only if there is a PvP id)
 global $pveSkillIds = array_flip($pvpSkillIds);
 
-//Transforms gwBBCode text to HTML
-//Better suited function name than gwbbcodize :/
-//Set $ignore_includes to true if you don't want any css and js including html code to be returned
-function parse_gwbbcode($text, $build_name = false, $ignore_includes = false) {
-	$hooks = '';
-	//For PvXwiki,
-	//If a build name is provided, assign it to all builds
-	if (!empty($build_name)) {
-		$text = preg_replace('#(\[build[^\]]*?) name="[^\]"]+"#isS', "\\1", $text); //Remove all build names
-		$text = preg_replace('#(\[build )#isS', "\\1name=\"$build_name\" ", $text); //Add build names
-	}
+/***************************************************************************
+ * MAIN FUNCTION
+ ***************************************************************************/
 
-	//Make sure body hook was included
+// Prepares the page and then replaces gwBBCode with HTML
+//  This function is directly called by: extension\classes\PvXCode.php
+function parse_gwbbcode($text, $build_name = false) {
+
+	// Make sure body hook was included so that tooltips have an anchor to target
+	//  This is required by extension\js\overlib.js
+	$hooks = '';
 	if (!defined('GWBBCODE_BODY_HOOK')) {
 		define('GWBBCODE_BODY_HOOK', true);
 		$hooks .= file_get_contents(GWBB_DYNAMIC_BODY);
 	}
-
 	$hooks = preg_replace('/[\\r\\n]/', '', $hooks);
-	return $hooks . gwbbcodize($text);
-}
 
-//Converts a gwBBCode text to HTML
-function gwbbcodize($t) {
+	// If a build name is provided, assign it to all builds
+	//  This is so that any save build button has a decent title
+	if (!empty($build_name)) {
+		$text = preg_replace('#(\[build[^\]]*?) name="[^\]"]+"#isS', "\\1", $text); // Remove all build names
+		$text = preg_replace('#(\[build )#isS', "\\1name=\"$build_name\" ", $text); // Add build names
+	}
+
+    // Timer for the actual gwBBCode parse duration
 	$start = gws_microtime_float();
 
-	// Replace all '['s inside [pre]..[/pre] by '&#91;'
-	if (!defined('SMF')) { //SMF uses the [pre] tag already
-		$t = preg_replace_callback('#\[pre\](.*?)\[\/pre\]#isS', 'pre_replace', $t);
-	}
-	$t = preg_replace_callback('#\[nobb\](.*?)\[\/nobb\]#isS', 'pre_replace', $t);
+	// 1: Replace all '['s inside [pre]..[/pre], or [nobb]..[/nobb] by '&#91;'
+	$text = preg_replace_callback('#\[pre\](.*?)\[\/pre\]#isS', 'pre_replace', $text);
+	$text = preg_replace_callback('#\[nobb\](.*?)\[\/nobb\]#isS', 'pre_replace', $text);
 
-	// Replace all [Random Skill] by [some random skill name] each time the post is rendered
-	$t = preg_replace_callback('#\[Random Skill(.*?)\]#is', 'random_skill_replace', $t);
+	// 2: Replace all [Random Skill] by [some random skill name] each time the post is rendered
+	$text = preg_replace_callback('#\[Random Skill(.*?)\]#is', 'random_skill_replace', $text);
 
-	// [rand seed=465468 players=2]
-	$t = preg_replace_callback('#\[rand([^\]]*)\]#isS', 'rand_replace', $t);
+	// 3: [rand seed=465468 players=2]
+	$text = preg_replace_callback('#\[rand([^\]]*)\]#isS', 'rand_replace', $text);
 
-	// Manage [build=...]
-	$t = preg_replace_callback('#\[build=([^\]]*)\]\]?(\[/build\])?\r?\n?#isS', 'build_id_replace', $t);
+	// 4: Manage [build=...], or [build_name;template_code]
+	$text = preg_replace_callback('#\[build=([^\]]*)\]\]?(\[/build\])?\r?\n?#isS', 'build_id_replace', $text);
+	$text = preg_replace_callback('#\[(([^]\r\n]+)(;)([^];\r\n]+))\]\r?\n?#isS', 'build_id_replace', $text);
 
-	// Manage [build_name;template_code]
-	$t = preg_replace_callback('#\[(([^]\r\n]+)(;)([^];\r\n]+))\]\r?\n?#isS', 'build_id_replace', $t);
+	// 5: Replace all [skill_name] by [skill]skill_name[/skill] if skill_name is a valid skill name
+	$text = preg_replace_callback('#\[(.+)\]#isSU', 'skill_name_replace', $text);
 
-	// Replace all [skill_name] by [skill]skill_name[/skill] if skill_name is a valid skill name
-	$t = preg_replace_callback('#\[(.+)\]#isSU', 'skill_name_replace', $t);
+	// 6: Manage [build]...[/build]
+	$text = preg_replace_callback('#\[build ([^\]]*)\](.*?)\[/build\]\r?\n?#isS', 'build_replace', $text);
 
-	// Manage [build]...[/build]
-	$t = preg_replace_callback('#\[build ([^\]]*)\](.*?)\[/build\]\r?\n?#isS', 'build_replace', $t);
+	// 7: Replace all [skillset=prof_short_name@attr_level]
+	$text = preg_replace_callback('#\[(\[?)skillset=(.*?)\]#isS', 'skillset_replace', $text);
 
-	// Replace all [skillset=prof_short_name@attr_level]
-	$t = preg_replace_callback('#\[(\[?)skillset=(.*?)\]#isS', 'skillset_replace', $t);
+	// 8: Manage [skill]...[/skill]
+	$text = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\][ ]?#isS', 'skill_replace', $text);
 
-	// Manage [skill]...[/skill]
-	$t = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\][ ]?#isS', 'skill_replace', $t);
-
-	// [pickup="arheu"]
-	$t = preg_replace_callback('#\[pickup([^\]]*)\]#isS', 'pickup_replace', $t);
-
-	//[gwbbcode runtime]
-	if (preg_match('@\[gwbbcode runtime\]@i', $t) !== false)
-		$t = preg_replace('@\[gwbbcode runtime\]@i', round(gws_microtime_float() - $start, 3), $t); //Precise enough
-
-	//Trick to use in MyBB against <p> elements screwing up first skill div, and some ending <br /> being removed
-	if (defined('IN_MYBB')) {
-		$t = '</p>' . $t;
-		$t = str_replace("</div>\n", "</div><br>", $t);
+	// [gwbbcode runtime]
+	if (preg_match('@\[gwbbcode runtime\]@i', $text) !== false) {
+		$text = preg_replace('@\[gwbbcode runtime\]@i', round(gws_microtime_float() - $start, 3), $text); //Precise enough
 	}
 
-	return $t;
+	return $hooks . $text;
 }
 
 
-//Changes any '[' by '&#91;', hence disabling bbcode
+
+
+/***************************************************************************
+ * HELPER REPLACEMENT FUNCTIONS
+ ***************************************************************************/
+
+// Replacement function 1:
+// Changes any '[' by '&#91;', hence disabling bbcode
 function pre_replace($reg) {
 	list($all, $content) = $reg;
 	return str_replace('[', '&#91;', $content);
 }
 
+// Replacement function 2:
+// Convert [Random Skill] tags to [a random skill name]
+function random_skill_replace($reg) {
+	list($all, $att) = $reg;
+	$skill_list = gws_skill_id_list();
+	$small_name = array_rand($skill_list);
+	$details    = gws_details($skill_list[$small_name]);
+	return '[' . $details['name'] . "$att]";
+}
 
+// Replacement function 3:
 // Process [rand seed=465468 players=2]
 function rand_replace($reg) {
 	list($all, $att) = $reg;
@@ -170,40 +180,16 @@ function rand_replace($reg) {
 	return "Random skill set (seed=$seed):\n$skill_list";
 }
 
-
-//Returns a list of pickup users, highlighting one specified username.
-function pickup_users($pickup, $username, $id, $nobody_msg) {
-	//Output our pickup's users
-	if (empty($id) || !isset($pickup[$id]))
-		$userlist = '';
-	else {
-		//Prepare list of users
-		$list = $pickup[$id];
-		sort($list);
-		foreach ($list as $key => $name)
-			if ($name === $username)
-				$list[$key] = "<span style=\"color: #40B030\">$name</span>";
-		$userlist = implode(', ', $list);
-		if (!empty($userlist))
-			$userlist .= '. ';
-
-	}
-
-	return empty($userlist) ? $nobody_msg : $userlist;
+// Replacement function 4:
+// Process the [build=id] element
+function build_id_replace($reg) {
+	list($all, $id) = $reg;
+	$new_code = template_to_gwbbcode($id);
+	return (strpos($new_code, '[') === 0) ? $new_code : $all;
 }
 
-//Convert [Random Skill] tags to [a random skill name]
-function random_skill_replace($reg) {
-	list($all, $att) = $reg;
-	$skill_list = gws_skill_id_list();
-	$small_name = array_rand($skill_list);
-	$details    = gws_details($skill_list[$small_name]);
-	return '[' . $details['name'] . "$att]";
-}
-
-
-
-//Convert [Potential Skill Name] tags to [skill]Potential Skill Name[/skill]
+// Replacement function 5:
+// Convert [Potential Skill Name] tags to [skill]Potential Skill Name[/skill]
 function skill_name_replace($reg) {
 	global $gwbbcode_tpl;
 	list($all, $name) = $reg;
@@ -262,54 +248,9 @@ function skill_name_replace($reg) {
 		return $all;
 }
 
-
-
-
-//Convert [skillset=prof_short_name@attr_level] tags to a list of skills of the appropriate attribute
-function skillset_replace($reg) {
-	list($all, $noicon, $name) = $reg;
-	$name = html_safe_decode($name);
-
-	//'[[...]' => no icon
-	$noicon       = empty($noicon) ? '' : ' noicon';
-	$noicon_comma = empty($noicon) ? '' : ', ';
-
-	//"name@attr_value" -> $name and $attr_val
-	$attr = '';
-	if (preg_match('|([^@\]]+)@([^\]]+)|', $name, $reg)) {
-		$name     = $reg[1];
-		$attr_val = preg_replace('@[^0-9+-]@', '', $reg[2]);
-	}
-
-
-	//Get the list of skills
-	$bbcode = Array();
-	if ($attr = gws_attribute_name($name)) {
-		$attr_bbcode = " $attr=$attr_val";
-		$skill_list  = gws_skill_id_list();
-		//ksort($skill_list);
-		foreach ($skill_list as $name_id => $id) {
-			$skill = gws_details($id);
-			if ($skill['attr'] == $attr) {
-				$bbcode[] = "[skill$noicon$attr_bbcode]{$skill['name']}[/skill]";
-			}
-		}
-	}
-
-	return implode($noicon_comma, $bbcode);
-}
-
-
-
-//Process the [build=id] element
-function build_id_replace($reg) {
-	list($all, $id) = $reg;
-	$new_code = template_to_gwbbcode($id);
-	return (strpos($new_code, '[') === 0) ? $new_code : $all;
-}
-
-
-//Process the [build] element
+//FIXME - SUSPECT THIS MAY CALL SOME OF THE OTHER REPLACEMENT FUNCTIONS - MAY NEED TO BE MOVED DOWNWARDS BELOW OTHER REPLACEMENT FUNCTIONS
+// Replacement function 6:
+// Process the [build] element
 function build_replace($reg) {
 	global $gwbbcode_tpl;
 	global $userdata;
@@ -391,23 +332,6 @@ function build_replace($reg) {
 		$desc .= '<span class="expert">Whenever an Enchantment ends, you gain <b>' . $attr_list['Mysticism'] . '</b> Health and <b>' . floor($attr_list['Mysticism'] / 3) . '</b> Energy.</span><br/>';
 	}
 
-
-
-	//Pickup status
-	$pickup_id = preg_match('|pickup=\\"([^"]+)\\"|', $att, $reg) ? $reg[1] : '';
-	//Get all pickup users
-	$pickup    = load(PICKUP_PATH);
-	if (!empty($pickup_id) && $pickup !== false) {
-
-		//Output status
-		$cursor      = 'pointer';
-		$pickup      = "Can play it: <span id=\"pickup_$pickup_id\">" . pickup_users($pickup, $userdata['username'], $pickup_id, 'No one can!') . '</span>';
-		$pickup_link = " onclick=\"pickup('switch', '$pickup_id')\"";
-	} else {
-		$pickup      = '';
-		$pickup_link = '';
-	}
-	$prof_imgs = str_replace('{cursor}', $cursor, $prof_imgs);
 
 	//Template: professions
 	$invalid_template = false;
@@ -569,8 +493,6 @@ function build_replace($reg) {
 	}
 
 
-
-
 	//Manage template save icons
 	if (preg_match("/ nosave/i", $att)) {
 		$template_html = '';
@@ -629,9 +551,43 @@ function build_replace($reg) {
 	return $tpl;
 }
 
+// Replacement function 7:
+// Convert [skillset=prof_short_name@attr_level] tags to a list of skills of the appropriate attribute
+function skillset_replace($reg) {
+	list($all, $noicon, $name) = $reg;
+	$name = html_safe_decode($name);
+
+	//'[[...]' => no icon
+	$noicon       = empty($noicon) ? '' : ' noicon';
+	$noicon_comma = empty($noicon) ? '' : ', ';
+
+	//"name@attr_value" -> $name and $attr_val
+	$attr = '';
+	if (preg_match('|([^@\]]+)@([^\]]+)|', $name, $reg)) {
+		$name     = $reg[1];
+		$attr_val = preg_replace('@[^0-9+-]@', '', $reg[2]);
+	}
 
 
-//Process the [skill] elements
+	//Get the list of skills
+	$bbcode = Array();
+	if ($attr = gws_attribute_name($name)) {
+		$attr_bbcode = " $attr=$attr_val";
+		$skill_list  = gws_skill_id_list();
+		//ksort($skill_list);
+		foreach ($skill_list as $name_id => $id) {
+			$skill = gws_details($id);
+			if ($skill['attr'] == $attr) {
+				$bbcode[] = "[skill$noicon$attr_bbcode]{$skill['name']}[/skill]";
+			}
+		}
+	}
+
+	return implode($noicon_comma, $bbcode);
+}
+
+// Replacement function 8:
+// Process the [skill] elements
 function skill_replace($reg) {
 	global $gwbbcode_tpl;
 	$gwbbcode_root_path = GWBBCODE_ROOT;
@@ -866,11 +822,13 @@ function skill_replace($reg) {
 
 
 
+/***************************************************************************
+ * HELPER DATABASE FUNCTIONS
+ ***************************************************************************/
 
-
-
-//Returns either the id of a $skill_name, or false, from the /databases/ folder
-//Also works if $skill_name is an abbreviation
+// Database function 1:
+// Returns either the id of a $skill_name, or false
+// Also works if $skill_name is an abbreviation (within reason)
 function gws_skill_id($skill_name) {
 	$ret = false;
 	//Handle abbreviations
@@ -910,8 +868,8 @@ function gws_skill_id($skill_name) {
 	return $ret;
 }
 
-
-//Return a list of skill names and corresponding id, from the /databases/ folder
+// Database function 2:
+// Return a list of skill names and corresponding id
 function gws_skill_id_list() {
 	//Load the name to id listing from a file (only once)
 	static $list = Array();
@@ -923,8 +881,9 @@ function gws_skill_id_list() {
 	return $list;
 }
 
-//Returns either the skill information array of a $skill_id, or false, from the /databases/ folder
-//if $db_suffix is specified, used database files are suffixed with it
+// Database function 3:
+// Returns either the skill information array of a $skill_id, or false
+// if $db_suffix is specified, used database files are suffixed with it
 function gws_details($skill_id, $db_suffix = '') {
 		//(Re)load skill list (can't have two in memory, it'd be too big)
 		static $skill_list = Array();
@@ -945,38 +904,42 @@ function gws_details($skill_id, $db_suffix = '') {
 }
 
 
-//Returns values of the prof attribute of an attribute list (string $att), or false
-//gws_build_profession(' prof=W/E tactics=16 desc="fdsfsdf"')  ===  Array('primary' => 'W', 'secondary' => 'E', 'professions => 'W/E')
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - PROFESSIONS
+ ***************************************************************************/
+
+// Calculation function 1:
+// Returns values of the prof attribute of an attribute list (string $att), or false
+// gws_build_profession(' prof=W/E tactics=16')  ===  Array('primary' => 'W', 'secondary' => 'E', 'professions => 'W/E')
 function gws_build_profession($att) {
-	if (preg_match('|prof=(([^/ ]+)/([^ ]+))|', $att, $reg))
+	if (preg_match('|prof=(([^/ ]+)/([^ ]+))|', $att, $reg)) {
 		return Array(
 			'primary' => $reg[2],
 			'secondary' => $reg[3],
 			'professions' => $reg[1]
 		);
-	else if (preg_match('|prof=([^/ ]+)|', $att, $reg))
+	} else if (preg_match('|prof=([^/ ]+)|', $att, $reg)) {
 		return Array(
 			'primary' => $reg[1],
 			'secondary' => '?',
 			'professions' => $reg[1]
 		);
-	else
+	} else {
 		return false;
+	}
 }
 
-//Returns value of the name attribute of an attribute list (string $att), or ''
-//gws_build_name(' prof=W/E name="Shock Warrior"')  ===  'Shock Warrior'
-function gws_build_name($att) {
-	return preg_match('|name=\\"([^\"]+)\\"|', $att, $reg) ? $reg[1] : '';
-}
-
-//Returns the full profession name of a partial one. Returns 'No profession' if no match is found
+// FIXME - RITUALIST EXCEPTION LOOKS IDIOTIC. WONDER IF IT TRIES TO MATCH RANGER INTO THE RITUALIST BIT? SURELY WE CAN CODE THIS BETTER.
+// Calculation function 2:
+// Returns the full profession name of a partial one. Returns 'No profession' if no match is found
 function gws_prof_name($profession) {
 	//Look for a profession name corresponding to $profession
 	static $p = Array('E' => 'Elementalist', 'Me' => 'Mesmer', 'Mo' => 'Monk', 'N' => 'Necromancer', 'R' => 'Ranger', 'W' => 'Warrior', 'A' => 'Assassin', 'Rt' => 'Ritualist', 'D' => 'Dervish', 'P' => 'Paragon', '?' => 'No profession');
 	$profession = strtolower($profession);
 
-	//Ritualist exception
+	// Ritualist exception
 	if ($profession == 'rt')
 		return $p['Rt'];
 
@@ -984,19 +947,41 @@ function gws_prof_name($profession) {
 		if (strpos(strtolower($prof), $profession) === 0)
 			return $prof;
 
-	//No corresponding profession was found
+	// No corresponding profession was found
 	return 'No profession';
 }
 
-
-//Returns the profession abbreviation of a partial one. Returns '?' if no match is found
+// Calculation function 3:
+// Returns the profession abbreviation of a partial one. Returns '?' if no match is found
 function gws_profession_abbr($profession) {
 	static $p = Array('E' => 'Elementalist', 'Me' => 'Mesmer', 'Mo' => 'Monk', 'N' => 'Necromancer', 'R' => 'Ranger', 'W' => 'Warrior', 'A' => 'Assassin', 'Rt' => 'Ritualist', 'D' => 'Dervish', 'P' => 'Paragon', '?' => 'No profession');
 	return array_search(gws_prof_name($profession), $p);
 }
 
 
-//Returns the full attribute name of a partial or full one. Returns false if no match is found
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - BUILD NAMES
+ ***************************************************************************/
+
+// FIXME - THINK THIS IS REFERRED TO FROM SMARTY TEMPLATE GWBBCODE.TPL, BUT NOT SURE IT WORKS AS INTENDED.
+// Calculation function 4:
+// Returns value of the name attribute of an attribute list (string $att), or ''
+// gws_build_name(' prof=W/E name="Shock Warrior"')  ===  'Shock Warrior'
+function gws_build_name($att) {
+	return preg_match('|name=\\"([^\"]+)\\"|', $att, $reg) ? $reg[1] : '';
+}
+
+
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - ATTRIBUTES
+ ***************************************************************************/
+
+// Calculation function 5:
+// Returns the full attribute name of a partial or full one. Returns false if no match is found
 function gws_attr_name($attr) {
 	static $attribute_list = array('airmagic' => 'Air Magic', 'earthmagic' => 'Earth Magic', 'energystorage' => 'Energy Storage', 'firemagic' => 'Fire Magic', 'watermagic' => 'Water Magic', 'dominationmagic' => 'Domination Magic', 'fastcasting' => 'Fast Casting', 'illusionmagic' => 'Illusion Magic', 'inspirationmagic' => 'Inspiration Magic', 'divinefavor' => 'Divine Favor', 'healingprayers' => 'Healing Prayers', 'protectionprayers' => 'Protection Prayers', 'smitingprayers' => 'Smiting Prayers', 'bloodmagic' => 'Blood Magic', 'curses' => 'Curses', 'deathmagic' => 'Death Magic', 'soulreaping' => 'Soul Reaping', 'beastmastery' => 'Beast Mastery', 'expertise' => 'Expertise', 'marksmanship' => 'Marksmanship', 'wildernesssurvival' => 'Wilderness Survival', 'axemastery' => 'Axe Mastery', 'hammermastery' => 'Hammer Mastery', 'strength' => 'Strength', 'swordsmanship' => 'Swordsmanship', 'tactics' => 'Tactics', 'criticalstrikes' => 'Critical Strikes', 'daggermastery' => 'Dagger Mastery', 'deadlyarts' => 'Deadly Arts', 'shadowarts' => 'Shadow Arts', 'spawningpower' => 'Spawning Power', 'channelingmagic' => 'Channeling Magic', 'communing' => 'Communing', 'restorationmagic' => 'Restoration Magic', 'spearmastery' => 'Spear Mastery', 'command' => 'Command', 'motivation' => 'Motivation', 'leadership' => 'Leadership', 'scythemastery' => 'Scythe Mastery', 'windprayers' => 'Wind Prayers', 'earthprayers' => 'Earth Prayers', 'mysticism' => 'Mysticism', 'kurzickrank' => 'Kurzick rank', 'luxonrank' => 'Luxon rank', 'sunspearrank' => 'Sunspear rank', 'lightbringerrank' => 'Lightbringer rank', 'asurarank' => 'Asura rank', 'deldrimorrank' => 'Deldrimor rank', 'ebonvanguardrank' => 'Ebon Vanguard rank', 'nornrank' => 'Norn rank');
 
@@ -1010,11 +995,12 @@ function gws_attr_name($attr) {
 			return $attribute;
 		}
 	}
-	//else
+	// Otherwise
 	return false;
 }
 
-//Returns the attribute name abbreviation of a partial one. Returns false if no match is found
+// Calculation function 6:
+// Returns the attribute name abbreviation of a partial one. Returns false if no match is found
 function gws_attribute_name($attribute) {
 	static $attribute_list = Array('air' => 'airmagic', 'ear' => 'earthmagic', 'ene' => 'energystorage', 'fir' => 'firemagic', 'wat' => 'watermagic', 'dom' => 'dominationmagic', 'fas' => 'fastcasting', 'ill' => 'illusionmagic', 'ins' => 'inspirationmagic', 'div' => 'divinefavor', 'hea' => 'healingprayers', 'pro' => 'protectionprayers', 'smi' => 'smitingprayers', 'blo' => 'bloodmagic', 'cur' => 'curses', 'dea' => 'deathmagic', 'sou' => 'soulreaping', 'bea' => 'beastmastery', 'exp' => 'expertise', 'mar' => 'marksmanship', 'wil' => 'wildernesssurvival', 'axe' => 'axemastery', 'ham' => 'hammermastery', 'str' => 'strength', 'swo' => 'swordsmanship', 'tac' => 'tactics', 'cri' => 'criticalstrikes', 'dag' => 'daggermastery', 'dead' => 'deadlyarts', 'sha' => 'shadowarts', 'spa' => 'spawningpower', 'cha' => 'channelingmagic', 'com' => 'communing', 'res' => 'restorationmagic', 'spe' => 'spearmastery', 'comma' => 'command', 'mot' => 'motivation', 'lea' => 'leadership', 'scy' => 'scythemastery', 'win' => 'windprayers', 'earthp' => 'earthprayers', 'mys' => 'mysticism', 'kur' => 'kurzickrank', 'lux' => 'luxonrank', 'sun' => 'sunspearrank', 'lig' => 'lightbringerrank', 'asu' => 'asurarank', 'del' => 'deldrimorrank', 'ebo' => 'ebonvanguardrank', 'nor' => 'nornrank');
 
@@ -1026,24 +1012,30 @@ function gws_attribute_name($attribute) {
 			}
 		}
 	}
-	//else
+	// Otherwise
 	return false;
 }
 
-//Returns true only if the partial attribute is a pve attribute, else false
+// Calculation function 7:
+// Returns the main attribute of a full profession name; false in case of 'No profession' or erroneous profession name
+function gws_main_attribute($profession) {
+	static $main_attributes = Array('Elementalist' => 'Energy Storage', 'Mesmer' => 'Fast Casting', 'Monk' => 'Divine Favor', 'Necromancer' => 'Soul Reaping', 'Ranger' => 'Expertise', 'Warrior' => 'Strength', 'Assassin' => 'Critical Strikes', 'Ritualist' => 'Spawning Power', 'Paragon' => 'Leadership', 'Dervish' => 'Mysticism');
+	return isset($main_attributes[$profession]) ? $main_attributes[$profession] : false;
+}
+
+// Calculation function 8:
+// Returns true only if the partial attribute is a pve attribute, else false
 function gws_pve_attr($attribute) {
 	static $pve_attr_list = Array('kur', 'lux', 'sun', 'lig', 'asu', 'del', 'ebo', 'nor');
 	return in_array(gws_attribute_name($attribute), $pve_attr_list);
 }
 
-//Returns the main attribute of a full profession name; false in case of 'No profession' or erroneous profession name
-function gws_main_attribute($profession) {
-	static $main_attributes = Array('Elementalist' => 'Energy Storage', 'Mesmer' => 'Fast Casting', 'Monk' => 'Divine Favor', 'Necromancer' => 'Soul Reaping', 'Ranger' => 'Expertise', 'Warrior' => 'Strength', 'Assassin' => 'Critical Strikes', 'Ritualist' => 'Spawning Power', 'Paragon' => 'Leadership', 'Dervish' => 'Mysticism');
 
-	return isset($main_attributes[$profession]) ? $main_attributes[$profession] : false;
-}
 
-//Returns the type abbreviation of a full one. Returns false if no match is found
+
+// FIXME - THIS INFORMATION IS ALREADY WITHIN SKILL_DB, SO THIS FUNCTION CAN BE DELETED.
+// Calculation function x:
+// Returns the type abbreviation of a full one. Returns false if no match is found
 function gws_type_abbr($type) {
 	static $type_list = Array('ax' => 'Axe Attack', 'bi' => 'Binding Ritual', 'bo' => 'Bow Attack', 'ch' => 'Chant', 'du' => 'Dual Attack', 'eb' => 'Ebon Vanguard Ritual', 'ec' => 'Echo', 'en' => 'Enchantment Spell', 'fo' => 'Form', 'gl' => 'Glyph', 'ha' => 'Hammer Attack', 'he' => 'Hex Spell', 'it' => 'Item Spell', 'le' => 'Lead Attack', 'me' => 'Melee Attack', 'na' => 'Nature Ritual', 'of' => 'Off-Hand Attack', 'pe' => 'Pet Attack', 'pr' => 'Preparation', 'ra' => 'Ranged Attack', 'sc' => 'Scythe Attack', 'sh' => 'Shout', 'si' => 'Signet', 'sk' => 'Skill', 'spea' => 'Spear Attack', 'sp' => 'Spell', 'st' => 'Stance', 'sw' => 'Sword Attack', 'ti' => 'Title', 'tr' => 'Trap', 'wa' => 'Ward Spell', 'wea' => 'Weapon Spell', 'we' => 'Well Spell');
 	return array_search($type, $type_list);
@@ -1052,18 +1044,20 @@ function gws_type_abbr($type) {
 
 
 
-//Returns an attribute list (string) cleaned of the prof, name, desc and pickup attributes
+
+// Calculation function 9:
+// Returns an attribute list (string) cleaned of the prof, name and desc attributes
 function gws_attributes_clean($att) {
 	$att = preg_replace('|prof=[^ \]]*|', '', $att);
 	$att = preg_replace('|name=\\"[^"]+\\"|', '', $att);
 	$att = preg_replace('|desc=\\"[^"]+\\"|', '', $att);
-	$att = preg_replace('|pickup=\\"[^"]+\\"|', '', $att);
 	return trim($att);
 }
 
-//Returns a list of attributes and their string values (e.g "12+1+3")
+// Calculation function 10:
+// Returns a list of attributes and their string values (e.g "12+1+3")
 function attribute_list_raw($att) {
-	$list       = Array();
+	$list = Array();
 	$clean_attr = explode(' ', gws_attributes_clean($att));
 	foreach ($clean_attr as $value) {
 		$value = explode('=', $value);
@@ -1084,7 +1078,8 @@ function attribute_list_raw($att) {
 	return $list;
 }
 
-//Returns a list of attributes and their numeric values (e.g "12+1+3" will return 16)
+// Calculation function 11:
+// Returns a list of attributes and their numeric values (e.g "12+1+3" will return 16)
 function attribute_list($att) {
 	$list = attribute_list_raw($att);
 	foreach ($list as $attr_name => $attr_lvl) {
@@ -1093,8 +1088,8 @@ function attribute_list($att) {
 	return $list;
 }
 
-//Return the number of necessary attribute points for given attribute levels
-//or false
+// Calculation function 12:
+// Return the number of necessary attribute points for given attribute levels, or false
 function attr_points($attr_list) {
 	static $point_list = Array(0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 13, 16, 20);
 	$points = 0;
@@ -1107,22 +1102,30 @@ function attr_points($attr_list) {
 	return $points;
 }
 
-//Returns a description after adapting it's variables to an attribute value
+
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - DESCRIPTIONS
+ ***************************************************************************/
+
+// Calculation function 13:
+// Returns a description after adapting it's variables to an attribute value
 function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_list, $type, $pve_only) {
-	//Take into account Divine Favor
+	// Take into account Divine Favor
 	add_divine_favor($desc, $extra_desc, $attr_list, $name);
 
-	//Take into account Strength
+	// Take into account Strength
 	if (!empty($attr_list['Strength']) && strpos($type, 'Attack') !== false) {
 		$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
 	}
 
-	//Put some green around the fork
+	// Put some green around the fork
 	$desc = preg_replace_callback('|([0-9]+\.\.[0-9]+)|', 'fork_replace', $desc);
 
-	//For PvP skills,
+	// For PvP skills,
 	if (!$pve_only) {
-		//Adapt the fork to the build's attribute level..
+		// Adapt the fork to the build's attribute level..
 		if (isset($attr_list[$attribute])) {
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
@@ -1132,14 +1135,14 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 				}
 			}
 		}
-		//.. or show its 0..12..16 values
+		// or show its 0..12..16 values
 		else {
 			$desc = preg_replace_callback('|([0-9]+)\.\.([0-9]+)|', 'desc_replace', $desc);
 		}
 	}
-	//For PvE skills
+	// For PvE skills
 	else {
-		//Adapt the fork to the build's attribute level..
+		// Adapt the fork to the build's attribute level..
 		if (isset($attr_list[$attribute])) {
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
@@ -1149,170 +1152,55 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 				}
 			}
 		}
-		//.. or show its 0..10 values (no action required)
+		// or show its 0..10 values (no action required)
 	}
 
-	//Specify a Spirit health and armor
+	// Specify a Spirit health and armor
 	$desc = add_spirit_health($desc, $attr_list);
 
-	//Specify additional weapon spell duration
+	// Specify additional weapon spell duration
 	$desc = calc_weapon_duration($desc, $attr_list, $type);
 }
 
-//Replace a 0..15 fork by a 0..12..16 one
-function desc_replace($reg) {
-	list($all, $val_0, $val_15) = $reg;
-	return $val_0 . '..' . fork_val($val_0, $val_15, 12) . '..' . fork_val($val_0, $val_15, 16);
-}
-
-//Return value at a given attribute level
-function fork_val($val_0, $val_15, $attr_lvl) {
-	return $val_0 + round(($val_15 - $val_0) * $attr_lvl / 15);
-}
-
-//Return value at a given attribute level for a pve only skill
-function fork_val_pveonly($val_0, $val_10, $attr_lvl) {
-	return $val_0 + round(($val_10 - $val_0) * $attr_lvl / 10);
-}
-
-//Put some green around the fork
+// Calculation function 14:
+// Put some green around the fork
 function fork_replace($reg) {
 	list($all, $fork) = $reg;
 	return "<span class=\"variable\">$fork</span>"; //Make sure to adapt add_spirit_health() if you change this
 }
 
-
-//Returns true if $att specifies that the skill should be rendered as text
-function gws_noicon($att) {
-	return strstr($att, 'noicon') !== false;
+// Calculation function 15:
+// Return value at a given attribute level
+function fork_val($val_0, $val_15, $attr_lvl) {
+	return $val_0 + round(($val_15 - $val_0) * $attr_lvl / 15);
 }
 
-
-
-//Returns current time in seconds with a 2 decimal digits precision
-function gws_microtime_float() {
-	list($usec, $sec) = explode(" ", microtime());
-	return (float) $usec + (float) ($sec % 1000000);
+// Calculation function 16:
+// Replace a 0..15 fork by a 0..12..16 one
+function desc_replace($reg) {
+	list($all, $val_0, $val_15) = $reg;
+	return $val_0 . '..' . fork_val($val_0, $val_15, 12) . '..' . fork_val($val_0, $val_15, 16);
 }
 
-
-//Restores html entities to characters, except for '<'
-function html_safe_decode($text) {
-	return str_replace('<', '&lt;', html_entity_decode($text));
+// Calculation function 17:
+// Return value at a given attribute level for a pve only skill
+function fork_val_pveonly($val_0, $val_10, $attr_lvl) {
+	return $val_0 + round(($val_10 - $val_0) * $attr_lvl / 10);
 }
 
-
-/*Loads gwbbcode templates from the gwbbcode.tpl file.
-Creates an array, keys are bbcode names like "b_open" or "url", values
-are the associated template.
-Probably pukes all over the place if there's something really screwed
-with the gwbbcode.tpl file.
-Modification of Nathan Codding's load_bbcode_template.*/
-function load_gwbbcode_template() {
-	$tpl_array = file(TEMPLATE_PATH);
-
-	//Trim each line
-	$tpl = '';
-	foreach ($tpl_array as $line) {
-		$tpl .= trim($line);
-	}
-
-
-	//Replace \ with \\ and then ' with \'.
-	$tpl = str_replace('\\', '\\\\', $tpl);
-	$tpl = str_replace('\'', '\\\'', $tpl);
-
-	//Strip newlines.
-	$tpl = str_replace("\n", '', $tpl);
-
-	//Turn template blocks into PHP assignment statements for the values of $gwbbcode_tpls..
-	$tpl = preg_replace('#<!-- BEGIN (.*?) -->(.*?)<!-- END (.*?) -->#', "\n" . '$gwbbcode_tpls[\'\\1\'] = clean_tpl(\'\\2\');', $tpl);
-
-	$gwbbcode_tpls = array();
-
-	eval($tpl);
-
-	return $gwbbcode_tpls;
-}
-
-
-//Outputs a javascript alert
-function alert($msg) {
-	$msg = addslashes($msg);
-	echo "<script>alert('$msg')</script>";
-	exit(0);
-}
-
-//Return a string after removing all its whitespaces at begining of lines, and its newlines
-function clean_tpl($tpl) {
-	return preg_replace('@[\r\n][ ]*@', '', $tpl);
-}
-
-
-//Sets $var to false if it wasn't already set
-function set_or_false(&$var) {
-	$var = isset($var) ? $var : false;
-	return $var;
-}
-
-//Int to bin on $bit_size bits
-function int2bin($int, $bit_size) {
-	$bin = strrev(base_convert($int, 10, 2));
-	if ($bit_size < strlen($bin)) {
-		return false;
-	}
-	//else
-	return $bin . str_repeat('0', $bit_size - strlen($bin));
-}
-
-//Return $text230ut8wjeois with each "{var_name}" replaced by $values['var_name']
-function infuse_values($text, $values) {
-	foreach ($values as $name => $value) {
-		$text = str_replace('{' . $name . '}', $value, $text);
-	}
-	return $text;
-}
-
-//Save a var to a file
-function save($filename, $var) {
-	if ($f = @fopen($filename, 'wb')) {
-		$res = @fwrite($f, '<? return ' . var_export($var, true) . '; ?>');
-		@fclose($f);
-		return $res !== false;
-	}
-	return false;
-}
-
-//Save a var to a file in a compact way
-function save_compact($filename, $var) {
-	if ($f = @fopen($filename, 'wb')) {
-		$res = @fwrite($f, '<?php return ' . preg_replace('@^ +@m', '', str_replace(' => ', '=>', var_export($var, true))) . '; ?>');
-		@fclose($f);
-		return $res !== false;
-	}
-	return false;
-}
-
-//Load a var from a file
-function load($filename) {
-	if (!file_exists($filename))
-		return false;
-	else
-		return require($filename);
-}
-
-
-//Return the real energy cost of a skill depending on its type and level of Expertise
+// Calculation function 18:
+// Return the real energy cost of a skill depending on its type and level of Expertise
 function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
 	if (isset($attr_list['Expertise']) && $attr_list['Expertise'] > 0 && ($profession == 'Ranger' || strpos($type, 'Attack') !== false || strpos($type, 'Ritual') !== false || $name == 'Lift Enchantment' || (preg_match('@touch@i', $desc) && !preg_match('@touch skills@i', $desc)))) {
 		return round($energy * (1.0 - 0.04 * $attr_list['Expertise']));
 	}
 
-	//else
+	// Otherwise
 	return false;
 }
 
-//Return the energy fork gained from using a skill depending on its type and level of Leadership
+// Calculation function 19:
+// Return the energy fork gained from using a skill depending on its type and level of Leadership
 function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
 	static $leadership_skills = Array(0 => Array('"It\'s just a flesh wound."', '"Make Your Time!"', '"Never Give Up!"', '"The Power Is Yours!"', '"Fear Me!"', '"I Will Avenge You!"', '"None Shall Pass!"', '"Retreat!"', '"On Your Knees!"', '"Coward!"', '"To the Limit!"', '"You Will Die!"', '"Victory is Mine!"', '"You\'re All Alone!"'), 1 => Array('"Brace Yourself!"', '"Can\'t Touch This!"', '"Find Their Weakness!"', '"Help Me!"', '"For Great Justice!"', '"I Will Survive!"', 'Call of Haste', 'Call of Protection', 'Otyugh\'s Cry', 'Predatory Bond', 'Symbiotic Bond'), 2 => Array('Strike as One'));
 	//Till we know more about PvE Chants and Shouts, ignore them
@@ -1335,12 +1223,12 @@ function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
 		}
 	}
 
-
-	//else
+	// Otherwise
 	return false;
 }
 
-//Return the real cast time of a skill depending on its type and level of Fast Casting
+// Calculation function 20:
+// Return the real cast time of a skill depending on its type and level of Fast Casting
 function calc_fastcasting($attr_list, $type, $casting, $profession) {
 	if ((isset($attr_list['Fast Casting']) && $attr_list['Fast Casting'] > 0) && ($profession == 'Mesmer' || $casting >= 2)) {
 		if (strpos($type, 'Spell') !== false) {
@@ -1350,12 +1238,12 @@ function calc_fastcasting($attr_list, $type, $casting, $profession) {
 		}
 	}
 
-	//else
+	// Otherwise
 	return false;
 }
 
-
-//Return the additional weapon spell duration depending on level of Spawning Power
+// Calculation function 21:
+// Return the additional weapon spell duration depending on level of Spawning Power
 function calc_weapon_duration($desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
 		if (preg_match('@(for (?:<span class="variable">)?)([0-9]+)((?:</span>)? second)@i', $desc, $reg)) {
@@ -1367,8 +1255,8 @@ function calc_weapon_duration($desc, $attr_list, $type) {
 	return $desc;
 }
 
-
-//Return a description of the real effect of a skill taking into account Divine Favor
+// Calculation function 22:
+// Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
 		if (preg_match('/\{((div)|(target)|(self))\}/', $desc, $reg)) {
@@ -1400,8 +1288,8 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	}
 }
 
-
-//Return a description specifying how much health and armor does a Spirit have
+// Calculation function 23:
+// Return a description specifying how much health and armor does a Spirit have
 function add_spirit_health($desc, $attr_list) {
 
 	//Get Spirit's level
@@ -1427,19 +1315,244 @@ function add_spirit_health($desc, $attr_list) {
 	return $desc;
 }
 
+// Calculation function 24:
+// Return a skill description enriched with a div tag depending on the specified effect ('{target}', '{self}' or '{div}')
+function add_div_tag($effect, $desc) {
+	if ($effect == 'target' || $effect == 'self') {
+		$desc .= '{' . $effect . '}';
+	} else { //div
+		$new_desc = preg_replace('@([0-9]+\\.\\.[0-9]+)( Health)@', '$1{div}$2', $desc, 1);
+		if ($desc != $new_desc) {
+			$desc = $new_desc;
+		} else {
+			//'Health' isn't specified :(
+			$desc = preg_replace('@([0-9]+\\.\\.[0-9]+)@', '$1{div}', $desc, 1);
+		}
+	}
+	return $desc;
+}
+
+// Calculation function 25:
+// Return the skill description enriched with a divine favor tags ('{target}', '{self}' or '{div}')
+function desc_with_div_tag($skill) {
+	$desc = $skill['desc'];
+	//Clean up the description
+	$desc = str_replace('{target}', '', str_replace('{self}', '', str_replace('{div}', '', $desc)));
+
+	//Add the appropriate div tag
+	if ($skill['prof'] != 'Mo' || strpos($skill['type'], 'Spell') === false) {
+		//No div fav bonus for you
+	} else if (in_array($skill['name'], Array(
+			'Kirin\'s Wrath',
+			'Symbol of Wrath',
+			'Amity',
+			'Light of Dwayna',
+			'Divine Spirit',
+			'Healer\'s Boon',
+			'Spell Shield',
+			'Healer\'s Covenant',
+			'Martyr',
+			'Smiter\'s Boon'
+		))) {
+		$desc = add_div_tag('self', $desc);
+	} else if ($skill['name'] == 'Infuse Health') {
+		$desc = add_div_tag('target', $desc);
+	} else if ($skill['name'] == 'Pacifism' || strpos($desc, 'to life') !== false || preg_match('@^Resurrect@', $desc)) {
+		//No div fav bonus for you
+	} else if (preg_match('@target ally for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
+		$desc = add_div_tag('div', $desc);
+	} else if (preg_match('@target (other )?ally is healed for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
+		$desc = add_div_tag('div', $desc);
+	} else if (strpos($desc, 'target ally') !== false) {
+		$desc = add_div_tag('target', $desc);
+	} else if (preg_match('@party|adjacent creatures|you use|you cast@', $desc)) {
+		$desc = add_div_tag('self', $desc);
+	} else if ($skill['attribute'] == 'Smiting Prayers') {
+		//No div fav bonus for you
+	} else if (preg_match('@ally for [0-9]+\\.\\.[0-9]+ Health@', $desc)) {
+		$desc = add_div_tag('div', $desc);
+	} else if (strpos($desc, 'adjacent') !== false) {
+		$desc = add_div_tag('target', $desc);
+	} else if ($skill['attribute'] == 'Healing Prayers' && preg_match('@healed for [0-9]+\\.\\.[0-9]+@', $desc)) {
+		$desc = add_div_tag('div', $desc);
+	} else {
+		$desc = add_div_tag('target', $desc);
+	}
+	return $desc;
+}
+
+// Calculation function 24:
+// Return $text with each "{var_name}" replaced by $values['var_name']
+function infuse_values($text, $values) {
+	foreach ($values as $name => $value) {
+		$text = str_replace('{' . $name . '}', $value, $text);
+	}
+	return $text;
+}
+
+// Calculation function 25:
+function getSkillIdPvP($pve) {
+	global $pveSkillIds;
+	return (isset($pveSkillIds[$pve]) ? $pveSkillIds[$pve] : $pve);
+}
+
+// Calculation function 26:
+function getSkillIdPvE($pvp) {
+	global $pvpSkillIds;
+	return (isset($pvpSkillIds[$pvp]) ? $pvpSkillIds[$pvp] : $pvp);
+}
+
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - MISCELLANEOUS
+ ***************************************************************************/
+
+// Calculation function 27:
+// Returns true if $att specifies that the skill should be rendered as text
+function gws_noicon($att) {
+	return strstr($att, 'noicon') !== false;
+}
+
+// Calculation function 28:
+// Returns current time in seconds with a 2 decimal digits precision
+function gws_microtime_float() {
+	list($usec, $sec) = explode(" ", microtime());
+	return (float) $usec + (float) ($sec % 1000000);
+}
+
+// Calculation function 29:
+// Restores html entities to characters, except for '<'
+function html_safe_decode($text) {
+	return str_replace('<', '&lt;', html_entity_decode($text));
+}
+
+// Calculation function 30:
+// Int to bin on $bit_size bits
+function int2bin($int, $bit_size) {
+	$bin = strrev(base_convert($int, 10, 2));
+	if ($bit_size < strlen($bin)) {
+		return false;
+	}
+	//else
+	return $bin . str_repeat('0', $bit_size - strlen($bin));
+}
+
+// Calculation function 31:
+// Load a var from a file
+function load($filename) {
+	if (!file_exists($filename))
+		return false;
+	else
+		return require($filename);
+}
+
+// Calculation function 32:
+// Organize skill by elite, profession, attribute and name (used by [rand seed="x"])
+function skill_sort_cmp($a, $b) {
+	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');
+	if ($a['elite'] == $b['elite']) {
+		$a['prof_id'] = array_search($a['profession'], $prof_ids);
+		$b['prof_id'] = array_search($b['profession'], $prof_ids);
+		if ($a['prof_id'] == $b['prof_id']) {
+			if ($a['attribute'] == 'No Attribute') {
+				$a['attribute'] = 'ZZZ';
+			}
+			if ($b['attribute'] == 'No Attribute') {
+				$b['attribute'] = 'ZZZ';
+			}
+
+			//Special case: Dervish
+			$d_attributes = Array(
+				'Earth Prayers',
+				'Wind Prayers',
+				'Mysticism',
+				'Scythe Mastery',
+				'ZZZ'
+			);
+			if ($a['prof'] == 'D') {
+				$a['attribute'] = array_search($a['attribute'], $d_attributes);
+				$b['attribute'] = array_search($b['attribute'], $d_attributes);
+			}
+
+			if (preg_replace('|[\'! ]|', '', strtolower($a['attribute'])) == preg_replace('|[\'! ]|', '', strtolower($b['attribute']))) {
+				if (preg_replace('|[\'!]|', '', strtolower($a['name'])) == preg_replace('|[\'!]|', '', strtolower($b['name']))) {
+					return 0;
+				}
+				return (preg_replace('|[\'!]|', '', strtolower($a['name'])) < preg_replace('|[\'!]|', '', strtolower($b['name']))) ? -1 : 1;
+			}
+			return (preg_replace('|[\'! ]|', '', strtolower($a['attribute'])) < preg_replace('|[\'! ]|', '', strtolower($b['attribute']))) ? -1 : 1;
+		}
+		return ($a['prof_id'] < $b['prof_id']) ? -1 : 1;
+	}
+	return ($a['elite'] > $b['elite']) ? -1 : 1;
+}
 
 
 
 
-//Template conversion
-/////////////////////
+/***************************************************************************
+ * SMARTY TEMPLATE FUNCTIONS
+ ***************************************************************************/
+/*
+ * Modification of Nathan Codding's load_bbcode_template.
+ **/
 
-//Return a binary string based on the $text template_id
+// Smarty template function 1:
+// Loads gwbbcode templates from the gwbbcode.tpl file
+// Creates an array, keys are bbcode names like "b_open" or "url", values are the associated template.
+// Probably pukes all over the place if there's something really screwed with the gwbbcode.tpl file.
+function load_gwbbcode_smarty_template() {
+	$tpl_array = file(TEMPLATE_PATH);
+
+	//Trim each line
+	$tpl = '';
+	foreach ($tpl_array as $line) {
+		$tpl .= trim($line);
+	}
+
+	//Replace \ with \\ and then ' with \'.
+	$tpl = str_replace('\\', '\\\\', $tpl);
+	$tpl = str_replace('\'', '\\\'', $tpl);
+
+	//Strip newlines.
+	$tpl = str_replace("\n", '', $tpl);
+
+	//Turn template blocks into PHP assignment statements for the values of $gwbbcode_tpls..
+	$tpl = preg_replace('#<!-- BEGIN (.*?) -->(.*?)<!-- END (.*?) -->#', "\n" . '$gwbbcode_tpls[\'\\1\'] = clean_tpl(\'\\2\');', $tpl);
+
+	$gwbbcode_tpls = array();
+
+	eval($tpl);
+
+	return $gwbbcode_tpls;
+}
+
+// Smarty template function 2:
+// Return a string after removing all its whitespaces at begining of lines, and its newlines
+function clean_tpl($tpl) {
+	return preg_replace('@[\r\n][ ]*@', '', $tpl);
+}
+
+
+
+
+/***************************************************************************
+ * GW TEMPLATE CONVERSION FUNCTIONS
+ ***************************************************************************/
+
+// GW template conversion function 1:
+function binval($bin) {
+	return intval(base_convert(strrev($bin), 2, 10));
+}
+
+// GW template conversion function 2:
+// Return a binary string based on the $text template_id
 function template_to_bin($text) {
 	static $conv_table = Array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4, 'F' => 5, 'G' => 6, 'H' => 7, 'I' => 8, 'J' => 9, 'K' => 10, 'L' => 11, 'M' => 12, 'N' => 13, 'O' => 14, 'P' => 15, 'Q' => 16, 'R' => 17, 'S' => 18, 'T' => 19, 'U' => 20, 'V' => 21, 'W' => 22, 'X' => 23, 'Y' => 24, 'Z' => 25, 'a' => 26, 'b' => 27, 'c' => 28, 'd' => 29, 'e' => 30, 'f' => 31, 'g' => 32, 'h' => 33, 'i' => 34, 'j' => 35, 'k' => 36, 'l' => 37, 'm' => 38, 'n' => 39, 'o' => 40, 'p' => 41, 'q' => 42, 'r' => 43, 's' => 44, 't' => 45, 'u' => 46, 'v' => 47, 'w' => 48, 'x' => 49, 'y' => 50, 'z' => 51, '0' => 52, '1' => 53, '2' => 54, '3' => 55, '4' => 56, '5' => 57, '6' => 58, '7' => 59, '8' => 60, '9' => 61, '+' => 62, '/' => 63);
 	$ret = '';
 	foreach (preg_split('//', trim($text), -1, PREG_SPLIT_NO_EMPTY) as $char) {
-		//Handle invalid characters
+		// Handle invalid characters
 		if (!isset($conv_table[$char])) {
 			return false;
 		}
@@ -1449,22 +1562,8 @@ function template_to_bin($text) {
 	return $ret;
 }
 
-//Return a template string based on the $bin binary string
-function bin_to_template($bin) {
-	static $conv_table = Array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4, 'F' => 5, 'G' => 6, 'H' => 7, 'I' => 8, 'J' => 9, 'K' => 10, 'L' => 11, 'M' => 12, 'N' => 13, 'O' => 14, 'P' => 15, 'Q' => 16, 'R' => 17, 'S' => 18, 'T' => 19, 'U' => 20, 'V' => 21, 'W' => 22, 'X' => 23, 'Y' => 24, 'Z' => 25, 'a' => 26, 'b' => 27, 'c' => 28, 'd' => 29, 'e' => 30, 'f' => 31, 'g' => 32, 'h' => 33, 'i' => 34, 'j' => 35, 'k' => 36, 'l' => 37, 'm' => 38, 'n' => 39, 'o' => 40, 'p' => 41, 'q' => 42, 'r' => 43, 's' => 44, 't' => 45, 'u' => 46, 'v' => 47, 'w' => 48, 'x' => 49, 'y' => 50, 'z' => 51, '0' => 52, '1' => 53, '2' => 54, '3' => 55, '4' => 56, '5' => 57, '6' => 58, '7' => 59, '8' => 60, '9' => 61, '+' => 62, '/' => 63);
-	$ret = '';
-	$bin .= str_repeat('0', 6 - (strlen($bin) % 6));
-	while (!empty($bin)) {
-		$digit = substr($bin, 0, 6);
-		$bin   = substr($bin, 6);
-		$ret .= array_search(base_convert(strrev($digit), 2, 10), $conv_table);
-	}
-	return $ret;
-}
-
-
-
-//Return gwbbcode based on the $text template id
+// GW template conversion function 3:
+// Return gwbbcode based on the $text template id
 function template_to_gwbbcode($text) {
 	static $prof_ids = Array('?', 'W', 'R', 'Mo', 'N', 'Me', 'E', 'A', 'Rt', 'P', 'D');
 	static $attr_ids = Array('fas', 'ill', 'dom', 'ins', 'blo', 'death', 'sou', 'cur', 'air', 'ear', 'fir', 'wat', 'ene', 'hea', 'smi', 'pro', 'div', 'str', 'axe', 'ham', 'swo', 'tac', 'bea', 'exp', 'wil', 'mar', 29 => 'dag', 'dead', 'sha', 'com', 'res', 'cha', 'cri', 'spa', 'spe', 'comma', 'mot', 'lea', 'scy', 'win', 'earthp', 'mys');
@@ -1514,8 +1613,9 @@ function template_to_gwbbcode($text) {
 	//Create prof=?/?
 	$ret .= "[build prof=$primary/$secondary";
 
-	//Add clean build name if any
-	//FIX by KillsLess to move syntax options out of the name
+	// FIXME - LOOKS SUSPICIOUS.
+	// Add clean build name if any
+	// Fix by KillsLess to move syntax options out of the name
 	if (!empty($build_name)) {
 		$syntax_options = array(
 			"nosave",
@@ -1530,7 +1630,7 @@ function template_to_gwbbcode($text) {
 		$ret .= ' name="' . str_replace('"', "''", $build_name) . '"';
 	}
 
-	//Manage attributes
+	// Manage attributes
 	$attr_count = binval($reg[4]);
 	$attr_size  = 4 + binval($reg[5]);
 	for ($i = 0; $i < $attr_count; $i++) {
@@ -1539,31 +1639,31 @@ function template_to_gwbbcode($text) {
 		}
 		$bin = preg_replace('@^([01]{' . $attr_size . '})([01]{4})@', '', $bin);
 
-		//Attribute name
+		// Attribute name
 		$attr_id = binval($reg2[1]);
 		if (!isset($attr_ids[$attr_id])) {
 			return "Invalid attribute id: $attr_id";
 		}
 		$attr_name = $attr_ids[$attr_id];
 
-		//Attribute value
+		// Attribute value
 		$attr_value = binval($reg2[2]);
 		if ($attr_value > 12) {
 			return 'An attribute value can\'t be higher than 12';
 		}
 
-		//Create attr=10
+		// Create attr=10
 		$ret .= " $attr_name=$attr_value";
 	}
 	$ret .= ']';
 
-	//Skills
+	// Skills
 	if (!preg_match('@^([01]{4})@', $bin, $reg2)) {
 		return 'Couldn\'t get skill id size';
 	}
 	$bin = preg_replace('@^([01]{4})@', '', $bin);
 
-	//Skill size
+	// Skill size
 	$skill_size = 8 + binval($reg2[1]);
 	for ($i = 0; $i < 8; $i++) {
 		if (!preg_match('@^([01]{' . $skill_size . '})@', $bin, $reg2)) {
@@ -1571,7 +1671,7 @@ function template_to_gwbbcode($text) {
 		}
 		$bin = preg_replace('@^([01]{' . $skill_size . '})@', '', $bin);
 
-		//Skill name
+		// Skill name
 		$skill_id   = getSkillIdPvP(binval($reg2[1]));
 		$skill      = gws_details($skill_id);
 		$skill_name = $skill['name'];
@@ -1581,132 +1681,21 @@ function template_to_gwbbcode($text) {
 			$ret .= '[' . $skill['name'] . ']';
 		}
 	}
-
 	return $ret . '[/build]';
 }
 
-
-
-
-function binval($bin) {
-	return intval(base_convert(strrev($bin), 2, 10));
-	;
-}
-
-
-
-//Organize skill by elite, profession, attribute and name
-function skill_sort_cmp($a, $b) {
-	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');
-	if ($a['elite'] == $b['elite']) {
-		$a['prof_id'] = array_search($a['profession'], $prof_ids);
-		$b['prof_id'] = array_search($b['profession'], $prof_ids);
-		if ($a['prof_id'] == $b['prof_id']) {
-			if ($a['attribute'] == 'No Attribute') {
-				$a['attribute'] = 'ZZZ';
-			}
-			if ($b['attribute'] == 'No Attribute') {
-				$b['attribute'] = 'ZZZ';
-			}
-
-			//Special case: Dervish
-			$d_attributes = Array(
-				'Earth Prayers',
-				'Wind Prayers',
-				'Mysticism',
-				'Scythe Mastery',
-				'ZZZ'
-			);
-			if ($a['prof'] == 'D') {
-				$a['attribute'] = array_search($a['attribute'], $d_attributes);
-				$b['attribute'] = array_search($b['attribute'], $d_attributes);
-			}
-
-			if (preg_replace('|[\'! ]|', '', strtolower($a['attribute'])) == preg_replace('|[\'! ]|', '', strtolower($b['attribute']))) {
-				if (preg_replace('|[\'!]|', '', strtolower($a['name'])) == preg_replace('|[\'!]|', '', strtolower($b['name']))) {
-					return 0;
-				}
-				return (preg_replace('|[\'!]|', '', strtolower($a['name'])) < preg_replace('|[\'!]|', '', strtolower($b['name']))) ? -1 : 1;
-			}
-			return (preg_replace('|[\'! ]|', '', strtolower($a['attribute'])) < preg_replace('|[\'! ]|', '', strtolower($b['attribute']))) ? -1 : 1;
-		}
-		return ($a['prof_id'] < $b['prof_id']) ? -1 : 1;
+// GW template conversion function 4:
+// Return a template string based on the $bin binary string
+function bin_to_template($bin) {
+	static $conv_table = Array('A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4, 'F' => 5, 'G' => 6, 'H' => 7, 'I' => 8, 'J' => 9, 'K' => 10, 'L' => 11, 'M' => 12, 'N' => 13, 'O' => 14, 'P' => 15, 'Q' => 16, 'R' => 17, 'S' => 18, 'T' => 19, 'U' => 20, 'V' => 21, 'W' => 22, 'X' => 23, 'Y' => 24, 'Z' => 25, 'a' => 26, 'b' => 27, 'c' => 28, 'd' => 29, 'e' => 30, 'f' => 31, 'g' => 32, 'h' => 33, 'i' => 34, 'j' => 35, 'k' => 36, 'l' => 37, 'm' => 38, 'n' => 39, 'o' => 40, 'p' => 41, 'q' => 42, 'r' => 43, 's' => 44, 't' => 45, 'u' => 46, 'v' => 47, 'w' => 48, 'x' => 49, 'y' => 50, 'z' => 51, '0' => 52, '1' => 53, '2' => 54, '3' => 55, '4' => 56, '5' => 57, '6' => 58, '7' => 59, '8' => 60, '9' => 61, '+' => 62, '/' => 63);
+	$ret = '';
+	$bin .= str_repeat('0', 6 - (strlen($bin) % 6));
+	while (!empty($bin)) {
+		$digit = substr($bin, 0, 6);
+		$bin   = substr($bin, 6);
+		$ret .= array_search(base_convert(strrev($digit), 2, 10), $conv_table);
 	}
-	return ($a['elite'] > $b['elite']) ? -1 : 1;
+	return $ret;
 }
 
-
-//Return the skill description enriched with a divine favor tags ('{target}', '{self}' or '{div}')
-function desc_with_div_tag($skill) {
-	$desc = $skill['desc'];
-	//Clean up the description
-	$desc = str_replace('{target}', '', str_replace('{self}', '', str_replace('{div}', '', $desc)));
-
-	//Add the appropriate div tag
-	if ($skill['prof'] != 'Mo' || strpos($skill['type'], 'Spell') === false) {
-		//No div fav bonus for you
-	} else if (in_array($skill['name'], Array(
-			'Kirin\'s Wrath',
-			'Symbol of Wrath',
-			'Amity',
-			'Light of Dwayna',
-			'Divine Spirit',
-			'Healer\'s Boon',
-			'Spell Shield',
-			'Healer\'s Covenant',
-			'Martyr',
-			'Smiter\'s Boon'
-		))) {
-		$desc = add_div_tag('self', $desc);
-	} else if ($skill['name'] == 'Infuse Health') {
-		$desc = add_div_tag('target', $desc);
-	} else if ($skill['name'] == 'Pacifism' || strpos($desc, 'to life') !== false || preg_match('@^Resurrect@', $desc)) {
-		//No div fav bonus for you
-	} else if (preg_match('@target ally for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (preg_match('@target (other )?ally is healed for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (strpos($desc, 'target ally') !== false) {
-		$desc = add_div_tag('target', $desc);
-	} else if (preg_match('@party|adjacent creatures|you use|you cast@', $desc)) {
-		$desc = add_div_tag('self', $desc);
-	} else if ($skill['attribute'] == 'Smiting Prayers') {
-		//No div fav bonus for you
-	} else if (preg_match('@ally for [0-9]+\\.\\.[0-9]+ Health@', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (strpos($desc, 'adjacent') !== false) {
-		$desc = add_div_tag('target', $desc);
-	} else if ($skill['attribute'] == 'Healing Prayers' && preg_match('@healed for [0-9]+\\.\\.[0-9]+@', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else {
-		$desc = add_div_tag('target', $desc);
-	}
-	return $desc;
-}
-
-//Return a skill description enriched with a div tag depending on the specified effect ('{target}', '{self}' or '{div}')
-function add_div_tag($effect, $desc) {
-	if ($effect == 'target' || $effect == 'self') {
-		$desc .= '{' . $effect . '}';
-	} else { //div
-		$new_desc = preg_replace('@([0-9]+\\.\\.[0-9]+)( Health)@', '$1{div}$2', $desc, 1);
-		if ($desc != $new_desc) {
-			$desc = $new_desc;
-		} else {
-			//'Health' isn't specified :(
-			$desc = preg_replace('@([0-9]+\\.\\.[0-9]+)@', '$1{div}', $desc, 1);
-		}
-	}
-	return $desc;
-}
-
-function getSkillIdPvP($pve) {
-	global $pveSkillIds;
-	return (isset($pveSkillIds[$pve]) ? $pveSkillIds[$pve] : $pve);
-}
-
-function getSkillIdPvE($pvp) {
-	global $pvpSkillIds;
-	return (isset($pvpSkillIds[$pvp]) ? $pvpSkillIds[$pvp] : $pvp);
-}
 ?>
