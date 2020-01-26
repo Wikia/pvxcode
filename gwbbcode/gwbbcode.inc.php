@@ -18,7 +18,7 @@
  *   All images, skill names and descriptions are (C) ArenaNet.
  ***************************************************************************/
 
-require_once(GWBBCODE_ROOT . '/common.inc.php');
+require_once(GWBBCODE_ROOT . '/constants.inc.php');
 
 // Load the gwbbcode template
 global $gwbbcode_tpl;

@@ -13,11 +13,14 @@ define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/databases/abbr_db.php');
 define('SKILLIDSPVP_PATH', GWBBCODE_ROOT.'/databases/skill_pvpids_db.php');
 
 // INCLUDE PATHS
-//  Used in common.inc.php
-define('CONFIG_PATH', GWBBCODE_ROOT.'/config.inc.php');
 
 //  Used in gwbbcode.inc.php
 define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/templates/gwbbcode.tpl');
 define('GWBB_DYNAMIC_BODY', GWBBCODE_ROOT.'/templates/dynamic_body.tpl');
+
+// PREFERENCES
+//  Used in gwbbcode.inc.php
+//  Choose between Kurzick and Luxon in order to adapt allegiance skills
+define('GWBBCODE_ALLEGIANCE', 'Kurzick');
 ?>
