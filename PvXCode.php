@@ -10,9 +10,13 @@
  * @package		PvXCode
  * @link		https://gitlab.com/hydrawiki
  *
+ * Purpose of this file:
+ *  Allows the extension to be loaded from localSettings.php
 **/
 if ( function_exists( 'wfLoadExtension' ) ) {
+   // The following line seeks the PvXCode/extension.json file
    wfLoadExtension( 'PvXCode' );
+
    // Keep i18n globals so mergeMessageFileList.php doesn't break
    $wgMessagesDirs['PvXCode'] = __DIR__ . '/i18n';
    wfWarn(

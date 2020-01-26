@@ -1,8 +1,8 @@
 <?php
 /**
  * Curse Inc.
- * PvX Convert
- * Dedicated special page for converting old GuildWiki templates into pvxbig code.
+ * PvX Code
+ * Guildwiki / Guild Wars Template to PvXCode Handling
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
@@ -10,8 +10,9 @@
  * @package		PvXDownloadTemplate
  * @link		https://gitlab.com/hydrawiki
  *
+ * Purpose of this file:
+ *  Provide a dedicated special page for converting old GuildWiki templates into valid pvxbig tags.
 **/
-
 class SpecialPvXConvert extends SpecialPage {
 	/**
 	 * Main Constructor

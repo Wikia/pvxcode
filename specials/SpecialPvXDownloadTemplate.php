@@ -1,8 +1,8 @@
 <?php
 /**
  * Curse Inc.
- * PvX Download Template
- * Dedicated special page for downloading build templates.
+ * PvX Code
+ * Guildwiki / Guild Wars Template to PvXCode Handling
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
@@ -10,8 +10,9 @@
  * @package		PvXDownloadTemplate
  * @link		https://gitlab.com/hydrawiki
  *
+ * Purpose of this file:
+ *  Provide a dedicated special page for downloading build templates.
 **/
-
 class SpecialPvXDownloadTemplate extends SpecialPage {
 	/**
 	 * Main Constructor
