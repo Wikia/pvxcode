@@ -935,7 +935,7 @@ function gws_build_profession($att) {
 // Calculation function 2:
 // Returns the full profession name of a partial one. Returns 'No profession' if no match is found
 function gws_prof_name($profession) {
-	//Look for a profession name corresponding to $profession
+	// Look for a profession name corresponding to $profession
 	static $p = Array('E' => 'Elementalist', 'Me' => 'Mesmer', 'Mo' => 'Monk', 'N' => 'Necromancer', 'R' => 'Ranger', 'W' => 'Warrior', 'A' => 'Assassin', 'Rt' => 'Ritualist', 'D' => 'Dervish', 'P' => 'Paragon', '?' => 'No profession');
 	$profession = strtolower($profession);
 
@@ -1029,21 +1029,6 @@ function gws_pve_attr($attribute) {
 	static $pve_attr_list = Array('kur', 'lux', 'sun', 'lig', 'asu', 'del', 'ebo', 'nor');
 	return in_array(gws_attribute_name($attribute), $pve_attr_list);
 }
-
-
-
-
-// FIXME - THIS INFORMATION IS ALREADY WITHIN SKILL_DB, SO THIS FUNCTION CAN BE DELETED.
-// Calculation function x:
-// Returns the type abbreviation of a full one. Returns false if no match is found
-function gws_type_abbr($type) {
-	static $type_list = Array('ax' => 'Axe Attack', 'bi' => 'Binding Ritual', 'bo' => 'Bow Attack', 'ch' => 'Chant', 'du' => 'Dual Attack', 'eb' => 'Ebon Vanguard Ritual', 'ec' => 'Echo', 'en' => 'Enchantment Spell', 'fo' => 'Form', 'gl' => 'Glyph', 'ha' => 'Hammer Attack', 'he' => 'Hex Spell', 'it' => 'Item Spell', 'le' => 'Lead Attack', 'me' => 'Melee Attack', 'na' => 'Nature Ritual', 'of' => 'Off-Hand Attack', 'pe' => 'Pet Attack', 'pr' => 'Preparation', 'ra' => 'Ranged Attack', 'sc' => 'Scythe Attack', 'sh' => 'Shout', 'si' => 'Signet', 'sk' => 'Skill', 'spea' => 'Spear Attack', 'sp' => 'Spell', 'st' => 'Stance', 'sw' => 'Sword Attack', 'ti' => 'Title', 'tr' => 'Trap', 'wa' => 'Ward Spell', 'wea' => 'Weapon Spell', 'we' => 'Well Spell');
-	return array_search($type, $type_list);
-	;
-}
-
-
-
 
 // Calculation function 9:
 // Returns an attribute list (string) cleaned of the prof, name and desc attributes
@@ -1613,7 +1598,6 @@ function template_to_gwbbcode($text) {
 	//Create prof=?/?
 	$ret .= "[build prof=$primary/$secondary";
 
-	// FIXME - LOOKS SUSPICIOUS.
 	// Add clean build name if any
 	// Fix by KillsLess to move syntax options out of the name
 	if (!empty($build_name)) {
