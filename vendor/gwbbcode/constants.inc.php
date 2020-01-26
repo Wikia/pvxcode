@@ -7,7 +7,6 @@ define('SKILLS_PATH_1', GWBBCODE_ROOT.'/skill_db_1.php');
 define('SKILLS_PATH_2', GWBBCODE_ROOT.'/skill_db_2.php');
 define('SKILLNAMES_PATH', GWBBCODE_ROOT.'/skillname_db.php');
 define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/abbr_db.php');
-define('PICKUP_PATH', GWBBCODE_ROOT.'/pickup_db.php');
 define('HASHES_PATH', GWBBCODE_ROOT.'/hashes_db.php');
 
 //Include paths

@@ -19,7 +19,7 @@ You do have to copy ~/gwbbcode/img_skills, or at least its new files, as a few P
 
 3) If you your skill database is stored with MySQL (see 2), update it by accessing ~/gwbbcode/install.php with your browser.
 
-3) If you want builds with Kurzick/Luxon skills to be adapted to your alliance faction, set GWBBCODE_ALLEGIANCE to 'Kurzick' or 'Luxon' in ~/gwbbcode/config.php (Kurzick by default, so edit only if you are Luxon)
+4) If you want builds with Kurzick/Luxon skills to be adapted to your alliance faction, set GWBBCODE_ALLEGIANCE to 'Kurzick' or 'Luxon' in ~/gwbbcode/config.php (Kurzick by default, so edit only if you are Luxon)
 
 
 
@@ -30,15 +30,13 @@ In the following, ~ will refer to your phpBB, PunBB or vBulletin directory (if y
 
 1) Copy the content of this archive into ~/gwbbcode/ so that one can access ~/gwbbcode/install.php
 
-2) If you use phpBB2, create ~/gwbbcode/pickup_db.php and make sure php scripts can modify it (chmod 666). So far only phpBB2 supports the pickup feature.
+2) If you want the skill database to be stored and accessed with MySQL, set GWBBCODE_SQL to true in ~/gwbbcode/config.php
 
-3) If you want the skill database to be stored and accessed with MySQL, set GWBBCODE_SQL to true in ~/gwbbcode/config.php
+3) If you want builds with Kurzick/Luxon skills to be adapted to your alliance faction, set GWBBCODE_ALLEGIANCE to 'Kurzick' or 'Luxon' in ~/gwbbcode/config.php (Kurzick by default, so edit only if you are Luxon)
 
-4) If you want builds with Kurzick/Luxon skills to be adapted to your alliance faction, set GWBBCODE_ALLEGIANCE to 'Kurzick' or 'Luxon' in ~/gwbbcode/config.php (Kurzick by default, so edit only if you are Luxon)
+4) Access ~/gwbbcode/install.php with your browser and follow the instructions (you may get errors because of access permissions).
 
-5) Access ~/gwbbcode/install.php with your browser and follow the instructions (you may get errors because of access permissions).
-
-6) Then try example posts from ~/gwbbcode/examples/ especially the short guide ~gwbbcode/examples/howto.txt
+5) Then try example posts from ~/gwbbcode/examples/ especially the short guide ~gwbbcode/examples/howto.txt
 
 
 

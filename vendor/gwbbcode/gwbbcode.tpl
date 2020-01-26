@@ -78,10 +78,3 @@
 <!-- BEGIN tpl_skill_no_attr -->
 Unlinked
 <!-- END tpl_skill_no_attr -->
-
-<!-- BEGIN pickup -->
-<span id="pickup_{id}">{userlist}</span>
-<span onclick="pickup('add', '{id}')" class="postlink" id="add_{id}" style="text-decoration: underline; color: #DD6900; display: none; cursor: pointer;">Add me</span>
-<span onclick="pickup('remove', '{id}')" class="postlink" id="remove_{id}" style="text-decoration: underline; color: #DD6900; display: none; cursor: pointer;">Remove me</span>
-<script>div('{action}_{id}').style.display='';</script>
-<!-- END pickup -->
