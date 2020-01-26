@@ -9,19 +9,15 @@ define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/abbr_db.php');
 define('HASHES_PATH', GWBBCODE_ROOT.'/hashes_db.php');
 
 //Include paths
+//Used in common.inc.php
+define('CONFIG_PATH', GWBBCODE_ROOT.'/config.inc.php');
+define('DEFAULT_CONFIG_PATH', GWBBCODE_ROOT.'/config_default.inc.php');
+
+//Used in gwbbcode.inc.php
 if (!defined('GWBBCODE_IMG_PATH')) {
    define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
 }
-define('CONSTANTS_PATH', GWBBCODE_ROOT.'/constants.inc.php');
-define('CONFIG_PATH', GWBBCODE_ROOT.'/config.inc.php');
-define('DEFAULT_CONFIG_PATH', GWBBCODE_ROOT.'/config_default.inc.php');
-define('OLD_CONFIG_PATH', GWBBCODE_ROOT.'/config.php');
-define('RENAMED_CONFIG_PATH', GWBBCODE_ROOT.'/config.old.php');
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/gwbbcode.tpl');
-define('BORDER_PATH', GWBBCODE_ROOT.'/img_border');
-
-define('GWBB_STATIC_HEADER', GWBBCODE_ROOT.'/static_header.tpl');
-define('GWBB_STATIC_BODY', GWBBCODE_ROOT.'/static_body.tpl');
 define('GWBB_DYNAMIC_HEADER', GWBBCODE_ROOT.'/dynamic_header.tpl');
 define('GWBB_DYNAMIC_BODY', GWBBCODE_ROOT.'/dynamic_body.tpl');
 ?>
