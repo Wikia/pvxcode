@@ -31,14 +31,14 @@ if (!isset($gwbbcode_tpl))
 
 // Array of PvP -> PvE IDs
 //  @ sign just means it suppresses errors if they occur
-global $pvpSkillIds = Array();
+static $pvpSkillIds = Array(); // previously "global" not "static"
 if (empty($pvpSkillIds)) {
 	if (($pvpSkillIds = @load(SKILLIDSPVP_PATH)) === false) {
 		die("Missing pvp skill id database.");
 	}
 }
 // Array of PvE -> PvP IDs (only if there is a PvP id)
-global $pveSkillIds = array_flip($pvpSkillIds);
+$pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STATIC IN FRONT OF THIS - THINK IT JUST TAKES THE TYPE OF THE ARRAY_FLIP?
 
 /***************************************************************************
  * MAIN FUNCTION
