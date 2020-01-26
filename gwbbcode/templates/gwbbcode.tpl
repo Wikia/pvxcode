@@ -1,8 +1,8 @@
 <!-- BEGIN build -->
 <table><tr><td>
 <div class="main">
-    <div class="type"><a href="https://wiki.guildwars.com/wiki/{primary}"><img src="/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="https://wiki.guildwars.com/wiki/{secondary}"><img src="/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="https://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="https://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
-    <div class="profession">
+    <div class="profession"><a href="https://wiki.guildwars.com/wiki/{primary}"><img src="/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="https://wiki.guildwars.com/wiki/{secondary}"><img src="/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="https://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="https://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
+    <div class="attribute_list">
         {attributes}
     </div><div style="clear: both;">
     {skills}
