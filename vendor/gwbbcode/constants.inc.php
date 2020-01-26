@@ -6,7 +6,6 @@ $gwbbcode_version = '1.8.0.2';
 define('SKILLS_PATH', GWBBCODE_ROOT.'/skill_db.php');
 define('SKILLNAMES_PATH', GWBBCODE_ROOT.'/skillname_db.php');
 define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/abbr_db.php');
-define('HASHES_PATH', GWBBCODE_ROOT.'/hashes_db.php');
 
 //Include paths
 //Used in common.inc.php
