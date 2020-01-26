@@ -36,10 +36,6 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return void, echos to page.
 	 */
 	function execute($par = null) {
-		// FIXME: Commenting these out, as I suspect these are loaded by classes/PvXCode.php anyway
-		// $this->getOutput()->addModuleStyles('ext.PvXCode.css');
-		// $this->getOutput()->addModules('ext.PvXCode.js');
-
 		$name  = $this->wgRequest->getText('wpName');
 		$build = $this->wgRequest->getText('wpBuild');
 
