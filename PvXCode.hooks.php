@@ -2,7 +2,7 @@
 /**
  * Curse Inc.
  * PvX Code
- * Guildwiki / Guild Wars Template to PvXCode Handling
+ * Instruct wiki to parse anything in pvxbig tags
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
