@@ -28,7 +28,7 @@ class PvXCodeHooks {
 	 * @return void
 	 */
 	public static function onRegistration() {
-		define('GWBBCODE_ROOT', __DIR__.'/vendor/gwbbcode');
+		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
