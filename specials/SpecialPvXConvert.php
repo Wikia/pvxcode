@@ -30,7 +30,7 @@ class SpecialPvXConvert extends SpecialPage {
 	}
 
 	/**
-	 * Main Execute for the Specil Page
+	 * Main Execute for the Special Page
 	 *
 	 * @param  $par Not used, but expected to be there by mediawiki.
 	 * @return void, echos to page.
