@@ -17,19 +17,14 @@
  *
  *   All images, skill names and descriptions are (C) ArenaNet.
  ***************************************************************************/
-
 require_once (GWBBCODE_ROOT.'/constants.inc.php');
 
-//Change "false" to "true" in the following line if you want gwBBCode
-//to store/access skills from your SQL database. Then run install.php again.
-define('GWBBCODE_VERSION', $gwbbcode_version);
-
-//Chose between Kurzick and Luxon in order to adapt allegiance skills
+// Choose between Kurzick and Luxon in order to adapt allegiance skills
 define('GWBBCODE_ALLEGIANCE', 'Kurzick');
 
-//use gwBBCode?
+// Use gwBBCode?
 define('USE_GWBBCODE', true);
 
-//List templates not to hook gwbbcode into
+// List templates not to hook gwbbcode into
 $not_to_hook = Array();
 ?>
