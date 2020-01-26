@@ -12,7 +12,6 @@
 'header.php'=>'49e2a',
 'index.php'=>'0fc86',
 'INSTALL.TXT'=>'3ac73',
-'overlib.js'=>'ae8db',
 'skillname_db.php'=>'2d2bd',
 'skill_db_1.php'=>'b9eb8',
 'img_interface/A.gif'=>'8689e',
