@@ -1,8 +1,8 @@
 <?php
 /**
  * Curse Inc.
- * PvX Download Template
- * Dedicated special page for downloading build templates.
+ * PvX Convert
+ * Dedicated special page for converting old GuildWiki templates into pvxbig code.
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.

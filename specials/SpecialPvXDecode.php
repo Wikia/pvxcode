@@ -1,8 +1,8 @@
 <?php
 /**
  * Curse Inc.
- * PvX Download Template
- * Dedicated special page for downloading build templates.
+ * PvX Decode
+ * Dedicated special page for converting an ingame skill template to pvxbig code.
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
