@@ -722,6 +722,14 @@ function skill_replace($reg) {
 					'modified_value' => $expert_energy
 				));
 			}
+			//Handle mysticism
+			$mystic_energy = calc_mysticism($attr_list, $type, $energy, $profession);
+			if ($mystic_energy && $mystic_energy != $energy) {
+				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
+					'initial_value' => $energy,
+					'modified_value' => $mystic_energy
+				));
+			}
 			//Handle leadership
 			else {
 				$leader_energy = false; //dummied out for now //calc_leadership($name, $attr_list, $type, $energy, $pve_only);
@@ -935,7 +943,7 @@ function gws_build_profession($att) {
 // Calculation function 2:
 // Returns the full profession name of a partial one. Returns 'No profession' if no match is found
 function gws_prof_name($profession) {
-	// Look for a profession name corresponding to $profession
+	//Look for a profession name corresponding to $profession
 	static $p = Array('E' => 'Elementalist', 'Me' => 'Mesmer', 'Mo' => 'Monk', 'N' => 'Necromancer', 'R' => 'Ranger', 'W' => 'Warrior', 'A' => 'Assassin', 'Rt' => 'Ritualist', 'D' => 'Dervish', 'P' => 'Paragon', '?' => 'No profession');
 	$profession = strtolower($profession);
 
@@ -1029,6 +1037,21 @@ function gws_pve_attr($attribute) {
 	static $pve_attr_list = Array('kur', 'lux', 'sun', 'lig', 'asu', 'del', 'ebo', 'nor');
 	return in_array(gws_attribute_name($attribute), $pve_attr_list);
 }
+
+
+
+
+// FIXME - THIS INFORMATION IS ALREADY WITHIN SKILL_DB, SO THIS FUNCTION CAN BE DELETED.
+// Calculation function x:
+// Returns the type abbreviation of a full one. Returns false if no match is found
+function gws_type_abbr($type) {
+	static $type_list = Array('ax' => 'Axe Attack', 'bi' => 'Binding Ritual', 'bo' => 'Bow Attack', 'ch' => 'Chant', 'du' => 'Dual Attack', 'eb' => 'Ebon Vanguard Ritual', 'ec' => 'Echo', 'en' => 'Enchantment Spell', 'fo' => 'Form', 'gl' => 'Glyph', 'ha' => 'Hammer Attack', 'he' => 'Hex Spell', 'it' => 'Item Spell', 'le' => 'Lead Attack', 'me' => 'Melee Attack', 'na' => 'Nature Ritual', 'of' => 'Off-Hand Attack', 'pe' => 'Pet Attack', 'pr' => 'Preparation', 'ra' => 'Ranged Attack', 'sc' => 'Scythe Attack', 'sh' => 'Shout', 'si' => 'Signet', 'sk' => 'Skill', 'spea' => 'Spear Attack', 'sp' => 'Spell', 'st' => 'Stance', 'sw' => 'Sword Attack', 'ti' => 'Title', 'tr' => 'Trap', 'wa' => 'Ward Spell', 'wea' => 'Weapon Spell', 'we' => 'Well Spell');
+	return array_search($type, $type_list);
+	;
+}
+
+
+
 
 // Calculation function 9:
 // Returns an attribute list (string) cleaned of the prof, name and desc attributes
@@ -1175,6 +1198,7 @@ function fork_val_pveonly($val_0, $val_10, $attr_lvl) {
 
 // Calculation function 18:
 // Return the real energy cost of a skill depending on its type and level of Expertise
+//  Note: There is not a field in databases/skill_db.php containing whether the skill is a touch skill or not.
 function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
 	if (isset($attr_list['Expertise']) && $attr_list['Expertise'] > 0 && ($profession == 'Ranger' || strpos($type, 'Attack') !== false || strpos($type, 'Ritual') !== false || $name == 'Lift Enchantment' || (preg_match('@touch@i', $desc) && !preg_match('@touch skills@i', $desc)))) {
 		return round($energy * (1.0 - 0.04 * $attr_list['Expertise']));
@@ -1185,6 +1209,17 @@ function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
 }
 
 // Calculation function 19:
+// Return the real energy cost of a skill depending on its type, profession and level of Mysticism
+function calc_mysticism($attr_list, $type, $energy, $profession) {
+	if (isset($attr_list['Mysticism']) && $attr_list['Mysticism'] > 0 && $profession == 'Dervish' && strpos($type, 'Enchantment') !== false ) {
+		return round($energy * (1.0 - 0.04 * $attr_list['Mysticism']));
+	}
+
+	// Otherwise
+	return false;
+}
+
+// Calculation function 20:
 // Return the energy fork gained from using a skill depending on its type and level of Leadership
 function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
 	static $leadership_skills = Array(0 => Array('"It\'s just a flesh wound."', '"Make Your Time!"', '"Never Give Up!"', '"The Power Is Yours!"', '"Fear Me!"', '"I Will Avenge You!"', '"None Shall Pass!"', '"Retreat!"', '"On Your Knees!"', '"Coward!"', '"To the Limit!"', '"You Will Die!"', '"Victory is Mine!"', '"You\'re All Alone!"'), 1 => Array('"Brace Yourself!"', '"Can\'t Touch This!"', '"Find Their Weakness!"', '"Help Me!"', '"For Great Justice!"', '"I Will Survive!"', 'Call of Haste', 'Call of Protection', 'Otyugh\'s Cry', 'Predatory Bond', 'Symbiotic Bond'), 2 => Array('Strike as One'));
@@ -1212,7 +1247,7 @@ function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
 	return false;
 }
 
-// Calculation function 20:
+// Calculation function 21:
 // Return the real cast time of a skill depending on its type and level of Fast Casting
 function calc_fastcasting($attr_list, $type, $casting, $profession) {
 	if ((isset($attr_list['Fast Casting']) && $attr_list['Fast Casting'] > 0) && ($profession == 'Mesmer' || $casting >= 2)) {
@@ -1227,7 +1262,7 @@ function calc_fastcasting($attr_list, $type, $casting, $profession) {
 	return false;
 }
 
-// Calculation function 21:
+// Calculation function 22:
 // Return the additional weapon spell duration depending on level of Spawning Power
 function calc_weapon_duration($desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
@@ -1240,7 +1275,7 @@ function calc_weapon_duration($desc, $attr_list, $type) {
 	return $desc;
 }
 
-// Calculation function 22:
+// Calculation function 23:
 // Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
@@ -1273,7 +1308,7 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	}
 }
 
-// Calculation function 23:
+// Calculation function 24:
 // Return a description specifying how much health and armor does a Spirit have
 function add_spirit_health($desc, $attr_list) {
 
@@ -1300,7 +1335,7 @@ function add_spirit_health($desc, $attr_list) {
 	return $desc;
 }
 
-// Calculation function 24:
+// Calculation function 25:
 // Return a skill description enriched with a div tag depending on the specified effect ('{target}', '{self}' or '{div}')
 function add_div_tag($effect, $desc) {
 	if ($effect == 'target' || $effect == 'self') {
@@ -1317,7 +1352,7 @@ function add_div_tag($effect, $desc) {
 	return $desc;
 }
 
-// Calculation function 25:
+// Calculation function 26:
 // Return the skill description enriched with a divine favor tags ('{target}', '{self}' or '{div}')
 function desc_with_div_tag($skill) {
 	$desc = $skill['desc'];
@@ -1366,7 +1401,7 @@ function desc_with_div_tag($skill) {
 	return $desc;
 }
 
-// Calculation function 24:
+// Calculation function 27:
 // Return $text with each "{var_name}" replaced by $values['var_name']
 function infuse_values($text, $values) {
 	foreach ($values as $name => $value) {
@@ -1375,13 +1410,13 @@ function infuse_values($text, $values) {
 	return $text;
 }
 
-// Calculation function 25:
+// Calculation function 28:
 function getSkillIdPvP($pve) {
 	global $pveSkillIds;
 	return (isset($pveSkillIds[$pve]) ? $pveSkillIds[$pve] : $pve);
 }
 
-// Calculation function 26:
+// Calculation function 29:
 function getSkillIdPvE($pvp) {
 	global $pvpSkillIds;
 	return (isset($pvpSkillIds[$pvp]) ? $pvpSkillIds[$pvp] : $pvp);
@@ -1393,26 +1428,26 @@ function getSkillIdPvE($pvp) {
  * HELPER CALCULATION FUNCTIONS - MISCELLANEOUS
  ***************************************************************************/
 
-// Calculation function 27:
+// Calculation function 30:
 // Returns true if $att specifies that the skill should be rendered as text
 function gws_noicon($att) {
 	return strstr($att, 'noicon') !== false;
 }
 
-// Calculation function 28:
+// Calculation function 31:
 // Returns current time in seconds with a 2 decimal digits precision
 function gws_microtime_float() {
 	list($usec, $sec) = explode(" ", microtime());
 	return (float) $usec + (float) ($sec % 1000000);
 }
 
-// Calculation function 29:
+// Calculation function 32:
 // Restores html entities to characters, except for '<'
 function html_safe_decode($text) {
 	return str_replace('<', '&lt;', html_entity_decode($text));
 }
 
-// Calculation function 30:
+// Calculation function 33:
 // Int to bin on $bit_size bits
 function int2bin($int, $bit_size) {
 	$bin = strrev(base_convert($int, 10, 2));
@@ -1423,7 +1458,7 @@ function int2bin($int, $bit_size) {
 	return $bin . str_repeat('0', $bit_size - strlen($bin));
 }
 
-// Calculation function 31:
+// Calculation function 34:
 // Load a var from a file
 function load($filename) {
 	if (!file_exists($filename))
@@ -1432,7 +1467,7 @@ function load($filename) {
 		return require($filename);
 }
 
-// Calculation function 32:
+// Calculation function 35:
 // Organize skill by elite, profession, attribute and name (used by [rand seed="x"])
 function skill_sort_cmp($a, $b) {
 	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');
@@ -1598,6 +1633,7 @@ function template_to_gwbbcode($text) {
 	//Create prof=?/?
 	$ret .= "[build prof=$primary/$secondary";
 
+	// FIXME - LOOKS SUSPICIOUS.
 	// Add clean build name if any
 	// Fix by KillsLess to move syntax options out of the name
 	if (!empty($build_name)) {
