@@ -36,7 +36,7 @@
         <div class="pvx_description" style="background-image:url('/extensions/PvXCode/images/img_skin/{profession}.jpg');">
             <div class="pvx_{elite_or_normal}">{name}</div>
             <div class="pvx_type">{type}</div>
-            <div class="pvx_skill_info">{{tpl_desc}}{extra_desc}</div>
+            <div class="pvx_skill_info">{desc}{extra_desc}</div>
         </div>
         <div class="pvx_attrib_list">
             <div class="pvx_attrib_bg">
@@ -58,10 +58,6 @@
 <!-- BEGIN modified_requirement_value -->
 <span class="expert">{modified_value}</span>
 <!-- END modified_requirement_value -->
-
-<!-- BEGIN tpl_desc -->
-{desc}
-<!-- END tpl_desc -->
 
 <!-- BEGIN tpl_extra_desc -->
 <br/><span class="expert">{extra_desc}</span>
