@@ -19,7 +19,6 @@ define('OLD_CONFIG_PATH', GWBBCODE_ROOT.'/config.php');
 define('RENAMED_CONFIG_PATH', GWBBCODE_ROOT.'/config.old.php');
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/gwbbcode.tpl');
 define('BORDER_PATH', GWBBCODE_ROOT.'/img_border');
-define('GWSHACK', file_exists('gwshack.php'));
 
 define('GWBB_STATIC_HEADER', GWBBCODE_ROOT.'/static_header.tpl');
 define('GWBB_STATIC_BODY', GWBBCODE_ROOT.'/static_body.tpl');

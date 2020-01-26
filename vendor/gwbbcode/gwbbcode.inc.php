@@ -831,11 +831,7 @@ function skill_replace($reg) {
 		//Skill name or image on which to move cursor
 		$name_link = str_replace("\"", "&quot;", $name);
 		if (gws_noicon($att)) {
-			if (GWSHACK) {
-				$tpl = $gwbbcode_tpl['noicon_gwshack'];
-			} else {
-				$tpl = $gwbbcode_tpl['noicon'];
-			}
+			$tpl = $gwbbcode_tpl['noicon'];
 		} else {
 			$tpl = $gwbbcode_tpl['icon'];
 		}

@@ -28,10 +28,6 @@
 <a href="http://wiki.guildwars.com/wiki/{name_link}" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
 <!-- END noicon -->
 
-<!-- BEGIN noicon_gwshack -->
-<span class="skill_link" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</span>
-<!-- END noicon -->
-
 <!-- BEGIN skill -->
 <div id="load{load}" style="display: none;">
     <div class="pvx_overlib" style="width:{desc_len}px;">
