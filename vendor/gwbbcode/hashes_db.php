@@ -7,7 +7,6 @@
 'config_default.inc.php'=>'82720',
 'constants.inc.php'=>'f3235',
 'CREDITS.TXT'=>'ed0f3',
-'download.php'=>'54072',
 'gwbbcode.inc.php'=>'e6562',
 'gwbbcode.php'=>'eb436',
 'gwbbcode.tpl'=>'04c64',
