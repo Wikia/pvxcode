@@ -10,7 +10,7 @@ define('SKILLNAMES_PATH', GWBBCODE_ROOT.'/databases/skillname_db.php');
 //  Skill shorthand names into full names
 define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/databases/abbr_db.php');
 //  Skill pvp ids into pve ids
-define('SKILLIDSPVP_PATH', GWBBCODE_ROOT.'/databases/skill_pvpids_db.php');
+define('SKILLIDSPVP_PATH', GWBBCODE_ROOT.'/databases/skillpvpids_db.php');
 
 // INCLUDE PATHS
 
