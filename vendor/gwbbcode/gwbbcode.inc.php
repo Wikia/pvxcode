@@ -1110,11 +1110,11 @@ function gws_details($skill_id, $db_suffix = '') {
 			if (!empty($db_suffix) && $db_suffix{0} !== '_') {
 				$db_suffix = '_' . $db_suffix;
 			}
-			$skills_path_1 = str_replace('.php', $db_suffix . '.php', SKILLS_PATH_1);
-			if ( !file_exists($skills_path_1) ) {
+			$skills_path = str_replace('.php', $db_suffix . '.php', SKILLS_PATH);
+			if ( !file_exists($skills_path) ) {
 				return false;
 			}
-			$skill_list = load($skills_path_1);
+			$skill_list = load($skills_path);
 		}
 		$ret = isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false;
 	} else {

@@ -3,7 +3,7 @@
 $gwbbcode_version = '1.8.0.2';
 
 //DB paths
-define('SKILLS_PATH_1', GWBBCODE_ROOT.'/skill_db_1.php');
+define('SKILLS_PATH', GWBBCODE_ROOT.'/skill_db.php');
 define('SKILLNAMES_PATH', GWBBCODE_ROOT.'/skillname_db.php');
 define('SKILLABBRS_PATH', GWBBCODE_ROOT.'/abbr_db.php');
 define('HASHES_PATH', GWBBCODE_ROOT.'/hashes_db.php');
