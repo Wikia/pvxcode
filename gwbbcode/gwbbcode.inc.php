@@ -248,7 +248,6 @@ function skill_name_replace($reg) {
 		return $all;
 }
 
-//FIXME - SUSPECT THIS MAY CALL SOME OF THE OTHER REPLACEMENT FUNCTIONS - MAY NEED TO BE MOVED DOWNWARDS BELOW OTHER REPLACEMENT FUNCTIONS
 // Replacement function 6:
 // Process the [build] element
 function build_replace($reg) {
@@ -1038,21 +1037,6 @@ function gws_pve_attr($attribute) {
 	return in_array(gws_attribute_name($attribute), $pve_attr_list);
 }
 
-
-
-
-// FIXME - THIS INFORMATION IS ALREADY WITHIN SKILL_DB, SO THIS FUNCTION CAN BE DELETED.
-// Calculation function x:
-// Returns the type abbreviation of a full one. Returns false if no match is found
-function gws_type_abbr($type) {
-	static $type_list = Array('ax' => 'Axe Attack', 'bi' => 'Binding Ritual', 'bo' => 'Bow Attack', 'ch' => 'Chant', 'du' => 'Dual Attack', 'eb' => 'Ebon Vanguard Ritual', 'ec' => 'Echo', 'en' => 'Enchantment Spell', 'fo' => 'Form', 'gl' => 'Glyph', 'ha' => 'Hammer Attack', 'he' => 'Hex Spell', 'it' => 'Item Spell', 'le' => 'Lead Attack', 'me' => 'Melee Attack', 'na' => 'Nature Ritual', 'of' => 'Off-Hand Attack', 'pe' => 'Pet Attack', 'pr' => 'Preparation', 'ra' => 'Ranged Attack', 'sc' => 'Scythe Attack', 'sh' => 'Shout', 'si' => 'Signet', 'sk' => 'Skill', 'spea' => 'Spear Attack', 'sp' => 'Spell', 'st' => 'Stance', 'sw' => 'Sword Attack', 'ti' => 'Title', 'tr' => 'Trap', 'wa' => 'Ward Spell', 'wea' => 'Weapon Spell', 'we' => 'Well Spell');
-	return array_search($type, $type_list);
-	;
-}
-
-
-
-
 // Calculation function 9:
 // Returns an attribute list (string) cleaned of the prof, name and desc attributes
 function gws_attributes_clean($att) {
@@ -1633,7 +1617,6 @@ function template_to_gwbbcode($text) {
 	//Create prof=?/?
 	$ret .= "[build prof=$primary/$secondary";
 
-	// FIXME - LOOKS SUSPICIOUS.
 	// Add clean build name if any
 	// Fix by KillsLess to move syntax options out of the name
 	if (!empty($build_name)) {
