@@ -7,13 +7,7 @@
 // Chieftain_Alex, 2020 January.
 
 function overlib2() {
-    // Add fixed position element in top left
-    var hoverdiv = document.createElement('div');
-    hoverdiv.id = 'gwpvxhoverdiv';
-    hoverdiv.style.position = 'absolute';
-    hoverdiv.style.top = '-5000px';
-    hoverdiv.style.left = '-5000px';
-    document.body.appendChild(hoverdiv);
+    // Note: Dynamic_body.tpl inserts gwpvxhoverdiv
     
     // New global function - Track cursor and move tooltip nearby
     window.moveTooltip = function(e) {

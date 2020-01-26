@@ -182,12 +182,6 @@ function parse_gwbbcode($text, $build_name = false, $ignore_includes = false) {
 		$text = preg_replace('#(\[build )#isS', "\\1name=\"$build_name\" ", $text); //Add build names
 	}
 
-	//Make sure header hook was included
-	if (!defined('GWBBCODE_HEADER_HOOK')) {
-		define('GWBBCODE_HEADER_HOOK', true);
-		$hooks .= str_replace('{gwbbcode_root_path}', GWBBCODE_ROOT, file_get_contents(GWBB_DYNAMIC_HEADER));
-	}
-
 	//Make sure body hook was included
 	if (!defined('GWBBCODE_BODY_HOOK')) {
 		define('GWBBCODE_BODY_HOOK', true);

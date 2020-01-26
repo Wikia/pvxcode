@@ -16,6 +16,5 @@ define('DEFAULT_CONFIG_PATH', GWBBCODE_ROOT.'/config_default.inc.php');
 //Used in gwbbcode.inc.php
 define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/gwbbcode.tpl');
-define('GWBB_DYNAMIC_HEADER', GWBBCODE_ROOT.'/dynamic_header.tpl');
 define('GWBB_DYNAMIC_BODY', GWBBCODE_ROOT.'/dynamic_body.tpl');
 ?>
