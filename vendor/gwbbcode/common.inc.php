@@ -18,9 +18,5 @@
  *   All images, skill names and descriptions are (C) ArenaNet.
  ***************************************************************************/
 require_once(GWBBCODE_ROOT.'/constants.inc.php');
-if (@file_exists(CONFIG_PATH)) {
-   require_once(CONFIG_PATH);
-} else {
-   require_once(DEFAULT_CONFIG_PATH);
-}
+require_once(CONFIG_PATH);
 ?>

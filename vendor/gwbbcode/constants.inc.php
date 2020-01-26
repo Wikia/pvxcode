@@ -11,7 +11,6 @@ define('HASHES_PATH', GWBBCODE_ROOT.'/hashes_db.php');
 //Include paths
 //Used in common.inc.php
 define('CONFIG_PATH', GWBBCODE_ROOT.'/config.inc.php');
-define('DEFAULT_CONFIG_PATH', GWBBCODE_ROOT.'/config_default.inc.php');
 
 //Used in gwbbcode.inc.php
 define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
