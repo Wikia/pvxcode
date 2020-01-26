@@ -256,58 +256,6 @@ function pre_replace($reg) {
 }
 
 
-//Processes the [pickup...] element
-function pickup_replace($reg) {
-	global $gwbbcode_tpl;
-	global $userdata;
-	list($all, $att) = $reg;
-	$att = html_safe_decode($att);
-
-	if (preg_match('|^=\\"(.+)\\"|', $att, $reg)) {
-		$id = preg_replace('|[\'"!]|', '', $reg[1]);
-		//Get username
-		//PHPBB3
-		if (file_exists(GWBBCODE_ROOT . '/../index.php') && strpos(file_get_contents(GWBBCODE_ROOT . '/../index.php'), 'phpBB3') !== false) {
-			global $user;
-			$username = $user->data['username'];
-		}
-		//phpBB2
-		else if (file_exists(GWBBCODE_ROOT . '/../index.php') && (strpos(file_get_contents(GWBBCODE_ROOT . '/../index.php'), 'phpBB') !== false || strpos(file_get_contents(GWBBCODE_ROOT . '/../index.php'), 'JOOM_PHPBB') !== false)) {
-			$username = $userdata['username'];
-		}
-		//Unsupported forum software
-		else {
-			return $all;
-		}
-
-		//Get all pickup users
-		$pickup = @load(PICKUP_PATH);
-		if ($pickup === false)
-			return $all;
-
-		//Add or Remove links? (default=Add)
-		$action = 'add';
-		if (isset($pickup[$id]) && in_array($username, $pickup[$id]))
-			$action = 'remove';
-
-		$userlist = pickup_users($pickup, $username, $id, '');
-
-		$gwbbcode_root_path = GWBBCODE_ROOT;
-		$gwbbcode_img_path  = GWBBCODE_IMG_PATH;
-		unset($matches);
-		preg_match_all("#\{(.*?)\}#is", $gwbbcode_tpl['pickup'], $matches);
-		foreach ($matches[0] as $r => $find) {
-			$replace                = ${$matches[1][$r]};
-			$gwbbcode_tpl['pickup'] = str_replace($find, $replace, $gwbbcode_tpl['pickup']);
-		}
-		return $gwbbcode_tpl['pickup'];
-	} else
-		return "<script>alert('No id found for [pickup]; Please give one as in [pickup=\"75578\"]')</script>";
-}
-
-
-
-
 // Process [rand seed=465468 players=2]
 function rand_replace($reg) {
 	list($all, $att) = $reg;
