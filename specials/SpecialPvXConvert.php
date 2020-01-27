@@ -67,7 +67,6 @@ class SpecialPvXConvert extends SpecialPage {
 		}
 		$this->setHeaders();
 
-
 		$this->output->addHtml($out);
 	}
 
@@ -78,10 +77,68 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return string
 	 */
 	function formatBuild($build, $name) {
-		$build = explode("skill", $build);
-		$att   = $build[0];
-		$skl   = $build[1];
-		return ($this->cnv_attributes($att, $name) . $this->cnv_skils($skl));
+		// Explode always returns at least one array element
+		$build = explode("skill bar", $build);
+		$att = $build[0];
+
+		// Check if second element exists
+		$skl = '';
+		if ( isset($build[1]) ) {
+			$skl = $build[1];
+		}
+
+		return ('<pvxbig>' . PHP_EOL . '[build' . $this->cnv_attributes($att, $name) . ']' . $this->cnv_skils($skl) . '[/build]' . PHP_EOL . '</pvxbig>');
+	}
+
+	/**
+	 * Converts Attributes section of gw code into pvx code.
+	 * @param  string $att gw code for attributes
+	 * @param  string $name build name
+	 * @return string
+	 */
+	function cnv_attributes($att, $name) {
+		$var = preg_replace("/\r\n|\n|\r/", "", $att);
+		$var = str_replace(" ", "", $var);
+		$var = str_replace("{{attributes|", "", $var);
+		$var = str_replace("{{", "", $var);
+		$var = str_replace("}}", "", $var);
+
+		// Quit early if no attributes (would have been equal to "{{" before removal).
+		if ($var == '') {
+			return ' prof=""'; // the converter doesn't like if the build attribute is empty.
+		}
+
+		// Add build name (if it exists)
+		$out = array();
+		if ($name) {
+			$out[0] = ' name="' . $name . '"';
+		} else {
+			$out[0] = '';
+		}
+		
+		// For the unnamed parameters:
+		//  the first two will be the professions
+		//  followed by pairs of attributes
+		$attributes = explode("|", $var);
+		
+		// Add build profession
+		if ( isset($attributes[0]) && isset($attributes[1]) ) {
+			$out[0] .= ' prof="' . $attributes[0] . '/' . $attributes[1] . '"';
+		
+			// Add build attributes
+			$i = 2; // offset due to first two being professions, per above
+			$y = 1; // first position is already occupied by the profession
+			while ($i <= count($attributes)) {
+				if ( isset($attributes[$i]) and isset($attributes[$i + 1]) ) {
+					// $out[$y] = substr($attributes[$i], 0, 6) . "=" . substr($attributes[$i + 1], 0, 12);
+					$out[$y] = $attributes[$i] . "=" . $attributes[$i + 1];
+				}
+				$y++;
+				$i = $i + 2;
+			}
+		}
+		$attributes = strtolower(implode(" ", $out));
+		return $attributes;
 	}
 
 	/**
@@ -90,56 +147,29 @@ class SpecialPvXConvert extends SpecialPage {
 	 * @return string
 	 */
 	function cnv_skils($skl) {
-		$var	= preg_replace("/\r\n|\n|\r/", "", $skl);
-		$var	= str_replace("'", "", $var);
-		$var	= str_replace("\"", "", $var);
-		$var	= str_replace("!", "", $var);
-		$var	= str_replace("{{", "", $var);
-		$var	= str_replace("}}", "", $var);
+		$var = preg_replace("/\r\n|\n|\r/", "", $skl);
+		$var = str_replace("'", "", $var);
+		$var = str_replace("\"", "", $var);
+		$var = str_replace("!", "", $var); // We're removing exclamation marks for shouts here.
+		$var = str_replace("{{", "", $var);
+		$var = str_replace("}}", "", $var);
+
+		// Quit early if no skill bar (would have been equal to "" before pattern removal).
+		if ($var == '') {
+			return '';
+		}
+
 		$skills = explode("|", $var);
-		$out	= array();
-		$i		= 0;
+		$out = array();
+		$i = 0;
 		while ($i <= count($out)) {
 			if (isset($skills[$i + 1])) {
-				$out[$i] = "[" . $skills[$i + 1] . "]";
+				$out[$i] = '[' . $skills[$i + 1] . ']';
 			}
 			$i++;
 		}
-		$skills = strtolower(implode("", $out)) . "[/build]\n</pvxbig>";
+		$skills = strtolower(implode("", $out));
 		return $skills;
-	}
-
-	/**
-	 * Converts gw code for attributes into pvx code.
-	 * @param  string $att	gw code for attributes
-	 * @param  string $name build name
-	 * @return string
-	 */
-	function cnv_attributes($att, $name) {
-		$var		= preg_replace("/\r\n|\n|\r/", "", $att);
-		$var		= str_replace(" ", "", $var);
-		$var		= str_replace("{{", "", $var);
-		$var		= str_replace("}}", "", $var);
-		$attributes = explode("|", $var);
-		$out		= array();
-		if ($name) {
-			$out[0] = '<pvxbig>
-	[build name="' . $name . '" prof=' . substr($attributes[1], 0, 5) . '/' . substr($attributes[2], 0, 5);
-		} else {
-			$out[0] = "<pvxbig>
-	[build prof=" . substr($attributes[1], 0, 5) . "/" . substr($attributes[2], 0, 5);
-		}
-		$i = 3;
-		$y = 1;
-		while ($i <= count($attributes)) {
-			if ($attributes[$i + 1]) {
-				$out[$y] = substr($attributes[$i], 0, 6) . "=" . substr($attributes[$i + 1], 0, 12);
-			}
-			$y++;
-			$i = $i + 2;
-		}
-		$attributes = strtolower(implode(" ", $out) . "]");
-		return $attributes;
 	}
 
 	/**
