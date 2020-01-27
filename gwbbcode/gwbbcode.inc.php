@@ -501,7 +501,7 @@ function build_replace($reg) {
 			$template_html   = $gwbbcode_tpl['template'];
 		} else {
 			$template_error_msg = htmlspecialchars($invalid_template);
-			$template_html      = $gwbbcode_tpl['no_template'];
+			// Template code won't be valid so we won't paste it into tpl['template']
 		}
 	}
 
@@ -509,22 +509,24 @@ function build_replace($reg) {
 	// Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
 	do {
 		$prev_tpl = $tpl;
-		//$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+		// "{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
 		$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m) {
 			return isset($gwbbcode_tpl[$m[1]]) ? $gwbbcode_tpl[$m[1]] : $m[0];
 		}, $tpl);
-		//$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:0; } , $tpl);
-		//"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
 
-		//$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+		// "{desc}" is replaced by $desc
 		unset($matches);
 		preg_match_all("#\{(.*?)\}#is", $tpl, $matches);
 		foreach ($matches[0] as $r => $find) {
-			$replace = ${$matches[1][$r]};
-			$tpl     = str_replace($find, $replace, $tpl);
+			// FIXME - ALEX TEST @ OLD LINE 523 - MODIFIED BRANCH TO CHECK IF EXISTS, IF NOT, THEN REMOVE THE EMPTY {STUFF}. VERIFY THIS HAS NOT BROKEN ANYTHING ELSE.
+			if ( isset(${$matches[1][$r]}) ) {
+				$replace = ${$matches[1][$r]};
+			} else {
+				$replace = '';
+			}
+			$tpl = str_replace($find, $replace, $tpl);
 		}
 
-		//"{desc}" is replaced by $desc
 	} while ($prev_tpl != $tpl);
 	return $tpl;
 }
@@ -586,7 +588,7 @@ function skill_replace($reg) {
 		return $all;
 	}
 
-	$details = gws_details($id, $db_suffix);
+	$details = gws_details($id);
 	if ($details === false)
 		die("Missing skill. Id=$id; Name=$name");
 
@@ -595,7 +597,7 @@ function skill_replace($reg) {
 		// Change to default allegiance
 		if (strtolower(GWBBCODE_ALLEGIANCE) !== 'kurzick') {
 			$id      = gws_skill_id($name . ' (luxon)');
-			$details = gws_details($id, $db_suffix);
+			$details = gws_details($id);
 		}
 	}
 
@@ -1082,10 +1084,11 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 		// Adapt the fork to the build's attribute level..
 		if (isset($attr_list[$attribute])) {
 			$attr_lvl = $attr_list[$attribute];
+			// FIXME - SHITTY FIX ATTEMPTED AS FOLLOWS - does not seem to be working now, but no errors!
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
 				foreach ($regs as $fork) {
-					$pos = strpos($desc, $all);
-					$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($all));
+					$pos = strpos($desc, $regs);
+					$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($regs));
 				}
 			}
 		}
