@@ -13,6 +13,7 @@
  * Purpose of this file:
  *  Provide a dedicated special page for downloading build templates.
 **/
+
 class SpecialPvXDownloadTemplate extends SpecialPage {
 	/**
 	 * Main Constructor
@@ -37,10 +38,19 @@ class SpecialPvXDownloadTemplate extends SpecialPage {
 	 */
 	public function execute( $path ) {
 
-		$name = $_GET["name"];
-		# hack -- gwbbcode passes unencoded build hash
-		$build = str_replace( " ", "+", $_GET["build"] );
-
+		// $_GET retrieves functions from the URL.
+		// If the parameter hasn't been specified we don't want 
+		// to put php errors in the download file.
+		$name = 'Unnamed template';
+		if (isset($_GET['name'])) {
+			$name = $_GET['link'];
+		}
+		$build = '(template parameter was blank)';
+		if (isset($_GET['build'])) {
+			$build = $_GET['build'];
+		}
+		// FIXME - gwbbcode passes unencoded build hash
+		$build = str_replace( " ", "+", $build );
 
 		//Begin writing headers
 		header("Pragma: public");
