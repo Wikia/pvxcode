@@ -168,7 +168,7 @@ class SpecialPvXConvert extends SpecialPage {
 			}
 			$i++;
 		}
-		$skills = strtolower(implode("", $out));
+		$skills = implode("", $out);
 		return $skills;
 	}
 
