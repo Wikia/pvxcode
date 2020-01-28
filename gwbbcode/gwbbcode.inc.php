@@ -47,16 +47,6 @@ $pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STA
 // Prepares the page and then replaces gwBBCode with HTML
 //  This function is directly called by: extension\classes\PvXCode.php
 function parse_gwbbcode($text, $build_name = false) {
-
-	// Make sure body hook was included so that tooltips have an anchor to target
-	//  This is required by extension\js\overlib.js
-	$hooks = '';
-	if (!defined('GWBBCODE_BODY_HOOK')) {
-		define('GWBBCODE_BODY_HOOK', true);
-		$hooks .= file_get_contents(GWBB_DYNAMIC_BODY);
-	}
-	$hooks = preg_replace('/[\\r\\n]/', '', $hooks);
-
 	// If a build name is provided, assign it to all builds
 	//  This is so that any save build button has a decent title
 	if (!empty($build_name)) {
@@ -99,7 +89,7 @@ function parse_gwbbcode($text, $build_name = false) {
 		$text = preg_replace('@\[gwbbcode runtime\]@i', round(gws_microtime_float() - $start, 3), $text); // Precise enough
 	}
 
-	return $hooks . $text;
+	return $text;
 }
 
 

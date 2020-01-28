@@ -17,7 +17,6 @@ define('SKILLIDSPVP_PATH', GWBBCODE_ROOT.'/databases/skillpvpids_db.php');
 //  Used in gwbbcode.inc.php
 define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/templates/gwbbcode.tpl');
-define('GWBB_DYNAMIC_BODY', GWBBCODE_ROOT.'/templates/dynamic_body.tpl');
 
 // PREFERENCES
 //  Used in gwbbcode.inc.php
