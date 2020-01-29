@@ -29,6 +29,7 @@ global $gwbbcode_tpl;
 if (!isset($gwbbcode_tpl))
 	$gwbbcode_tpl = load_gwbbcode_smarty_template();
 
+// FIXME - SUSPECT MEMORY INTENSIVE - NOT SURE HOW TO ONLY LOAD THE IDS ONCE, AND NOT ATTEMPT TO LOAD MULTIPLE TIMES.
 // Array of PvP -> PvE IDs
 //  @ sign just means it suppresses errors if they occur
 static $pvpSkillIds = Array(); // previously "global" not "static"
@@ -54,8 +55,8 @@ function parse_gwbbcode($text, $build_name = false) {
 		$text = preg_replace('#(\[build )#isS', "\\1name=\"$build_name\" ", $text); // Add build names
 	}
 
-    // Timer for the actual gwBBCode parse duration
-	$start = gws_microtime_float();
+	// Timer for the actual gwBBCode parse duration
+	$start = microtime(true);
 
 	// 1: Replace all '['s inside [pre]..[/pre], or [nobb]..[/nobb] by '&#91;'
 	$text = preg_replace_callback('#\[pre\](.*?)\[\/pre\]#isS', 'pre_replace', $text);
@@ -86,7 +87,7 @@ function parse_gwbbcode($text, $build_name = false) {
 	// FIXME - SEEMS TO ALWAYS RETURN ZERO?
 	// 9: [gwbbcode runtime]
 	if (preg_match('@\[gwbbcode runtime\]@i', $text) !== false) {
-		$text = preg_replace('@\[gwbbcode runtime\]@i', round(gws_microtime_float() - $start, 3), $text); // Precise enough
+		$text = preg_replace('@\[gwbbcode runtime\]@i', 'Runtime = ' . round(microtime(true) - $start, 3) . ' seconds', $text); // Precise enough
 	}
 
 	return $text;
@@ -487,11 +488,9 @@ function build_replace($reg) {
 				}
 			}
 			$template_bbcode = "&#91;$template_name;$template_code]"; // Used &#91; to prevent double parsing anomalies
-			$template_size   = strlen($template_bbcode);
-			$template_html   = $gwbbcode_tpl['template'];
 		} else {
 			$template_error_msg = htmlspecialchars($invalid_template);
-			// Template code won't be valid so we won't paste it into tpl['template']
+			// FIXME - No idea where the error should be routed to.
 		}
 	}
 
@@ -503,12 +502,11 @@ function build_replace($reg) {
 		$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m) {
 			return isset($gwbbcode_tpl[$m[1]]) ? $gwbbcode_tpl[$m[1]] : $m[0];
 		}, $tpl);
-
+	
 		// "{desc}" is replaced by $desc
 		unset($matches);
 		preg_match_all("#\{(.*?)\}#is", $tpl, $matches);
 		foreach ($matches[0] as $r => $find) {
-			// FIXME - ALEX TEST @ OLD LINE 523 - MODIFIED BRANCH TO CHECK IF EXISTS, IF NOT, THEN REMOVE THE EMPTY {STUFF}. VERIFY THIS HAS NOT BROKEN ANYTHING ELSE.
 			if ( isset(${$matches[1][$r]}) ) {
 				$replace = ${$matches[1][$r]};
 			} else {
@@ -516,7 +514,6 @@ function build_replace($reg) {
 			}
 			$tpl = str_replace($find, $replace, $tpl);
 		}
-
 	} while ($prev_tpl != $tpl);
 	return $tpl;
 }
@@ -738,8 +735,6 @@ function skill_replace($reg) {
 			'extra_desc' => $extra_desc
 		));
 
-		$desc_len = strlen($desc) / 2.5 + 340;
-
 		// Change the skill aspect if skill is elite
 		if (isset($elite) && $elite) {
 			$elite_or_normal = 'elite_skill';
@@ -758,7 +753,8 @@ function skill_replace($reg) {
 	// Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
 	do {
 		$prev_tpl = $tpl;
-		//$tpl = preg_replace("#\{\{(.*?)\}\}#ise", "isset(\$gwbbcode_tpl['\\1'])?\$gwbbcode_tpl['\\1']:'\\0'", $tpl);
+
+		//"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
 		unset($matches);
 		preg_match_all("#\{\{(.*?)\}\}#is", $tpl, $matches);
 		foreach ($matches[0] as $r => $find) {
@@ -767,23 +763,15 @@ function skill_replace($reg) {
 				$tpl     = str_replace($find, $replace, $tpl);
 			}
 		}
-		//$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m){ echo $m[1]; return isset($gwbbcode_tpl[$m[1]])?$gwbbcode_tpl[$m[1]]:"Not Found: ".$m[1].""; } , $tpl);
-		//"{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
-		//$tpl = preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $tpl);
+		
+		//"{desc}" is replaced by $desc
 		unset($matches);
 		preg_match_all("#\{(.*?)\}#is", $tpl, $matches);
 		foreach ($matches[0] as $r => $find) {
 			$replace = ${$matches[1][$r]};
 			$tpl     = str_replace($find, $replace, $tpl);
 		}
-		//"{desc}" is replaced by $desc
 	} while ($prev_tpl != $tpl);
-
-	// Adds a space entity if the skill tag is followed by a space
-	// Necessary cause IE doesn't show spaces following divs
-	if ($all[strlen($all) - 1] === ' ') {
-		$tpl .= '&nbsp;';
-	}
 
 	return $tpl;
 }
@@ -1074,11 +1062,11 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 		// Adapt the fork to the build's attribute level..
 		if (isset($attr_list[$attribute])) {
 			$attr_lvl = $attr_list[$attribute];
-			// FIXME - SHITTY FIX ATTEMPTED AS FOLLOWS - does not seem to be working now, but no errors!
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
 				foreach ($regs as $fork) {
-					$pos = strpos($desc, $regs);
-					$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($regs));
+					list($all, $val_0, $val_15) = $fork;
+					$pos = strpos($desc, $all);
+					$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($all));
 				}
 			}
 		}
@@ -1094,6 +1082,7 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
 				foreach ($regs as $fork) {
+					list($all, $val_0, $val_10) = $fork;
 					$pos = strpos($desc, $all);
 					$desc = substr_replace($desc, fork_val_pveonly($val_0, $val_10, $attr_lvl), $pos, strlen($all));
 				}
@@ -1374,19 +1363,12 @@ function gws_noicon($att) {
 }
 
 // Calculation function 31:
-// Returns current time in seconds with a 2 decimal digits precision
-function gws_microtime_float() {
-	list($usec, $sec) = explode(" ", microtime());
-	return (float) $usec + (float) ($sec % 1000000);
-}
-
-// Calculation function 32:
 // Restores html entities to characters, except for '<'
 function html_safe_decode($text) {
 	return str_replace('<', '&lt;', html_entity_decode($text));
 }
 
-// Calculation function 33:
+// Calculation function 32:
 // Int to bin on $bit_size bits
 function int2bin($int, $bit_size) {
 	$bin = strrev(base_convert($int, 10, 2));
@@ -1397,7 +1379,7 @@ function int2bin($int, $bit_size) {
 	return $bin . str_repeat('0', $bit_size - strlen($bin));
 }
 
-// Calculation function 34:
+// Calculation function 33:
 // Load a var from a file
 function load($filename) {
 	if (!file_exists($filename))
@@ -1406,7 +1388,7 @@ function load($filename) {
 		return require($filename);
 }
 
-// Calculation function 35:
+// Calculation function 34:
 // Organize skill by elite, profession, attribute and name (used by [rand seed="x"])
 function skill_sort_cmp($a, $b) {
 	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');

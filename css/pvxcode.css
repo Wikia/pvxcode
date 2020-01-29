@@ -9,7 +9,7 @@ div.pvx_overlib {
 	border:1px;
 	border-color:#78796c;
 	border-style:solid;
-	height:150px;
+	width:420px;
 	background-color:#ffffff;
     position:relative;
 	padding:1px;
@@ -57,9 +57,10 @@ div.pvx_description {
 	background-color:#fafaf7;
 	background-repeat: no-repeat;
 	background-position:right top;
-	height:148px;
 	z-index:1;
 	margin-left:64px;
+	margin-bottom:32px;
+	min-height:120px;
 }
 
 div.pvx_normal_skill {

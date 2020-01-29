@@ -17,7 +17,7 @@
 
 <!-- END prof_icon -->
 <!-- BEGIN icon -->
-<div class="skill_box"><div class="skill_icon" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="https://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="https://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
+<div class="skill_box"><div class="skill_icon hovertooltip" data-tooltipid="load{load}"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="https://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="https://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
 <!-- END icon -->
 
 <!-- BEGIN blank_icon -->
@@ -25,12 +25,12 @@
 <!-- END blank_icon -->
 
 <!-- BEGIN noicon -->
-<a href="https://wiki.guildwars.com/wiki/{name_link}" onmouseover="return gwTooltipOpen(document.getElementById('load{load}').innerHTML);" onmouseout="return gwTooltipClose();" style="text-decoration: none">{name}</a>
+<a href="https://wiki.guildwars.com/wiki/{name_link}" class="hovertooltip" data-tooltipid="load{load}" style="text-decoration: none">{name}</a>
 <!-- END noicon -->
 
 <!-- BEGIN skill -->
 <div id="load{load}" style="display: none;">
-    <div class="pvx_overlib" style="width:{desc_len}px;">
+    <div class="pvx_overlib">
         <div class="pvx_campaign">{chapter}</div>
         <div class="pvx_mastery">{profession}. {attr_html}</div>
         <div class="pvx_description" style="background-image:url('/extensions/PvXCode/images/img_skin/{profession}.jpg');">
@@ -58,6 +58,10 @@
 <!-- BEGIN modified_requirement_value -->
 <span class="expert">{modified_value}</span>
 <!-- END modified_requirement_value -->
+
+<!-- BEGIN tpl_desc -->
+{desc}
+<!-- END tpl_desc -->
 
 <!-- BEGIN tpl_extra_desc -->
 <br/><span class="expert">{extra_desc}</span>
