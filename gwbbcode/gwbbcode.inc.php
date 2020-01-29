@@ -297,7 +297,7 @@ function build_replace($reg) {
 	$attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
 	$skills     = str_replace('[skill', '[skill ' . $att, $skills);
 
-	// Build description
+	// Build description - FIXME: NO IDEA WHERE THE DESCRIPTION GOES TO. SIMILARLY, WHERE DOES THE EXPERT ATTRIBUTE DESC GO TO?
 	$desc = preg_match('|desc=\\"([^"]+)\\"|', $att, $reg) ? $reg[1] : '';
 	$desc = empty($desc) ? '' : ($desc . '<br/>');
 	$desc = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $desc))));
@@ -1191,19 +1191,44 @@ function calc_fastcasting($attr_list, $type, $casting, $profession) {
 }
 
 // Calculation function 22:
+// Return a description specifying how much health and armor does a Spirit have
+function add_spirit_health($desc, $attr_list) {
+	// Get Spirit's level
+	if (preg_match('@Create a level <span class="variable">([0-9]+)</span> Spirit@', $desc, $reg)) {
+		$spirit_level = $reg[1];
+
+		// Get Binding Ritual level
+		$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
+
+		// Compute the Spirit's Health and armor
+		$spirit_health  = $spirit_level * 20; // Thanks to GuildWiki.org for this equation
+		$spawning_bonus = '';
+		if ($spawning_level > 0) {
+			$spawning_health = round($spirit_health * ($spawning_level * 0.04));
+			$spawning_bonus  = ' (+' . $spawning_health . '&#041;';
+		}
+		$spirit_armor = round((88 / 15 * $spirit_level) + 3);
+
+		// Add Spirit's health to description
+		$desc = preg_replace('@Create a level <span class="variable">[0-9]+</span> Spirit@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
+	}
+	return $desc;
+}
+
+// Calculation function 23:
 // Return the additional weapon spell duration depending on level of Spawning Power
 function calc_weapon_duration($desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
 		if (preg_match('@(for (?:<span class="variable">)?)([0-9]+)((?:</span>)? second)@i', $desc, $reg)) {
 			$base_duration       = $reg[2];
 			$additional_duration = round($reg[2] * $attr_list['Spawning Power'] * 0.04, 1);
-			$desc                = str_replace($reg[0], $reg[1] . $reg[2] . '<span class="expert">(+' . $additional_duration . '&#041;</span>' . $reg[3], $desc);
+			$desc                = str_replace($reg[0], $reg[1] . $reg[2] . ' <span class="expert">(+' . $additional_duration . '&#041;</span>' . $reg[3], $desc);
 		}
 	}
 	return $desc;
 }
 
-// Calculation function 23:
+// Calculation function 24:
 // Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
@@ -1234,33 +1259,6 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 		$desc = str_replace('{target}', '', $desc);
 		$desc = str_replace('{self}', '', $desc);
 	}
-}
-
-// Calculation function 24:
-// Return a description specifying how much health and armor does a Spirit have
-function add_spirit_health($desc, $attr_list) {
-
-	// Get Spirit's level
-	if (preg_match('@Create a level <span class="variable">([0-9]+)</span> Spirit@', $desc, $reg)) {
-		$spirit_level = $reg[1];
-
-		// Get Binding Ritual level
-		$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
-
-		// Compute the Spirit's Health and armor
-		$spirit_health  = $spirit_level * 20; // Thanks to GuildWiki.org for this equation
-		$spawning_bonus = '';
-		if ($spawning_level > 0) {
-			$spawning_health = round($spirit_health * ($spawning_level * 0.04));
-			$spawning_bonus  = ' (+' . $spawning_health . '&#041;';
-		}
-		$spirit_armor = round((88 / 15 * $spirit_level) + 3);
-
-		// Add Spirit's health to description
-		$desc = preg_replace('@Create a level <span class="variable">[0-9]+</span> Spirit@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
-	}
-
-	return $desc;
 }
 
 // Calculation function 25:
