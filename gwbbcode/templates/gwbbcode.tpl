@@ -33,7 +33,7 @@
     <div class="pvx_overlib">
         <div class="pvx_campaign">{chapter}</div>
         <div class="pvx_mastery">{profession}. {attr_html}</div>
-        <div class="pvx_description" style="background-image:url('/extensions/PvXCode/images/img_skin/{profession}.jpg');">
+        <div class="pvx_description" style="background-image:url('/extensions/PvXCode/images/img_skin/{profession}.gif');">
             <div class="pvx_{elite_or_normal}">{name}</div>
             <div class="pvx_type">{type}</div>
             <div class="pvx_skill_info">{desc}{extra_desc}</div>
