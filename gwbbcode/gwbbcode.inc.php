@@ -39,7 +39,7 @@ if (!isset($gwbbcode_tpl))
 // 		die("Missing pvp skill id database.");
 // 	}
 // }
-// // Array of PvE -> PvP IDs (only if there is a PvP id)
+// Array of PvE -> PvP IDs (only if there is a PvP id)
 // $pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STATIC IN FRONT OF THIS - THINK IT JUST TAKES THE TYPE OF THE ARRAY_FLIP?
 
 /***************************************************************************
@@ -115,8 +115,8 @@ function pre_replace($reg) {
 function random_skill_replace($reg) {
 	list($all, $att) = $reg;
 	$skill_list = gws_skill_id_list();
-	$small_name = array_rand($skill_list);
-	$details = gws_details($skill_list[$small_name]);
+	$random_skill_name = array_rand($skill_list);
+	$details = gws_details($skill_list[$random_skill_name]);
 	return '[' . $details['name'] . "$att]";
 }
 
@@ -130,9 +130,9 @@ function rand_replace($reg) {
 	if (preg_match('|seed=([0-9]+)|', $att, $reg)) {
 		$seed = intval($reg[1]);
 	} else {
-		$seed = rand(1000, 100000);
+		$seed = mt_rand(1000, 100000);
 	}
-	srand($seed);
+	mt_srand($seed);
 
 	// Get the number of players
 	if (preg_match('|players=([0-9]+)|', $att, $reg)) {
@@ -141,27 +141,48 @@ function rand_replace($reg) {
 		$players = 1;
 	}
 
+	// Get PvP ids so we can ignore them
+	static $pvpSkillIds = Array();
+	if ( !file_exists(SKILLIDSPVP_PATH) ) {
+		die("Missing pvp skill id database.");
+	}
+	$pvpSkillIds = load(SKILLIDSPVP_PATH);
+
 	// Generate random skills
-	// Note: Can't use array_filter then array_rand, because array_rand uses an algorithm that doesn't respect setting the random seed with srand().
+	// Note: Can't use array_filter then array_rand, because array_rand uses an algorithm that doesn't respect setting the random seed with mt_srand().
 	$skills = Array();
-	$elite = 0;
-	$max_elite = ($players + 1) * 3;
+	$used_ids = Array();
+
+	// Initialise variables
 	$normal = 0;
-	$max_normal = ($players + 1) * 14;
+	$elite = 0;
 	$total = 0;
+	$max_normal = ($players + 1) * 14;
+	$max_elite = ($players + 1) * 3;
 	$max_total = $max_elite + $max_normal;
+
+	// Reject if the limits are excessive.
+	if ($max_total > 200) {
+		return "Selected input parameters to &#91;rand ...] requested too many skills ($max_total skills requested).";
+	}
+
+	// Initialise
 	while ($total < $max_total) {
-		$id = rand(0, 2657); // 2657 is the id of the highest non-pvp only skill.
-		if ($skill = gws_details($id)) {
+		$id = mt_rand(0, 2423); // 2423 is the id of the highest non-pvp only skill.
+		$skill = gws_details($id);
+		// Check skill details exist, that it is not a pvp skill id, and that the id hasn't been stored before
+		if ($skill && !isset($pvpSkillIds[$id]) && !in_array($id, $used_ids)) {
 			// Skill exists!
 			if ($skill['elite'] == 1 && $elite < $max_elite) {
 				$elite++;
 				$total++;
 				$skills[] = $skill;
+				$used_ids[] = $id;
 			} else if ($skill['elite'] == 0 && $normal < $max_normal) {
 				$normal++;
 				$total++;
 				$skills[] = $skill;
+				$used_ids[] = $id;
 			}
 		}
 	}
@@ -194,7 +215,7 @@ function skill_name_replace($reg) {
 	//'[[Skill Name]' => no icon
 	if ($name{0} == '[') {
 		$noicon = true;
-		$name   = substr($name, 1);
+		$name = substr($name, 1);
 	} else
 		$noicon = false;
 
@@ -209,7 +230,8 @@ function skill_name_replace($reg) {
 		$name = $reg[1];
 	}
 
-	if (($id = gws_skill_id($name)) !== false) {
+	$id = gws_skill_id($name);
+	if ($id !== false) {
 		// Handle [shock@8]
 		$attr = '';
 		if (isset($attr_val)) {
@@ -247,7 +269,7 @@ function build_replace($reg) {
 	$att           = str_replace("\n", "<br/>\n", html_safe_decode($att));
 	$attr_list_raw = attribute_list_raw($att);
 	$attr_list     = attribute_list($att);
-	$load          = rand();
+	$load          = mt_rand();
 
 	// Professions
 	$prof      = gws_build_profession($att);
@@ -519,13 +541,13 @@ function skillset_replace($reg) {
 		// Load all skills
 		static $skill_list = Array();
 		if ( !file_exists(SKILLS_PATH) ) {
-			return false;
+			die("Missing skill details database.");
 		}
-		
+
 		// Prepare bbcode prefix
 		$skill_list = load(SKILLS_PATH);
 		$attr_bbcode = " $attr=$attr_val";
-		
+
 		// Native php filter function is more effective than a loop
 		$skill_list_filtered = array_filter($skill_list, function ($var) use ($attr) {
 			return ($var['attr'] == $attr);
@@ -568,7 +590,7 @@ function skill_replace($reg) {
 		die("Missing skill. Id=$id; Name=$name");
 
 	extract($details, EXTR_OVERWRITE);
-	$load = rand();
+	$load = mt_rand();
 
 	// Blank/Optional skill slot
 	if ($name == 'No Skill') {
