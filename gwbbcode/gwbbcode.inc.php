@@ -142,6 +142,7 @@ function rand_replace($reg) {
 	}
 
 	// Generate random skills
+	// Note: Can't use array_filter then array_rand, because array_rand uses an algorithm that doesn't respect setting the random seed with srand().
 	$skills = Array();
 	$elite = 0;
 	$max_elite = ($players + 1) * 3;
