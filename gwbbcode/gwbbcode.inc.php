@@ -325,14 +325,26 @@ function build_replace($reg) {
 	$desc = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $desc))));
 
 	// Primary attribute effect on build
-	if (!empty($attr_list['Energy Storage'])) {
-		$desc .= '<span class="expert">Your maximum Energy is raised by <b>' . (3 * $attr_list['Energy Storage']) . '</b>.</span><br/>';
+	if (!empty($attr_list['Strength'])) {
+		$desc .= '<span class="expert">Your attack skills gain <b>' . $attr_list['Strength'] . '%</b> armor penetration.</span><br/>';
+	} else if (!empty($attr_list['Expertise'])) {
+		$desc .= '<span class="expert">The energy cost of attack skills, rituals, touch skills and all Ranger skills is reduced by <b>' . (4 * $attr_list['Expertise']) . '%</b>.</span><br/>';
+	} else if (!empty($attr_list['Divine Favor'])) {
+		$desc .= '<span class="expert">Your allies are healed for ' . round(3.2 * $attr_list['Divine Favor']) . ' Health whenever you cast Monk spells on them.</span><br/>';
 	} else if (!empty($attr_list['Soul Reaping'])) {
 		$desc .= '<span class="expert">When they die near you, you gain <b>' . $attr_list['Soul Reaping'] . '</b> Energy per creature, or <b>' . floor($attr_list['Soul Reaping'] / 2) . '</b> Energy per Spirit under your control, up to 3 times every 15 seconds.</span><br/>';
+	} else if (!empty($attr_list['Fast Casting'])) {
+		$desc .= '<span class="expert">You activate Spells <b>' . (100 - floor(pow(0.955, $attr_list['Fast Casting'])*100)) . '%</b> and Signets <b>' . (3 * $attr_list['Fast Casting']) . '%</b> faster. (No effect for non-Mesmer skills with a cast time less than 2 seconds.)</span><br/>';
+		$desc .= '<span class="expert">In PvE, the recharge time of your Mesmer Spells is reduced by <b>' . (3 * $attr_list['Fast Casting']) . '%</b>.</span><br/>';
+	} else if (!empty($attr_list['Energy Storage'])) {
+		$desc .= '<span class="expert">Your maximum Energy is raised by <b>' . (3 * $attr_list['Energy Storage']) . '</b>.</span><br/>';
 	} else if (!empty($attr_list['Critical Strikes'])) {
-		$desc .= '<span class="expert">You have an additonal <b>' . $attr_list['Critical Strikes'] . '</b>% chance to critical hit. Whenever you critical hit, you get <b>' . round($attr_list['Critical Strikes'] / 5) . '</b> Energy.</span><br/>';
+		$desc .= '<span class="expert">You have an additional <b>' . $attr_list['Critical Strikes'] . '</b>% chance to critical hit. Whenever you critical hit, you get <b>' . round($attr_list['Critical Strikes'] / 5) . '</b> Energy.</span><br/>';
+	} else if (!empty($attr_list['Spawning Power'])) {
+		$desc .= '<span class="expert">Spirits and minions you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>'; // FIXME
 	} else if (!empty($attr_list['Mysticism'])) {
 		$desc .= '<span class="expert">Whenever an Enchantment ends, you gain <b>' . $attr_list['Mysticism'] . '</b> Health and <b>' . floor($attr_list['Mysticism'] / 3) . '</b> Energy.</span><br/>';
+		$desc .= '<span class="expert">In PvE, gain <b>+' . $attr_list['Mysticism'] . '</b> armor rating while enchanted.</span><br/>';
 	} else if (!empty($attr_list['Leadership'])) {
 		$desc .= '<span class="expert">You gain 2 Energy for each ally affected by one of your Shouts or Chants (maximum <b>' . floor($attr_list['Leadership'] / 2) . '</b> Energy).</span><br/>';
 	}
@@ -1149,6 +1161,9 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 
 	// PvE only: Append a note saying PvE only
 	if ($pve_only !== '') {
+		if ($extra_desc !== '') {
+			$extra_desc .= '<br>';
+		}
 		$extra_desc .= $pve_only;
 	}
 }
