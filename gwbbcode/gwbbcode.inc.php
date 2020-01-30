@@ -84,8 +84,10 @@ function parse_gwbbcode($text, $build_name = false) {
 	// 8: Manage [skill]...[/skill]
 	$text = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\][ ]?#isS', 'skill_replace', $text);
 
-	// FIXME - SEEMS TO ALWAYS RETURN ZERO?
-	// 9: [gwbbcode runtime]
+	// 9: Manage [gwbbcode version]
+	$text = preg_replace('@\[gwbbcode version\]@i', GWBBCODE_VERSION, $text);
+
+	// 10: Manage [gwbbcode runtime]
 	if (preg_match('@\[gwbbcode runtime\]@i', $text) !== false) {
 		$text = preg_replace('@\[gwbbcode runtime\]@i', 'Runtime = ' . round(microtime(true) - $start, 3) . ' seconds', $text); // Precise enough
 	}
@@ -113,7 +115,7 @@ function random_skill_replace($reg) {
 	list($all, $att) = $reg;
 	$skill_list = gws_skill_id_list();
 	$small_name = array_rand($skill_list);
-	$details    = gws_details($skill_list[$small_name]);
+	$details = gws_details($skill_list[$small_name]);
 	return '[' . $details['name'] . "$att]";
 }
 
@@ -139,15 +141,15 @@ function rand_replace($reg) {
 	}
 
 	// Generate random skills
-	$skills     = Array();
-	$elite      = 0;
-	$max_elite  = ($players + 1) * 3;
-	$normal     = 0;
+	$skills = Array();
+	$elite = 0;
+	$max_elite = ($players + 1) * 3;
+	$normal = 0;
 	$max_normal = ($players + 1) * 14;
-	$total      = 0;
-	$max_total  = $max_elite + $max_normal;
+	$total = 0;
+	$max_total = $max_elite + $max_normal;
 	while ($total < $max_total) {
-		$id = rand(0, 2000);
+		$id = rand(0, 2657); // 2657 is the id of the highest non-pvp only skill.
 		if ($skill = gws_details($id)) {
 			// Skill exists!
 			if ($skill['elite'] == 1 && $elite < $max_elite) {
@@ -187,8 +189,6 @@ function skill_name_replace($reg) {
 	list($all, $name) = $reg;
 	$name = html_safe_decode($name);
 
-	$all = preg_replace('@\[gwbbcode version\]@i', GWBBCODE_VERSION, $all);
-
 	//'[[Skill Name]' => no icon
 	if ($name{0} == '[') {
 		$noicon = true;
@@ -212,19 +212,21 @@ function skill_name_replace($reg) {
 		$attr = '';
 		if (isset($attr_val)) {
 			$skill = gws_details($id);
-			$attr  = gws_attribute_name($skill['attribute']);
-			$attr  = " $attr=$attr_val";
+			$attr = gws_attribute_name($skill['attribute']);
+			$attr = " $attr=$attr_val";
 		}
 
 		// Handle [shock|a knockdown]
 		$show = '';
 		if (!empty($shown_name)) {
-			$show   = " show=\"$shown_name\"";
+			$show = " show=\"$shown_name\"";
 			$noicon = true;
 		}
 
 		// Handle the difference between [[shock] and [shock]
 		if ($noicon)
+			// PHP note: Use of double quotes replaces variables inside with their values
+			// PHP note: Use of single quotes shows the variable names like JS would.
 			return "[skill noicon$attr$show]" . $name . '[/skill]';
 		else
 			return "[skill$attr]" . $name . '[/skill]';
@@ -244,10 +246,6 @@ function build_replace($reg) {
 	$attr_list_raw = attribute_list_raw($att);
 	$attr_list     = attribute_list($att);
 	$load          = rand();
-
-	// Build name
-	$build_name = gws_build_name($att);
-	$build_name = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $build_name))));
 
 	// Professions
 	$prof      = gws_build_profession($att);
@@ -284,7 +282,6 @@ function build_replace($reg) {
 	// Attributes
 	$attributes = '';
 	foreach ($attr_list_raw as $attribute_name => $attribute_value) {
-		//$attributes .= preg_replace("#\{(.*?)\}#ise", "isset($\\1)?$\\1:'\\0'", $gwbbcode_tpl['attribute']);
 		unset($matches);
 		$attr = $gwbbcode_tpl['attribute'];
 		preg_match_all("#\{(.*?)\}#is", $attr, $matches);
@@ -297,7 +294,8 @@ function build_replace($reg) {
 	$attributes = preg_replace('/\s*\\+\s*/', ' + ', $attributes);
 	$skills     = str_replace('[skill', '[skill ' . $att, $skills);
 
-	// Build description - FIXME: NO IDEA WHERE THE DESCRIPTION GOES TO. SIMILARLY, WHERE DOES THE EXPERT ATTRIBUTE DESC GO TO?
+
+	// Build description
 	$desc = preg_match('|desc=\\"([^"]+)\\"|', $att, $reg) ? $reg[1] : '';
 	$desc = empty($desc) ? '' : ($desc . '<br/>');
 	$desc = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $desc))));
@@ -311,6 +309,8 @@ function build_replace($reg) {
 		$desc .= '<span class="expert">You have an additonal <b>' . $attr_list['Critical Strikes'] . '</b>% chance to critical hit. Whenever you critical hit, you get <b>' . round($attr_list['Critical Strikes'] / 5) . '</b> Energy.</span><br/>';
 	} else if (!empty($attr_list['Mysticism'])) {
 		$desc .= '<span class="expert">Whenever an Enchantment ends, you gain <b>' . $attr_list['Mysticism'] . '</b> Health and <b>' . floor($attr_list['Mysticism'] / 3) . '</b> Energy.</span><br/>';
+	} else if (!empty($attr_list['Leadership'])) {
+		$desc .= '<span class="expert">You gain 2 Energy for each ally affected by one of your Shouts or Chants (maximum <b>' . floor($attr_list['Leadership'] / 2) . '</b> Energy).</span><br/>';
 	}
 
 
@@ -325,7 +325,6 @@ function build_replace($reg) {
 	static $attr_ids = Array('fas', 'ill', 'dom', 'ins', 'blo', 'dea', 'sou', 'cur', 'air', 'ear', 'fir', 'wat', 'ene', 'hea', 'smi', 'pro', 'div', 'str', 'axe', 'ham', 'swo', 'tac', 'bea', 'exp', 'wil', 'mar', 29 => 'dag', 'dead', 'sha', 'com', 'res', 'cha', 'cri', 'spa', 'spe', 'comma', 'mot', 'lea', 'scy', 'win', 'earthp', 'mys');
 	static $prof_attr_list = array('Air Magic' => 'Elementalist', 'Earth Magic' => 'Elementalist', 'Energy Storage' => 'Elementalist', 'Fire Magic' => 'Elementalist', 'Water Magic' => 'Elementalist', 'Domination Magic' => 'Mesmer', 'Fast Casting' => 'Mesmer', 'Illusion Magic' => 'Mesmer', 'Inspiration Magic' => 'Mesmer', 'Divine Favor' => 'Monk', 'Healing Prayers' => 'Monk', 'Protection Prayers' => 'Monk', 'Smiting Prayers' => 'Monk', 'Blood Magic' => 'Necromancer', 'Curses' => 'Necromancer', 'Death Magic' => 'Necromancer', 'Soul Reaping' => 'Necromancer', 'Beast Mastery' => 'Ranger', 'Expertise' => 'Ranger', 'Marksmanship' => 'Ranger', 'Wilderness Survival' => 'Ranger', 'Axe Mastery' => 'Warrior', 'Hammer Mastery' => 'Warrior', 'Strength' => 'Warrior', 'Swordsmanship' => 'Warrior', 'Tactics' => 'Warrior', 'Critical Strikes' => 'Assassin', 'Dagger Mastery' => 'Assassin', 'Deadly Arts' => 'Assassin', 'Shadow Arts' => 'Assassin', 'Spawning Power' => 'Ritualist', 'Channeling Magic' => 'Ritualist', 'Communing' => 'Ritualist', 'Restoration Magic' => 'Ritualist', 'Spear Mastery' => 'Paragon', 'Command' => 'Paragon', 'Motivation' => 'Paragon', 'Leadership' => 'Paragon', 'Scythe Mastery' => 'Dervish', 'Wind Prayers' => 'Dervish', 'Earth Prayers' => 'Dervish', 'Mysticism' => 'Dervish');
 	arsort($attr_list_raw); //=> First attribute is attribute of highest level
-
 
 	// Prepare a base attribute level and rune bonus list for primary and secondary attributes
 	$attr_primary     = Array();
@@ -397,7 +396,7 @@ function build_replace($reg) {
 	$attr_bit_size  = 5;
 	$template_attrs = Array();
 	foreach ($attr_list_raw as $attr => $level) {
-		$id                  = array_search(gws_attribute_name($attr), $attr_ids);
+		$id = array_search(gws_attribute_name($attr), $attr_ids);
 		$template_attrs[$id] = $level;
 		if ($id >= 32) {
 			$attr_bit_size = 6;
@@ -410,42 +409,16 @@ function build_replace($reg) {
 		$template .= int2bin($level, 4);
 	}
 
-
-	// Template: skills
-	// and Kurzick/Luxon adaptation
+	// Template: Skills
 	$skill_bit_size  = 9;
-	$skill_id_max    = pow(2, $skill_bit_size);
+	$skill_id_max = pow(2, $skill_bit_size);
 	$template_skills = Array();
 	if (preg_match_all('#\[skill[^\]]*\](.*?)\[/skill\][ ]?#isS', $skills, $regs, PREG_SET_ORDER)) {
 		foreach ($regs as $reg) {
 			$skill_name = $reg[1];
-			$id         = gws_skill_id($skill_name);
+			$id = gws_skill_id($skill_name);
 			if ($id !== false) {
 				$skill = gws_details($id);
-				// Handle faction-less skills
-				if ($skill['attr'] == 'kur' && strpos($skill_name, '(') === false) { // By default, unaligned skills are kurzick
-					// Change to default allegiance
-					$default_id = $id;
-					if (strpos(strtolower(GWBBCODE_ALLEGIANCE), 'kurzick') === false) {
-						$id         = gws_skill_id($skill_name . ' (luxon)');
-						$skill      = gws_details($id);
-						$default_id = $id;
-					}
-					// Try the other allegiance if default one is already used
-					if (array_search($id, $template_skills) !== false) {
-						$id = gws_skill_id($skill_name . ($skill['attr'] == 'kur' ? ' (Luxon)' : ' (Kurzick)'));
-						// Change back to default allegiance if both allegiance skills were used
-						if (array_search($id, $template_skills) !== false) {
-							$id = $default_id;
-						}
-						$skill = gws_details($id);
-					}
-					// Update skill names in $skills
-					$new_skill_str = str_replace($skill_name, $skill_name . ($skill['attr'] == 'kur' ? ' (Kurzick)' : ' (Luxon)'), $reg[0]);
-					$new_skill_str = str_replace('$', '\\$', $new_skill_str); // you never know..
-					$skills        = preg_replace('@' . preg_quote($reg[0]) . '@', $new_skill_str, $skills, 1);
-				}
-
 				if (($skill['profession'] == $primary || $skill['profession'] == $secondary || $skill['prof'] == '?') && (array_search($id, $template_skills) === false || $id == 0)) {
 					if ($id >= $skill_id_max) {
 						$skill_bit_size = floor(log($id, 2)) + 1;
@@ -473,36 +446,35 @@ function build_replace($reg) {
 		$template .= str_repeat(str_repeat('0', $skill_bit_size), 8 - count($template_skills));
 	}
 
-	// Manage template save icons
+	// Template: Build name as populated by template_to_gwbbcode() - note any user-specified names will be ignored.
+	$build_name = gws_build_name($att);
+	$build_name = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $build_name))));
+
+	// Template: Manage template save link
 	if (preg_match("/ nosave/i", $att)) {
 		$template_html = '';
 	} else {
 		if ($invalid_template === false) {
 			// Prepare template bbcode
 			$template_code = bin_to_template($template . '0'); // Added a 0 since that's what GW does
+
+			// Prepare template name
 			$template_name = preg_replace('@[];]@', '', preg_replace('@<br/>.*@', '', $build_name));
-			if (empty($template_name)) {
-				$template_name = gws_profession_abbr($primary);
-				if ($secondary != 'No profession' && $secondary != $primary) {
-					$template_name .= '/' . gws_profession_abbr($secondary);
-				}
-			}
-			$template_bbcode = "&#91;$template_name;$template_code]"; // Used &#91; to prevent double parsing anomalies
 		} else {
+			// Display error message beneath build template
 			$template_error_msg = htmlspecialchars($invalid_template);
-			// FIXME - No idea where the error should be routed to.
 		}
 	}
 
+	// Replace all "{var_name}" with $var_name until there are none to replace (i.e a tag replacement can contain other tags)
 	$tpl = $gwbbcode_tpl['build'];
-	// Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
 	do {
 		$prev_tpl = $tpl;
 		// "{{skill_description}}" is replaced by $gwbbcode_tpl['skill_description']
 		$tpl = preg_replace_callback("#\{\{(.*?)\}\}#is", function($m) {
 			return isset($gwbbcode_tpl[$m[1]]) ? $gwbbcode_tpl[$m[1]] : $m[0];
 		}, $tpl);
-	
+
 		// "{desc}" is replaced by $desc
 		unset($matches);
 		preg_match_all("#\{(.*?)\}#is", $tpl, $matches);
@@ -521,6 +493,9 @@ function build_replace($reg) {
 // Replacement function 7:
 // Convert [skillset=prof_short_name@attr_level] tags to a list of skills of the appropriate attribute
 function skillset_replace($reg) {
+	global $gwbbcode_tpl;
+	$tpl = $gwbbcode_tpl['skillset'];
+
 	list($all, $noicon, $name) = $reg;
 	$name = html_safe_decode($name);
 
@@ -535,21 +510,38 @@ function skillset_replace($reg) {
 		$attr_val = preg_replace('@[^0-9+-]@', '', $reg[2]);
 	}
 
-
 	// Get the list of skills
 	$bbcode = Array();
-	if ($attr = gws_attribute_name($name)) {
+	$attr = gws_attribute_name($name);
+	
+	// FIXME - NEW EFFICIENCY IMPROVEMENT
+	// static $skill_list = Array();
+	// if ( !file_exists(SKILLS_PATH) ) {
+	// 	return false;
+	// }
+	// $skill_list = load(SKILLS_PATH);
+	
+	
+	if ($attr) {
 		$attr_bbcode = " $attr=$attr_val";
-		$skill_list  = gws_skill_id_list();
-		foreach ($skill_list as $name_id => $id) {
-			$skill = gws_details($id);
-			if ($skill['attr'] == $attr) {
+		$skill_list  = gws_skill_id_list(); // list of all the names to ids
+		
+		foreach ($skill_list as $name_id => $id) { // for each list of ids
+			$skill = gws_details($id); // pull details for that specific id
+			if ($skill['attr'] == $attr) { // if attr matches, add the name
 				$bbcode[] = "[skill$noicon$attr_bbcode]{$skill['name']}[/skill]";
 			}
 		}
+		
+		// FIXME - NEW EFFICIENCY IMPROVEMENT
+		//$skill_list_filtered = array_filter($arr, function ($var) use ($attr) {
+		//	return ($var['name'] == $attr);
+		//});
 	}
 
-	return implode($noicon_comma, $bbcode);
+	return infuse_values($gwbbcode_tpl['skillset'], Array(
+		'skillset_value' => implode($noicon_comma, $bbcode)
+	));
 }
 
 // Replacement function 8:
@@ -567,7 +559,7 @@ function skill_replace($reg) {
 	$shown_name = $name;
 	if (preg_match('/show="([^\]]*)"/', $att, $reg)) {
 		$shown_name = html_safe_decode($reg[1]); // Play it safe
-		$att        = preg_replace('/[ ]*db="[^\]]*"/', '', $att);
+		$att = preg_replace('/[ ]*show="[^\]]*"/', '', $att);
 	}
 
 	// Exit if skill doesn't exist
@@ -579,19 +571,10 @@ function skill_replace($reg) {
 	if ($details === false)
 		die("Missing skill. Id=$id; Name=$name");
 
-	// Handle faction-less skills
-	if ($details['attr'] == 'kur' && strpos($name, '(') === false) { // By default, unaligned skills are kurzick
-		// Change to default allegiance
-		if (strtolower(GWBBCODE_ALLEGIANCE) !== 'kurzick') {
-			$id      = gws_skill_id($name . ' (luxon)');
-			$details = gws_details($id);
-		}
-	}
-
 	extract($details, EXTR_OVERWRITE);
 	$load = rand();
 
-	// Blank skill slot
+	// Blank/Optional skill slot
 	if ($name == 'No Skill') {
 		$tpl = $gwbbcode_tpl['blank_icon'];
 	}
@@ -604,20 +587,89 @@ function skill_replace($reg) {
 
 		// Skill name or image on which to move cursor
 		$name_link = str_replace("\"", "&quot;", $name);
-		if (gws_noicon($att)) {
-			$tpl = $gwbbcode_tpl['noicon'];
+		if (strstr($att, 'noicon') !== false) {
+			if ($shown_name !== $name) {
+				$tpl = $gwbbcode_tpl['noicon_showname'];
+			} else {
+				$tpl = $gwbbcode_tpl['noicon'];
+			}
 		} else {
 			$tpl = $gwbbcode_tpl['icon'];
 		}
+
+		// Append the hidden tooltip element
 		$tpl .= $gwbbcode_tpl['skill'];
 
-		// What adrenaline/energy/energyregen is required?
+		// Initialise array of requirements
 		$required = Array();
-		if ($recharge != 0)
+
+		// Format adrenaline
+		if ($adrenaline != 0) {
 			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
-				'type' => 'rech',
-				'value' => $recharge
+				'type' => 'adre',
+				'value' => $adrenaline
 			));
+		}
+
+		// Format sacrifice
+		if ($sacrifice != 0) {
+			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
+				'type' => 'sacr',
+				'value' => $sacrifice
+			));
+		}
+
+		// Format upkeep
+		if ($eregen != 0) {
+			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
+				'type' => 'eregen',
+				'value' => -$eregen
+			));
+		}
+
+		// Format overcast
+		if ($overcast != 0) {
+			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
+				'type' => 'over',
+				'value' => $overcast
+			));
+		}
+
+		// Format energy
+		if ($energy != 0) {
+			$energy_change = false;
+
+			// Handle expertise
+			$expert_energy = calc_expertise($name, $attr_list, $type, $energy, $profession, $desc);
+			if ($expert_energy && $expert_energy != $energy) {
+				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
+					'initial_value' => $energy,
+					'modified_value' => $expert_energy
+				));
+				$energy_change = true;
+			}
+
+			// Handle mysticism
+			$mystic_energy = calc_mysticism($attr_list, $type, $energy, $profession);
+			if ($mystic_energy && $mystic_energy != $energy) {
+				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
+					'initial_value' => $energy,
+					'modified_value' => $mystic_energy
+				));
+				$energy_change = true;
+			}
+
+			// Default
+			if ($energy_change == false) {
+				$energy_html = $energy;
+			}
+
+			// Insert values into template
+			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
+				'type' => 'ener',
+				'value' => $energy_html
+			));
+		}
 
 		// Format casting time
 		if ($casting != 0) {
@@ -651,65 +703,15 @@ function skill_replace($reg) {
 			));
 		}
 
-		// Format energy, adrenaline and upkeep
-		if ($adrenaline != 0) {
-			$required[]    = infuse_values($gwbbcode_tpl['requirement'], Array(
-				'type' => 'adre',
-				'value' => $adrenaline
-			));
-			// Handle leadership
-			$leader_energy = false; // FIXME: dummied out for now // calc_leadership($name, $attr_list, $type, 0, $pve_only);
-			if ($leader_energy) {
-				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
-					'initial_value' => '',
-					'modified_value' => $leader_energy
-				));
-				$required[]  = infuse_values($gwbbcode_tpl['requirement'], Array(
-					'type' => 'ener',
-					'value' => $energy_html
-				));
-			} else {
-				$energy_html = $energy;
-			}
-		} else if ($energy != 0) {
-			// Handle expertise
-			$expert_energy = calc_expertise($name, $attr_list, $type, $energy, $profession, $desc);
-			if ($expert_energy && $expert_energy != $energy) {
-				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
-					'initial_value' => $energy,
-					'modified_value' => $expert_energy
-				));
-			}
-			// Handle mysticism
-			$mystic_energy = calc_mysticism($attr_list, $type, $energy, $profession);
-			if ($mystic_energy && $mystic_energy != $energy) {
-				$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
-					'initial_value' => $energy,
-					'modified_value' => $mystic_energy
-				));
-			}
-			// Handle leadership
-			else {
-				$leader_energy = false; // FIXME: dummied out for now // calc_leadership($name, $attr_list, $type, $energy, $pve_only);
-				if ($leader_energy) {
-					$energy_html = infuse_values($gwbbcode_tpl['modified_requirement_value'], Array(
-						'initial_value' => $energy,
-						'modified_value' => $energy
-					));
-				} else {
-					$energy_html = $energy;
-				}
-			}
+		// Format recharge time
+		if ($recharge != 0) {
 			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
-				'type' => 'ener',
-				'value' => $energy_html
+				'type' => 'rech',
+				'value' => $recharge
 			));
 		}
-		if ($eregen != 0)
-			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
-				'type' => 'eregen',
-				'value' => -$eregen
-			));
+
+		// Concatenate requirements
 		$required = implode('', $required);
 
 		// Campaign names
@@ -725,7 +727,7 @@ function skill_replace($reg) {
 		}
 
 		// PvE only
-		$pve_only = $pve_only ? '<br/>PvE only' : '';
+		$pve_only = $pve_only ? 'PvE only' : '';
 
 		// Descriptions variables -> green and adapted to their attribute. (0..12..16 -> green 8)
 		$extra_desc = '';
@@ -744,10 +746,11 @@ function skill_replace($reg) {
 		}
 
 		// Profession icon
-		if ($prof == '?')
+		if ($prof == '?') {
 			$prof_img = "$gwbbcode_img_path/img_interface/void2.gif";
-		else
+		} else {
 			$prof_img = "$gwbbcode_img_path/img_interface/$profession.gif";
+		}
 	}
 
 	// Replace all "{var_name}" by $var_name till there is none to replace (i.e a tag replacement can contain other tags)
@@ -763,7 +766,7 @@ function skill_replace($reg) {
 				$tpl     = str_replace($find, $replace, $tpl);
 			}
 		}
-		
+
 		//"{desc}" is replaced by $desc
 		unset($matches);
 		preg_match_all("#\{(.*?)\}#is", $tpl, $matches);
@@ -841,15 +844,14 @@ function gws_skill_id_list() {
 // Database function 3:
 // Returns either the skill information array of a $skill_id, or false
 function gws_details($skill_id) {
-		//(Re)load skill list (can't have two in memory, it'd be too big)
-		static $skill_list = Array();
-		if ( !file_exists(SKILLS_PATH) ) {
-			return false;
-		}
-		$skill_list = load(SKILLS_PATH);
-		
-		$ret = isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false;
-	return $ret;
+	//(Re)load skill list (can't have two in memory, it'd be too big)
+	static $skill_list = Array();
+	if ( !file_exists(SKILLS_PATH) ) {
+		return false;
+	}
+	$skill_list = load(SKILLS_PATH);
+
+	return (isset($skill_list[$skill_id]) ? $skill_list[$skill_id] : false);
 }
 
 
@@ -880,21 +882,34 @@ function gws_build_profession($att) {
 	}
 }
 
-// FIXME - RITUALIST EXCEPTION LOOKS IDIOTIC. WONDER IF IT TRIES TO MATCH RANGER INTO THE RITUALIST BIT? SURELY WE CAN CODE THIS BETTER.
 // Calculation function 2:
 // Returns the full profession name of a partial one. Returns 'No profession' if no match is found
 function gws_prof_name($profession) {
-	// Look for a profession name corresponding to $profession
-	static $p = Array('E' => 'Elementalist', 'Me' => 'Mesmer', 'Mo' => 'Monk', 'N' => 'Necromancer', 'R' => 'Ranger', 'W' => 'Warrior', 'A' => 'Assassin', 'Rt' => 'Ritualist', 'D' => 'Dervish', 'P' => 'Paragon', '?' => 'No profession');
+	// Look for a $p profession name corresponding to $profession
+	static $p = Array(
+		'E' => 'Elementalist',
+		'Me' => 'Mesmer',
+		'Mo' => 'Monk',
+		'N' => 'Necromancer',
+		'R' => 'Ranger',
+		'W' => 'Warrior',
+		'A' => 'Assassin',
+		'Rt' => 'Ritualist',
+		'D' => 'Dervish',
+		'P' => 'Paragon',
+		'?' => 'No profession'
+	);
 	$profession = strtolower($profession);
 
-	// Ritualist exception
-	if ($profession == 'rt')
+	// Ritualist exception ("rt" is the only abbreviation that does not reflect the first one/two letters of the full name)
+	if ($profession == 'rt') {
 		return $p['Rt'];
+	}
 
-	foreach ($p as $prof)
+	foreach ($p as $prof) {
 		if (strpos(strtolower($prof), $profession) === 0)
 			return $prof;
+	}
 
 	// No corresponding profession was found
 	return 'No profession';
@@ -914,7 +929,6 @@ function gws_profession_abbr($profession) {
  * HELPER CALCULATION FUNCTIONS - BUILD NAMES
  ***************************************************************************/
 
-// FIXME - THINK THIS IS REFERRED TO FROM SMARTY TEMPLATE GWBBCODE.TPL, BUT NOT SURE IT WORKS AS INTENDED.
 // Calculation function 4:
 // Returns value of the name attribute of an attribute list (string $att), or ''
 // gws_build_name(' prof=W/E name="Shock Warrior"')  ===  'Shock Warrior'
@@ -1045,21 +1059,13 @@ function attr_points($attr_list) {
 
 // Calculation function 13:
 // Returns a description after adapting it's variables to an attribute value
+// PHP note: Using the ampersand before desc and extra_desc means the same variables get passed back to the source
 function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_list, $type, $pve_only) {
-	// Take into account Divine Favor
-	add_divine_favor($desc, $extra_desc, $attr_list, $name);
-
-	// Take into account Strength
-	if (!empty($attr_list['Strength']) && strpos($type, 'Attack') !== false) {
-		$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
-	}
-
 	// Put some green around the fork
 	$desc = preg_replace_callback('|([0-9]+\.\.[0-9]+)|', 'fork_replace', $desc);
 
-	// For PvP skills,
+	// For skill which are not PvE only skills, adapt the 0..15 fork to the build's attribute level if the attribute level has been specified
 	if (!$pve_only) {
-		// Adapt the fork to the build's attribute level..
 		if (isset($attr_list[$attribute])) {
 			$attr_lvl = $attr_list[$attribute];
 			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
@@ -1070,32 +1076,63 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 				}
 			}
 		}
-		// or show its 0..12..16 values
+		// or adapt the 0..15 form to 0..12..16 values if the attribute level has not been specified
 		else {
 			$desc = preg_replace_callback('|([0-9]+)\.\.([0-9]+)|', 'desc_replace', $desc);
 		}
 	}
-	// For PvE skills
+	// For PvE only skills, adapt the fork to the rank. Rank limits vary with tracks.
+	// Suggest an array of attribute shorthands and their max ranks for effects.
+	// Then lookup the attribute.
 	else {
-		// Adapt the fork to the build's attribute level..
-		if (isset($attr_list[$attribute])) {
-			$attr_lvl = $attr_list[$attribute];
-			if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
-				foreach ($regs as $fork) {
-					list($all, $val_0, $val_10) = $fork;
-					$pos = strpos($desc, $all);
-					$desc = substr_replace($desc, fork_val_pveonly($val_0, $val_10, $attr_lvl), $pos, strlen($all));
+		if ($attribute == 'Kurzick rank' || $attribute == 'Luxon rank') {
+			// FIXME - ROUNDING LOOKS WRONG ON SUMMON SPIRITS. CHECK.
+			// Kurzick/Luxon ranks are 0-12, but have no effect above rank 6.
+			if (isset($attr_list[$attribute])) {
+				$attr_lvl = $attr_list[$attribute];
+				if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
+					foreach ($regs as $fork) {
+						list($all, $val_0, $val_max) = $fork;
+						$pos = strpos($desc, $all);
+						$desc = substr_replace($desc, fork_val_pve_only($val_0, $val_max, $attr_lvl, 6), $pos, strlen($all));
+					}
+				}
+			}
+		} else {
+			// Lightbringer, Sunspear, Asura, Dwarf, Ebon, Norn ranks are 0-10, but have no effect above rank 5.
+			if (isset($attr_list[$attribute])) {
+				$attr_lvl = $attr_list[$attribute];
+				if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
+					foreach ($regs as $fork) {
+						list($all, $val_0, $val_max) = $fork;
+						$pos = strpos($desc, $all);
+						$desc = substr_replace($desc, fork_val_pve_only($val_0, $val_max, $attr_lvl, 5), $pos, strlen($all));
+					}
 				}
 			}
 		}
 		// or show its 0..10 values (no action required)
 	}
 
-	// Specify a Spirit health and armor
+	// Warrior: Take into account Strength
+	if (!empty($attr_list['Strength']) && strpos($type, 'Attack') !== false) {
+		$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
+	}
+
+	// Monk: Take into account Divine Favor
+	add_divine_favor($desc, $extra_desc, $attr_list, $name);
+
+	// Spirits created by anyone: Specify a Spirit health and armor
+	// Ritualist: Take into account Spawning Power
 	$desc = add_spirit_health($desc, $attr_list);
 
-	// Specify additional weapon spell duration
+	// Ritualist: Specify additional weapon spell duration
 	$desc = calc_weapon_duration($desc, $attr_list, $type);
+
+	// PvE only: Append a note saying PvE only
+	if ($pve_only !== '') {
+		$extra_desc .= $pve_only;
+	}
 }
 
 // Calculation function 14:
@@ -1119,119 +1156,16 @@ function desc_replace($reg) {
 }
 
 // Calculation function 17:
-// Return value at a given attribute level for a pve only skill
-function fork_val_pveonly($val_0, $val_10, $attr_lvl) {
-	return $val_0 + round(($val_10 - $val_0) * $attr_lvl / 10);
+// Return value at a given attribute level, with a limit.
+function fork_val_pve_only($val_minrank, $val_maxrank, $rank_lvl, $rank_limit) {
+	return $val_minrank + round(($val_maxrank - $val_minrank) * min($rank_lvl, $rank_limit) / $rank_limit);
 }
 
 // Calculation function 18:
-// Return the real energy cost of a skill depending on its type and level of Expertise
-//  Note: There is not a field in databases/skill_db.php containing whether the skill is a touch skill or not.
-function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
-	if (isset($attr_list['Expertise']) && $attr_list['Expertise'] > 0 && ($profession == 'Ranger' || strpos($type, 'Attack') !== false || strpos($type, 'Ritual') !== false || $name == 'Lift Enchantment' || (preg_match('@touch@i', $desc) && !preg_match('@touch skills@i', $desc)))) {
-		return round($energy * (1.0 - 0.04 * $attr_list['Expertise']));
-	}
-
-	// Otherwise
-	return false;
-}
-
-// Calculation function 19:
-// Return the real energy cost of a skill depending on its type, profession and level of Mysticism
-function calc_mysticism($attr_list, $type, $energy, $profession) {
-	if (isset($attr_list['Mysticism']) && $attr_list['Mysticism'] > 0 && $profession == 'Dervish' && strpos($type, 'Enchantment') !== false ) {
-		return round($energy * (1.0 - 0.04 * $attr_list['Mysticism']));
-	}
-
-	// Otherwise
-	return false;
-}
-
-// Calculation function 20:
-// Return the energy fork gained from using a skill depending on its type and level of Leadership
-function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
-	static $leadership_skills = Array(0 => Array('"It\'s just a flesh wound."', '"Make Your Time!"', '"Never Give Up!"', '"The Power Is Yours!"', '"Fear Me!"', '"I Will Avenge You!"', '"None Shall Pass!"', '"Retreat!"', '"On Your Knees!"', '"Coward!"', '"To the Limit!"', '"You Will Die!"', '"Victory is Mine!"', '"You\'re All Alone!"'), 1 => Array('"Brace Yourself!"', '"Can\'t Touch This!"', '"Find Their Weakness!"', '"Help Me!"', '"For Great Justice!"', '"I Will Survive!"', 'Call of Haste', 'Call of Protection', 'Otyugh\'s Cry', 'Predatory Bond', 'Symbiotic Bond'), 2 => Array('Strike as One'));
-	// FIXME - Till we know more about PvE Chants and Shouts, ignore them
-	if ($pve_only) {
-		return false;
-	}
-	if (isset($attr_list['Leadership']) && $attr_list['Leadership'] > 1 && ($type == 'Chant' || $type == 'Shout')) {
-		$max_energy = 8;
-		foreach ($leadership_skills as $skill_energy => $skill_list) {
-			if (in_array($name, $skill_list)) {
-				$max_energy = $skill_energy;
-				break;
-			}
-		}
-		$max_energy = min($max_energy, floor($attr_list['Leadership'] / 2));
-		if ($max_energy > 1) {
-			return '+1..' . $max_energy;
-		} else {
-			return '+' . $max_energy;
-		}
-	}
-
-	// Otherwise
-	return false;
-}
-
-// Calculation function 21:
-// Return the real cast time of a skill depending on its type and level of Fast Casting
-function calc_fastcasting($attr_list, $type, $casting, $profession) {
-	if ((isset($attr_list['Fast Casting']) && $attr_list['Fast Casting'] > 0) && ($profession == 'Mesmer' || $casting >= 2)) {
-		if (strpos($type, 'Spell') !== false) {
-			return $casting * pow(2.0, (($attr_list['Fast Casting'] * -1.0) / 15.0));
-		} else if ($type == 'Signet') {
-			return $casting * (1.0 - ($attr_list['Fast Casting'] * 0.03));
-		}
-	}
-
-	// Otherwise
-	return false;
-}
-
-// Calculation function 22:
-// Return a description specifying how much health and armor does a Spirit have
-function add_spirit_health($desc, $attr_list) {
-	// Get Spirit's level
-	if (preg_match('@Create a level <span class="variable">([0-9]+)</span> Spirit@', $desc, $reg)) {
-		$spirit_level = $reg[1];
-
-		// Get Binding Ritual level
-		$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
-
-		// Compute the Spirit's Health and armor
-		$spirit_health  = $spirit_level * 20; // Thanks to GuildWiki.org for this equation
-		$spawning_bonus = '';
-		if ($spawning_level > 0) {
-			$spawning_health = round($spirit_health * ($spawning_level * 0.04));
-			$spawning_bonus  = ' (+' . $spawning_health . '&#041;';
-		}
-		$spirit_armor = round((88 / 15 * $spirit_level) + 3);
-
-		// Add Spirit's health to description
-		$desc = preg_replace('@Create a level <span class="variable">[0-9]+</span> Spirit@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
-	}
-	return $desc;
-}
-
-// Calculation function 23:
-// Return the additional weapon spell duration depending on level of Spawning Power
-function calc_weapon_duration($desc, $attr_list, $type) {
-	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
-		if (preg_match('@(for (?:<span class="variable">)?)([0-9]+)((?:</span>)? second)@i', $desc, $reg)) {
-			$base_duration       = $reg[2];
-			$additional_duration = round($reg[2] * $attr_list['Spawning Power'] * 0.04, 1);
-			$desc                = str_replace($reg[0], $reg[1] . $reg[2] . ' <span class="expert">(+' . $additional_duration . '&#041;</span>' . $reg[3], $desc);
-		}
-	}
-	return $desc;
-}
-
-// Calculation function 24:
 // Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
+		// This function relies on the descriptions in skill_db.php containing a suffix of {div}, {target} or {self} which are manually added.
 		if (preg_match('/\{((div)|(target)|(self))\}/', $desc, $reg)) {
 			$heal_type = $reg[1];
 			$div_heal  = round(3.2 * $attr_list['Divine Favor']);
@@ -1261,10 +1195,123 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	}
 }
 
+// Calculation function 19:
+// Return a description specifying how much health and armor does a Spirit have
+function add_spirit_health($desc, $attr_list) {
+	// Get Spirit's level
+	if (preg_match('@Create a level <span class="variable">([0-9]+)</span> Spirit@', $desc, $reg)) {
+		$spirit_level = $reg[1];
+
+		// Get Binding Ritual level
+		$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
+
+		// Compute the Spirit's Health and armor
+		$spirit_health  = $spirit_level * 20;
+		$spawning_bonus = '';
+		if ($spawning_level > 0) {
+			$spawning_health = round($spirit_health * ($spawning_level * 0.04));
+			$spawning_bonus = ' (+' . $spawning_health . ')';
+		}
+		$spirit_armor = round((88 / 15 * $spirit_level) + 3);
+
+		// Add Spirit's health to description
+		$desc = preg_replace('@Create a level <span class="variable">[0-9]+</span> Spirit@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
+	}
+	return $desc;
+}
+
+// Calculation function 20:
+// Return the additional weapon spell duration depending on level of Spawning Power
+function calc_weapon_duration($desc, $attr_list, $type) {
+	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
+		if (preg_match('@(for (?:<span class="variable">)?)([0-9]+)((?:</span>)? second)@i', $desc, $reg)) {
+			$base_duration = $reg[2];
+			$additional_duration = round($reg[2] * $attr_list['Spawning Power'] * 0.04, 1);
+			$desc = str_replace($reg[0], $reg[1] . $reg[2] . ' <span class="expert">(+' . $additional_duration . '&#041;</span>' . $reg[3], $desc);
+		}
+	}
+	return $desc;
+}
+
+
+
+
+/***************************************************************************
+ * HELPER CALCULATION FUNCTIONS - PROPERTIES
+ ***************************************************************************/
+
+// Calculation function 21:
+// Return the real energy cost of a skill depending on its type and level of Expertise
+//  Note: There is not a field in databases/skill_db.php containing whether the skill is a touch skill or not.
+function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
+	if (isset($attr_list['Expertise']) && $attr_list['Expertise'] > 0 && ($profession == 'Ranger' || strpos($type, 'Attack') !== false || strpos($type, 'Ritual') !== false || $name == 'Lift Enchantment' || (preg_match('@touch@i', $desc) && !preg_match('@touch skills@i', $desc)))) {
+		return round($energy * (1.0 - 0.04 * $attr_list['Expertise']));
+	}
+
+	// Otherwise
+	return false;
+}
+
+// Calculation function 22:
+// Return the real energy cost of a skill depending on its type, profession and level of Mysticism
+function calc_mysticism($attr_list, $type, $energy, $profession) {
+	if (isset($attr_list['Mysticism']) && $attr_list['Mysticism'] > 0 && $profession == 'Dervish' && strpos($type, 'Enchantment') !== false ) {
+		return round($energy * (1.0 - 0.04 * $attr_list['Mysticism']));
+	}
+
+	// Otherwise
+	return false;
+}
+
+// Calculation function 23: // FIXME - NOT SURE IF I WANT TO KEEP THIS OR NOT. MIGHT NEED TO MARKUP EACH SHOUT LIKE DIVINE FAVOR GETS TAGGED.
+// Return the energy fork gained from using a skill depending on its type and level of Leadership
+// '<span class="expert">You gain 2 Energy for each ally affected by one of your Shouts or Chants (maximum <b>' . floor($attr_list['Leadership'] / 2) . '</b> Energy).</span><br/>';
+function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
+	static $leadership_skills = Array(0 => Array('"It\'s just a flesh wound."', '"Make Your Time!"', '"Never Give Up!"', '"The Power Is Yours!"', '"Fear Me!"', '"I Will Avenge You!"', '"None Shall Pass!"', '"Retreat!"', '"On Your Knees!"', '"Coward!"', '"To the Limit!"', '"You Will Die!"', '"Victory is Mine!"', '"You\'re All Alone!"'), 1 => Array('"Brace Yourself!"', '"Can\'t Touch This!"', '"Find Their Weakness!"', '"Help Me!"', '"For Great Justice!"', '"I Will Survive!"', 'Call of Haste', 'Call of Protection', 'Otyugh\'s Cry', 'Predatory Bond', 'Symbiotic Bond'), 2 => Array('Strike as One'));
+	// FIXME - Till we know more about PvE Chants and Shouts, ignore them
+	if ($pve_only) {
+		return false;
+	}
+	if (isset($attr_list['Leadership']) && $attr_list['Leadership'] > 1 && ($type == 'Chant' || $type == 'Shout')) {
+		$max_energy = 8;
+		foreach ($leadership_skills as $skill_energy => $skill_list) {
+			if (in_array($name, $skill_list)) {
+				$max_energy = $skill_energy;
+				break;
+			}
+		}
+		$max_energy = min($max_energy, floor($attr_list['Leadership'] / 2));
+		if ($max_energy > 1) {
+			return '+1..' . $max_energy;
+		} else {
+			return '+' . $max_energy;
+		}
+	}
+
+	// Otherwise
+	return false;
+}
+
+// Calculation function 24:
+// Return the real cast time of a skill depending on its type and level of Fast Casting
+function calc_fastcasting($attr_list, $type, $casting, $profession) {
+	if ((isset($attr_list['Fast Casting']) && $attr_list['Fast Casting'] > 0) && ($profession == 'Mesmer' || $casting >= 2)) {
+		if (strpos($type, 'Spell') !== false) {
+			return $casting * pow(2.0, (($attr_list['Fast Casting'] * -1.0) / 15.0));
+		} else if ($type == 'Signet') {
+			return $casting * (1.0 - ($attr_list['Fast Casting'] * 0.03));
+		}
+	}
+
+	// Otherwise
+	return false;
+}
+
 // Calculation function 25:
 // Return a skill description enriched with a div tag depending on the specified effect ('{target}', '{self}' or '{div}')
 function add_div_tag($effect, $desc) {
 	if ($effect == 'target' || $effect == 'self') {
+		// Adds the effect to the end of the tooltip
 		$desc .= '{' . $effect . '}';
 	} else {
 		$new_desc = preg_replace('@([0-9]+\\.\\.[0-9]+)( Health)@', '$1{div}$2', $desc, 1);
@@ -1279,55 +1326,6 @@ function add_div_tag($effect, $desc) {
 }
 
 // Calculation function 26:
-// Return the skill description enriched with a divine favor tags ('{target}', '{self}' or '{div}')
-function desc_with_div_tag($skill) {
-	$desc = $skill['desc'];
-	// Clean up the description
-	$desc = str_replace('{target}', '', str_replace('{self}', '', str_replace('{div}', '', $desc)));
-
-	// Add the appropriate div tag
-	if ($skill['prof'] != 'Mo' || strpos($skill['type'], 'Spell') === false) {
-		// No div fav bonus for you
-	} else if (in_array($skill['name'], Array(
-			'Kirin\'s Wrath',
-			'Symbol of Wrath',
-			'Amity',
-			'Light of Dwayna',
-			'Divine Spirit',
-			'Healer\'s Boon',
-			'Spell Shield',
-			'Healer\'s Covenant',
-			'Martyr',
-			'Smiter\'s Boon'
-		))) {
-		$desc = add_div_tag('self', $desc);
-	} else if ($skill['name'] == 'Infuse Health') {
-		$desc = add_div_tag('target', $desc);
-	} else if ($skill['name'] == 'Pacifism' || strpos($desc, 'to life') !== false || preg_match('@^Resurrect@', $desc)) {
-		// No div fav bonus for you
-	} else if (preg_match('@target ally for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (preg_match('@target (other )?ally is healed for [0-9]+\\.\\.[0-9]+ Health@i', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (strpos($desc, 'target ally') !== false) {
-		$desc = add_div_tag('target', $desc);
-	} else if (preg_match('@party|adjacent creatures|you use|you cast@', $desc)) {
-		$desc = add_div_tag('self', $desc);
-	} else if ($skill['attribute'] == 'Smiting Prayers') {
-		// No div fav bonus for you
-	} else if (preg_match('@ally for [0-9]+\\.\\.[0-9]+ Health@', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else if (strpos($desc, 'adjacent') !== false) {
-		$desc = add_div_tag('target', $desc);
-	} else if ($skill['attribute'] == 'Healing Prayers' && preg_match('@healed for [0-9]+\\.\\.[0-9]+@', $desc)) {
-		$desc = add_div_tag('div', $desc);
-	} else {
-		$desc = add_div_tag('target', $desc);
-	}
-	return $desc;
-}
-
-// Calculation function 27:
 // Return $text with each "{var_name}" replaced by $values['var_name']
 function infuse_values($text, $values) {
 	foreach ($values as $name => $value) {
@@ -1336,13 +1334,13 @@ function infuse_values($text, $values) {
 	return $text;
 }
 
-// Calculation function 28:
+// Calculation function 27:
 function getSkillIdPvP($pve) {
 	global $pveSkillIds;
 	return (isset($pveSkillIds[$pve]) ? $pveSkillIds[$pve] : $pve);
 }
 
-// Calculation function 29:
+// Calculation function 28:
 function getSkillIdPvE($pvp) {
 	global $pvpSkillIds;
 	return (isset($pvpSkillIds[$pvp]) ? $pvpSkillIds[$pvp] : $pvp);
@@ -1354,19 +1352,13 @@ function getSkillIdPvE($pvp) {
  * HELPER CALCULATION FUNCTIONS - MISCELLANEOUS
  ***************************************************************************/
 
-// Calculation function 30:
-// Returns true if $att specifies that the skill should be rendered as text
-function gws_noicon($att) {
-	return strstr($att, 'noicon') !== false;
-}
-
-// Calculation function 31:
+// Calculation function 29:
 // Restores html entities to characters, except for '<'
 function html_safe_decode($text) {
 	return str_replace('<', '&lt;', html_entity_decode($text));
 }
 
-// Calculation function 32:
+// Calculation function 30:
 // Int to bin on $bit_size bits
 function int2bin($int, $bit_size) {
 	$bin = strrev(base_convert($int, 10, 2));
@@ -1377,7 +1369,7 @@ function int2bin($int, $bit_size) {
 	return $bin . str_repeat('0', $bit_size - strlen($bin));
 }
 
-// Calculation function 33:
+// Calculation function 31:
 // Load a var from a file
 function load($filename) {
 	if (!file_exists($filename))
@@ -1386,7 +1378,7 @@ function load($filename) {
 		return require($filename);
 }
 
-// Calculation function 34:
+// Calculation function 32:
 // Organize skill by elite, profession, attribute and name (used by [rand seed="x"])
 function skill_sort_cmp($a, $b) {
 	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');
@@ -1399,20 +1391,6 @@ function skill_sort_cmp($a, $b) {
 			}
 			if ($b['attribute'] == 'No Attribute') {
 				$b['attribute'] = 'ZZZ';
-			}
-
-			// FIXME - Investigate why this is present. Probably minimal impact if removed, but would be nice to understand it.
-			// Special case: Dervish
-			$d_attributes = Array(
-				'Earth Prayers',
-				'Wind Prayers',
-				'Mysticism',
-				'Scythe Mastery',
-				'ZZZ'
-			);
-			if ($a['prof'] == 'D') {
-				$a['attribute'] = array_search($a['attribute'], $d_attributes);
-				$b['attribute'] = array_search($b['attribute'], $d_attributes);
 			}
 
 			if (preg_replace('|[\'! ]|', '', strtolower($a['attribute'])) == preg_replace('|[\'! ]|', '', strtolower($b['attribute']))) {
@@ -1508,7 +1486,7 @@ function template_to_gwbbcode($text) {
 	static $prof_ids = Array('?', 'W', 'R', 'Mo', 'N', 'Me', 'E', 'A', 'Rt', 'P', 'D');
 	static $attr_ids = Array('fas', 'ill', 'dom', 'ins', 'blo', 'death', 'sou', 'cur', 'air', 'ear', 'fir', 'wat', 'ene', 'hea', 'smi', 'pro', 'div', 'str', 'axe', 'ham', 'swo', 'tac', 'bea', 'exp', 'wil', 'mar', 29 => 'dag', 'dead', 'sha', 'com', 'res', 'cha', 'cri', 'spa', 'spe', 'comma', 'mot', 'lea', 'scy', 'win', 'earthp', 'mys');
 
-	// Handle the [build name;build code] syntaxe
+	// Handle the [build name;build code] syntax
 	$build_name = '';
 	if (preg_match('@([^][]+);([^];]+)@', $text, $reg)) {
 		$build_name = $reg[1];
@@ -1554,7 +1532,6 @@ function template_to_gwbbcode($text) {
 	$ret .= "[build prof=$primary/$secondary";
 
 	// Add clean build name if any
-	//  Fix by KillsLess to move syntax options out of the name
 	if (!empty($build_name)) {
 		$syntax_options = array(
 			"nosave",

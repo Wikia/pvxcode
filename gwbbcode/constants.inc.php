@@ -17,8 +17,4 @@ define('SKILLIDSPVP_PATH', GWBBCODE_ROOT.'/databases/skillpvpids_db.php');
 define('GWBBCODE_IMG_PATH', GWBBCODE_ROOT);
 define('TEMPLATE_PATH', GWBBCODE_ROOT.'/templates/gwbbcode.tpl');
 
-// PREFERENCES
-//  Used in gwbbcode.inc.php
-//  Choose between Kurzick and Luxon in order to adapt allegiance skills
-define('GWBBCODE_ALLEGIANCE', 'Kurzick');
 ?>
