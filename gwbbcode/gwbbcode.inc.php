@@ -29,17 +29,18 @@ global $gwbbcode_tpl;
 if (!isset($gwbbcode_tpl))
 	$gwbbcode_tpl = load_gwbbcode_smarty_template();
 
-// FIXME - SUSPECT MEMORY INTENSIVE - NOT SURE HOW TO ONLY LOAD THE IDS ONCE, AND NOT ATTEMPT TO LOAD MULTIPLE TIMES.
+// FIXME 2 - NOT ACTUALLY USED?
+// FIXME 1 - SUSPECT MEMORY INTENSIVE - NOT SURE HOW TO ONLY LOAD THE IDS ONCE, AND NOT ATTEMPT TO LOAD MULTIPLE TIMES.
 // Array of PvP -> PvE IDs
 //  @ sign just means it suppresses errors if they occur
-static $pvpSkillIds = Array(); // previously "global" not "static"
-if (empty($pvpSkillIds)) {
-	if (($pvpSkillIds = @load(SKILLIDSPVP_PATH)) === false) {
-		die("Missing pvp skill id database.");
-	}
-}
-// Array of PvE -> PvP IDs (only if there is a PvP id)
-$pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STATIC IN FRONT OF THIS - THINK IT JUST TAKES THE TYPE OF THE ARRAY_FLIP?
+// static $pvpSkillIds = Array(); // previously "global" not "static"
+// if (empty($pvpSkillIds)) {
+// 	if (($pvpSkillIds = @load(SKILLIDSPVP_PATH)) === false) {
+// 		die("Missing pvp skill id database.");
+// 	}
+// }
+// // Array of PvE -> PvP IDs (only if there is a PvP id)
+// $pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STATIC IN FRONT OF THIS - THINK IT JUST TAKES THE TYPE OF THE ARRAY_FLIP?
 
 /***************************************************************************
  * MAIN FUNCTION
@@ -513,30 +514,24 @@ function skillset_replace($reg) {
 	// Get the list of skills
 	$bbcode = Array();
 	$attr = gws_attribute_name($name);
-	
-	// FIXME - NEW EFFICIENCY IMPROVEMENT
-	// static $skill_list = Array();
-	// if ( !file_exists(SKILLS_PATH) ) {
-	// 	return false;
-	// }
-	// $skill_list = load(SKILLS_PATH);
-	
-	
 	if ($attr) {
-		$attr_bbcode = " $attr=$attr_val";
-		$skill_list  = gws_skill_id_list(); // list of all the names to ids
-		
-		foreach ($skill_list as $name_id => $id) { // for each list of ids
-			$skill = gws_details($id); // pull details for that specific id
-			if ($skill['attr'] == $attr) { // if attr matches, add the name
-				$bbcode[] = "[skill$noicon$attr_bbcode]{$skill['name']}[/skill]";
-			}
+		// Load all skills
+		static $skill_list = Array();
+		if ( !file_exists(SKILLS_PATH) ) {
+			return false;
 		}
 		
-		// FIXME - NEW EFFICIENCY IMPROVEMENT
-		//$skill_list_filtered = array_filter($arr, function ($var) use ($attr) {
-		//	return ($var['name'] == $attr);
-		//});
+		// Prepare bbcode prefix
+		$skill_list = load(SKILLS_PATH);
+		$attr_bbcode = " $attr=$attr_val";
+		
+		// Native php filter function is more effective than a loop
+		$skill_list_filtered = array_filter($skill_list, function ($var) use ($attr) {
+			return ($var['attr'] == $attr);
+		});
+		foreach ($skill_list_filtered as $id) {
+			$bbcode[] = "[skill$noicon$attr_bbcode]{$id['name']}[/skill]";
+		}
 	}
 
 	return infuse_values($gwbbcode_tpl['skillset'], Array(
