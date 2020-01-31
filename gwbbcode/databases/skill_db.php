@@ -30357,7 +30357,7 @@ array (
 'pve_only'=>0,
 'elite'=>0,
 'desc'=>'Create a level 1..10 Spirit. When this Spirit dies, all party members in the area are resurrected with 5..50% Health and zero Energy. This Spirit dies after 30 seconds.',
-'name_id' => 'restoration (pvp)',
+'name_id'=>'restoration (pvp)',
 ),
 3019=>
 array (
@@ -31809,7 +31809,7 @@ array (
 'pve_only'=>0,
 'elite'=>0,
 'desc'=>'Heal entire party for 30..75 Health.{self}',
-'name_id'=>'heal party',
+'name_id'=>'heal party (pvp)',
 ),
 3233=>
 array (
@@ -32426,5 +32426,5 @@ array (
 'elite'=>0,
 'desc'=>'If target foe is Blind or moving, that foe is knocked down. (50% failure chance with Water Magic 4 or less.)',
 'name_id'=>'slippery ground (pvp)',
-),
+)
 ); ?>
