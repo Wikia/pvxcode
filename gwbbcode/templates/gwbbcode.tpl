@@ -1,7 +1,7 @@
 <!-- BEGIN build -->
 <table><tr><td>
 <div class="build_container">
-    <div class="profession"><a href="https://wiki.guildwars.com/wiki/{primary}"><img src="http://localhost/wiki/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="https://wiki.guildwars.com/wiki/{secondary}"><img src="http://localhost/wiki/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="https://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="https://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
+    <div class="profession"><a href="https://wiki.guildwars.com/wiki/{primary}"><img src="/extensions/PvXCode/images/img_skin/{primary}.gif" border="0" /></a><a href="https://wiki.guildwars.com/wiki/{secondary}"><img src="/extensions/PvXCode/images/img_skin/{secondary}.gif" border="0" /></a><span><a href="https://wiki.guildwars.com/wiki/{primary}"><b>{primary}</b></a> / <a href="https://wiki.guildwars.com/wiki/{secondary}"><b>{secondary}</b></a></span></div>
     <div class="attributes">
         {attributes}
     </div>
@@ -12,7 +12,7 @@
     {skills}
     </div>
     <div class="template">
-        <div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="http://localhost/wiki/extensions/PvXCode/images/img_skin/save.png" border="0" alt="save" /></a></div>
+        <div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="/extensions/PvXCode/images/img_skin/save.png" border="0" alt="save" /></a></div>
         <div class="template_name">Template code</div>
     </div>
 </div>
@@ -23,11 +23,11 @@
 
 <!-- END prof_icon -->
 <!-- BEGIN icon -->
-<div class="skill_box"><div class="skill_icon hovertooltip" data-tooltipid="load{load}"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="https://wiki.guildwars.com/wiki/{name_link}"><img src="http://localhost/wiki/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="https://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
+<div class="skill_box"><div class="skill_icon hovertooltip" data-tooltipid="load{load}"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="https://wiki.guildwars.com/wiki/{name_link}"><img src="/extensions/PvXCode/images/img_skills/{id}.jpg" border="0" /></a></div><a href="https://wiki.guildwars.com/wiki/{name_link}">{name}</a></div>
 <!-- END icon -->
 
 <!-- BEGIN blank_icon -->
-<img src="http://localhost/wiki/extensions/PvXCode/images/img_skills/{id}.jpg" style="vertical-align: middle;" />
+<img src="/extensions/PvXCode/images/img_skills/{id}.jpg" style="vertical-align: middle;" />
 <!-- END blank_icon -->
 
 <!-- BEGIN noicon -->
@@ -43,14 +43,14 @@
     <div class="pvx_overlib">
         <div class="pvx_campaign">{chapter}</div>
         <div class="pvx_mastery">{profession}. {attr_html}</div>
-        <div class="pvx_description" style="background-image:url('http://localhost/wiki/extensions/PvXCode/images/img_skin/{profession}.gif');">
+        <div class="pvx_description" style="background-image:url('/extensions/PvXCode/images/img_skin/{profession}.gif');">
             <div class="pvx_{elite_or_normal}">{name}</div>
             <div class="pvx_type">{type}</div>
             <div class="pvx_skill_info">{desc}{extra_desc}</div>
         </div>
         <div class="pvx_attrib_list">
             <div class="pvx_attrib_bg">
-                <img src="http://localhost/wiki/extensions/PvXCode/images/img_thumb/{id}.jpg" height="40" width="40" border="0"><div id="pvx_attributes">{required}</div>
+                <img src="/extensions/PvXCode/images/img_thumb/{id}.jpg" height="40" width="40" border="0"><div id="pvx_attributes">{required}</div>
             </div>
         </div>
     </div>
