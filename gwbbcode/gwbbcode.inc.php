@@ -747,7 +747,7 @@ function skill_replace($reg) {
 		}
 
 		// PvE only
-		$pve_only = $pve_only ? 'PvE only' : '';
+		$pve_only = $pve_only ? 'PvE only.' : '';
 
 		// Descriptions variables -> green and adapted to their attribute. (0..12..16 -> green 8)
 		$extra_desc = '';
@@ -1139,17 +1139,17 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 	}
 
 	// Paragon: Take into account Leadership
-	add_leadership($extra_desc, $name, $attr_list, $type);
+	add_leadership($extra_desc, $attr_list, $type, $name);
 
 	// Monk: Take into account Divine Favor
 	add_divine_favor($desc, $extra_desc, $attr_list, $name);
 
 	// Spirits created by anyone: Specify a Spirit health and armor
 	// Ritualist: Take into account Spawning Power
-	$desc = add_spirit_health($desc, $attr_list);
+	add_spirit_health($desc, $attr_list);
 
 	// Ritualist: Specify additional weapon spell duration
-	$desc = calc_weapon_duration($desc, $attr_list, $type);
+	add_weapon_duration($desc, $attr_list, $type);
 
 	// PvE only: Append a note saying PvE only
 	if ($pve_only !== '') {
@@ -1205,7 +1205,7 @@ function fork_val_pve_only($val_0, $val_15, $attr_lvl, $rank_limit) {
 
 // Calculation function 18:
 // Return a tooltip addition for the energy gained from using a skill depending on its type and level of Leadership
-function add_leadership(&$extra_desc, $name, $attr_list, $type) {
+function add_leadership(&$extra_desc, $attr_list, $type, $name) {
 	static $leadership_limited_gain_skills = Array(
 		// Bugged - no energy
 		'"By Ural\'s Hammer!"' => 0,
@@ -1302,13 +1302,13 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 }
 
 // Calculation function 20:
-// Return a description specifying how much health and armor does a Spirit have
-function add_spirit_health($desc, $attr_list) {
+// Return a description specifying how much health and armor does a Spirit, Minion or Summon have
+function add_spirit_health(&$desc, $attr_list) {
 	// Get Spirit's level
 	if (preg_match('@Create a level <span class="variable">([0-9]+)</span> Spirit@', $desc, $reg)) {
 		$spirit_level = $reg[1];
 
-		// Get Binding Ritual level
+		// Get Spawning Power level
 		$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
 
 		// Compute the Spirit's Health and armor
@@ -1320,15 +1320,59 @@ function add_spirit_health($desc, $attr_list) {
 		}
 		$spirit_armor = round((88 / 15 * $spirit_level) + 3);
 
-		// Add Spirit's health to description
+		// Add Spirit's health and armor to description
 		$desc = preg_replace('@Create a level <span class="variable">[0-9]+</span> Spirit@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
 	}
-	return $desc;
+	
+	if ( isset($attr_list['Death Magic']) ) {
+		if (preg_match('@level <span class="variable">([0-9]+)</span> (bone fiend|bone horror|bone minions|bone minion|flesh golem|jagged horror|masterless bone horror|shambling horror|vampiric horror)@', $desc, $reg)) {
+			$spirit_level = $reg[1];
+
+			// Get Spawning Power level
+			$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
+
+			// Compute the Minion's Health and armor
+			// https://wiki.guildwars.com/wiki/Creature#Health : health = level*20+80
+			$spirit_health  = $spirit_level * 20 + 80;
+			$spawning_bonus = '';
+			if ($spawning_level > 0) {
+				$spawning_health = round($spirit_health * ($spawning_level * 0.04));
+				$spawning_bonus = ' (+' . $spawning_health . ')';
+			}
+			$spirit_armor = round((88 / 15 * $spirit_level) + 3);
+
+			// Add Minion's health and armor to description
+			$desc = preg_replace('@level <span class="variable">[0-9]+</span> (?:bone fiend|bone horror|bone minions|bone minion|flesh golem|jagged horror|masterless bone horror|shambling horror|vampiric horror)@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
+		}
+	}
+	
+	// https://wiki.guildwars.com/wiki/Creature#Health : health = level*20+80
+	if ( isset($attr_list['Asura rank']) || isset($attr_list['Ebon Vanguard rank']) ) {
+		if (preg_match('@Summon a level <span class="variable">([0-9]+)</span> (?:Ebon Vanguard Assassin|Ice Imp|Mursaat|Naga Shaman|Ruby Djinn)@', $desc, $reg)) {
+			$spirit_level = $reg[1];
+
+			// Get Spawning Power level
+			$spawning_level = isset($attr_list['Spawning Power']) ? $attr_list['Spawning Power'] : 0;
+
+			// Compute the Summon's Health and armor
+			// https://wiki.guildwars.com/wiki/Creature#Health : health = level*20+80
+			$spirit_health  = $spirit_level * 20 + 80;
+			$spawning_bonus = '';
+			if ($spawning_level > 0) {
+				$spawning_health = round($spirit_health * ($spawning_level * 0.04));
+				$spawning_bonus = ' (+' . $spawning_health . ')';
+			}
+			$spirit_armor = round((88 / 15 * $spirit_level) + 3);
+
+			// Add Summon's health and armor to description
+			$desc = preg_replace('@Summon a level <span class="variable">[0-9]+</span> (?:Ebon Vanguard Assassin|Ice Imp|Mursaat|Naga Shaman|Ruby Djinn)@', '${0} <span class="expert"> with <b>' . $spirit_health . $spawning_bonus . '</b> Health and <b>' . $spirit_armor . '</b> armor</span>', $desc);
+		}
+	}
 }
 
 // Calculation function 21:
 // Return the additional weapon spell duration depending on level of Spawning Power
-function calc_weapon_duration($desc, $attr_list, $type) {
+function add_weapon_duration(&$desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
 		if (preg_match('@(for (?:<span class="variable">)?)([0-9]+)((?:</span>)? second)@i', $desc, $reg)) {
 			$base_duration = $reg[2];
@@ -1336,7 +1380,6 @@ function calc_weapon_duration($desc, $attr_list, $type) {
 			$desc = str_replace($reg[0], $reg[1] . $reg[2] . ' <span class="expert">(+' . $additional_duration . '&#041;</span>' . $reg[3], $desc);
 		}
 	}
-	return $desc;
 }
 
 
