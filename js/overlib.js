@@ -24,7 +24,13 @@ function overlib2() {
 
 	// Helper function - Track cursor and move tooltip nearby
 	function moveTooltip(e) {
-		document.getElementById('hovertooltip-parent').style.left = (e.pageX +20) + 'px';
+		// Avoid possible collision with right-hand side of page
+		var w = window.innerWidth;
+		if (w !== null && e.pageX + 20 + 420 > w) {
+			document.getElementById('hovertooltip-parent').style.left = (e.pageX - (20 + 420)) + 'px';
+		} else {
+			document.getElementById('hovertooltip-parent').style.left = (e.pageX +20) + 'px';
+		}
 		document.getElementById('hovertooltip-parent').style.top = (e.pageY +20) + 'px';
 	}
 
