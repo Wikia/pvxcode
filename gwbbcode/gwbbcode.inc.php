@@ -29,18 +29,8 @@ global $gwbbcode_tpl;
 if (!isset($gwbbcode_tpl))
 	$gwbbcode_tpl = load_gwbbcode_smarty_template();
 
-// FIXME 2 - NOT ACTUALLY USED?
-// FIXME 1 - SUSPECT MEMORY INTENSIVE - NOT SURE HOW TO ONLY LOAD THE IDS ONCE, AND NOT ATTEMPT TO LOAD MULTIPLE TIMES.
-// Array of PvP -> PvE IDs
-//  @ sign just means it suppresses errors if they occur
-// static $pvpSkillIds = Array(); // previously "global" not "static"
-// if (empty($pvpSkillIds)) {
-// 	if (($pvpSkillIds = @load(SKILLIDSPVP_PATH)) === false) {
-// 		die("Missing pvp skill id database.");
-// 	}
-// }
-// Array of PvE -> PvP IDs (only if there is a PvP id)
-// $pveSkillIds = array_flip($pvpSkillIds); // FIXME - VERIFY: PREVIOUSLY WROTE STATIC IN FRONT OF THIS - THINK IT JUST TAKES THE TYPE OF THE ARRAY_FLIP?
+
+
 
 /***************************************************************************
  * MAIN FUNCTION
@@ -1148,6 +1138,9 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 		$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
 	}
 
+	// Paragon: Take into account Leadership
+	add_leadership($extra_desc, $name, $attr_list, $type);
+
 	// Monk: Take into account Divine Favor
 	add_divine_favor($desc, $extra_desc, $attr_list, $name);
 
@@ -1211,6 +1204,70 @@ function fork_val_pve_only($val_0, $val_15, $attr_lvl, $rank_limit) {
 }
 
 // Calculation function 18:
+// Return a tooltip addition for the energy gained from using a skill depending on its type and level of Leadership
+function add_leadership(&$extra_desc, $name, $attr_list, $type) {
+	static $leadership_limited_gain_skills = Array(
+		// Bugged - no energy
+		'"By Ural\'s Hammer!"' => 0,
+		'"Make Your Time!"' => 0,
+
+		// Targets a foe only - no energy
+		'"Coward!"' => 0,
+		'"Dodge This!"' => 0,
+		'"Finish Him!"' => 0,
+		'"None Shall Pass!"' => 0,
+		'"On Your Knees!"' => 0,
+		'"You Are All Weaklings!"' => 0,
+		'"You Move Like a Dwarf!"' => 0,
+		'"You\'re All Alone!"' => 0,
+
+		// Selfish shouts / Target only one ally / Target only pet - energy = 2. 
+		'"Brace Yourself!"' => 2,
+		'"Fear Me!"' => 2,
+		'"Find Their Weakness!"' => 2,
+		'"For Great Justice!"' => 2,
+		'"Help Me!"' => 2,
+		'"I Am Unstoppable!"' => 2,
+		'"I Am the Strongest!"' => 2,
+		'"I Meant to Do That!"' => 2,
+		'"I Will Avenge You!"' => 2,
+		'"I Will Survive!"' => 2,
+		'"It\'s just a flesh wound."' => 2,
+		'"Lead the Way!"' => 2,
+		'"To the Limit!"' => 2,
+		'"Victory is Mine!"' => 2,
+		'"You Will Die!"' => 2,
+		'Call of Haste' => 2,
+		'Call of Protection' => 2,
+		'Otyugh\'s Cry' => 2,
+		'Predatory Bond' => 2,
+		'Symbiotic Bond' => 2,
+
+		// Target yourself and pet - energy = 4
+		'Strike as One' => 4
+	);
+	
+	// Check if leadership is set, if leadership is greater than 1, and if the skill is either a shout or chant
+	if (isset($attr_list['Leadership']) && $attr_list['Leadership'] > 1 && ($type == 'Chant' || $type == 'Shout')) {
+		
+		// Check if it is one of the limited leadership gain skills.
+		if ( isset($leadership_limited_gain_skills[$name]) ) {
+			$max_energy = $leadership_limited_gain_skills[$name];
+			
+			// Check if is not one of the bugged shout skills with zero gain. If so, energy gain is fixed.
+			if ($max_energy !== 0) {
+				$extra_desc = 'Gain <b>' . min($max_energy, floor($attr_list['Leadership'] / 2)) . '</b> energy.';
+			}
+		}
+		
+		// Otherwise for regular shouts/chants, energy increases with allies
+		else {
+			$extra_desc = 'Gain 2 energy per affected ally (maximum of <b>' . floor($attr_list['Leadership'] / 2) . '</b> energy).';
+		}
+	}
+}
+
+// Calculation function 19:
 // Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
@@ -1244,7 +1301,7 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	}
 }
 
-// Calculation function 19:
+// Calculation function 20:
 // Return a description specifying how much health and armor does a Spirit have
 function add_spirit_health($desc, $attr_list) {
 	// Get Spirit's level
@@ -1269,7 +1326,7 @@ function add_spirit_health($desc, $attr_list) {
 	return $desc;
 }
 
-// Calculation function 20:
+// Calculation function 21:
 // Return the additional weapon spell duration depending on level of Spawning Power
 function calc_weapon_duration($desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
@@ -1289,7 +1346,7 @@ function calc_weapon_duration($desc, $attr_list, $type) {
  * HELPER CALCULATION FUNCTIONS - PROPERTIES
  ***************************************************************************/
 
-// Calculation function 21:
+// Calculation function 22:
 // Return the real energy cost of a skill depending on its type and level of Expertise
 //  Note: There is not a field in databases/skill_db.php containing whether the skill is a touch skill or not.
 function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
@@ -1301,40 +1358,11 @@ function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
 	return false;
 }
 
-// Calculation function 22:
+// Calculation function 23:
 // Return the real energy cost of a skill depending on its type, profession and level of Mysticism
 function calc_mysticism($attr_list, $type, $energy, $profession) {
 	if (isset($attr_list['Mysticism']) && $attr_list['Mysticism'] > 0 && $profession == 'Dervish' && strpos($type, 'Enchantment') !== false ) {
 		return round($energy * (1.0 - 0.04 * $attr_list['Mysticism']));
-	}
-
-	// Otherwise
-	return false;
-}
-
-// Calculation function 23: // FIXME - NOT SURE IF I WANT TO KEEP THIS OR NOT. MIGHT NEED TO MARKUP EACH SHOUT LIKE DIVINE FAVOR GETS TAGGED.
-// Return the energy fork gained from using a skill depending on its type and level of Leadership
-// '<span class="expert">You gain 2 Energy for each ally affected by one of your Shouts or Chants (maximum <b>' . floor($attr_list['Leadership'] / 2) . '</b> Energy).</span><br/>';
-function calc_leadership($name, $attr_list, $type, $energy, $pve_only) {
-	static $leadership_skills = Array(0 => Array('"It\'s just a flesh wound."', '"Make Your Time!"', '"Never Give Up!"', '"The Power Is Yours!"', '"Fear Me!"', '"I Will Avenge You!"', '"None Shall Pass!"', '"Retreat!"', '"On Your Knees!"', '"Coward!"', '"To the Limit!"', '"You Will Die!"', '"Victory is Mine!"', '"You\'re All Alone!"'), 1 => Array('"Brace Yourself!"', '"Can\'t Touch This!"', '"Find Their Weakness!"', '"Help Me!"', '"For Great Justice!"', '"I Will Survive!"', 'Call of Haste', 'Call of Protection', 'Otyugh\'s Cry', 'Predatory Bond', 'Symbiotic Bond'), 2 => Array('Strike as One'));
-	// FIXME - Till we know more about PvE Chants and Shouts, ignore them
-	if ($pve_only) {
-		return false;
-	}
-	if (isset($attr_list['Leadership']) && $attr_list['Leadership'] > 1 && ($type == 'Chant' || $type == 'Shout')) {
-		$max_energy = 8;
-		foreach ($leadership_skills as $skill_energy => $skill_list) {
-			if (in_array($name, $skill_list)) {
-				$max_energy = $skill_energy;
-				break;
-			}
-		}
-		$max_energy = min($max_energy, floor($attr_list['Leadership'] / 2));
-		if ($max_energy > 1) {
-			return '+1..' . $max_energy;
-		} else {
-			return '+' . $max_energy;
-		}
 	}
 
 	// Otherwise
