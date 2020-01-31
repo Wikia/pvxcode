@@ -341,7 +341,7 @@ function build_replace($reg) {
 	} else if (!empty($attr_list['Critical Strikes'])) {
 		$desc .= '<span class="expert">You have an additional <b>' . $attr_list['Critical Strikes'] . '</b>% chance to critical hit. Whenever you critical hit, you get <b>' . round($attr_list['Critical Strikes'] / 5) . '</b> Energy.</span><br/>';
 	} else if (!empty($attr_list['Spawning Power'])) {
-		$desc .= '<span class="expert">Spirits and minions you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>'; // FIXME
+		$desc .= '<span class="expert">Spirits and minions you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>';
 	} else if (!empty($attr_list['Mysticism'])) {
 		$desc .= '<span class="expert">Whenever an Enchantment ends, you gain <b>' . $attr_list['Mysticism'] . '</b> Health and <b>' . floor($attr_list['Mysticism'] / 3) . '</b> Energy.</span><br/>';
 		$desc .= '<span class="expert">In PvE, gain <b>+' . $attr_list['Mysticism'] . '</b> armor rating while enchanted.</span><br/>';
@@ -1116,7 +1116,6 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 	// Then lookup the attribute.
 	else {
 		if ($attribute == 'Kurzick rank' || $attribute == 'Luxon rank') {
-			// FIXME - ROUNDING LOOKS WRONG ON SUMMON SPIRITS. CHECK.
 			// Kurzick/Luxon ranks are 0-12, but have no effect above rank 6.
 			if (isset($attr_list[$attribute])) {
 				$attr_lvl = $attr_list[$attribute];
@@ -1189,9 +1188,26 @@ function desc_replace($reg) {
 }
 
 // Calculation function 17:
-// Return value at a given attribute level, with a limit.
-function fork_val_pve_only($val_minrank, $val_maxrank, $rank_lvl, $rank_limit) {
-	return $val_minrank + round(($val_maxrank - $val_minrank) * min($rank_lvl, $rank_limit) / $rank_limit);
+// Return value at a given attribute level, using a non-linear conversion.
+function fork_val_pve_only($val_0, $val_15, $attr_lvl, $rank_limit) {
+	// Sunspear, Lightbringer and EoTN ranks have an improved effect up to rank 5
+	$track10_limit5 = array( 0 => 0, 1 => 3, 2 => 6, 3 => 9, 4 => 12, 5 => 15);
+	// Kurzick and Luxon ranks have an improved effect up to rank 6
+	$track12_limit6 = array( 0 => 0, 1 => 2, 2 => 5, 3 => 7, 4 => 10, 5 => 12, 6 => 15);
+	
+	$factor = 0;
+	if ($attr_lvl > $rank_limit) {
+		$factor = 15;
+	} else if ($attr_lvl >= 0) {
+		if ($rank_limit == 6) {
+			$conversion_array = $track12_limit6;
+		} else {
+			$conversion_array = $track10_limit5;
+		}
+		$factor = $conversion_array[$attr_lvl];
+	}
+
+	return $val_0 + round(($val_15 - $val_0) * $factor / 15);
 }
 
 // Calculation function 18:
