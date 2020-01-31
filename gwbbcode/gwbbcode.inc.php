@@ -29,6 +29,14 @@ global $gwbbcode_tpl;
 if (!isset($gwbbcode_tpl))
 	$gwbbcode_tpl = load_gwbbcode_smarty_template();
 
+// Load the pvp to pve id conversion array
+// Ingame templates must not contain pvp skill ids to be valid.
+global $pvp_to_pve_skill_list;
+if ( !file_exists(SKILLIDSPVP_PATH) ) {
+	die("Missing pvp skill id database.");
+}
+$pvp_to_pve_skill_list = load(SKILLIDSPVP_PATH);
+
 
 
 
@@ -1454,17 +1462,13 @@ function infuse_values($text, $values) {
 	return $text;
 }
 
-// Calculation function 27:
-function getSkillIdPvP($pve) {
-	global $pveSkillIds;
-	return (isset($pveSkillIds[$pve]) ? $pveSkillIds[$pve] : $pve);
+// Calculation function 28:
+// Can't have pvp skill ids in any download links since they cannot be loaded ingame.
+function getSkillIdPvE($pvp) {
+	global $pvp_to_pve_skill_list;
+	return (isset($pvp_to_pve_skill_list[$pvp]) ? $pvp_to_pve_skill_list[$pvp] : $pvp);
 }
 
-// Calculation function 28:
-function getSkillIdPvE($pvp) {
-	global $pvpSkillIds;
-	return (isset($pvpSkillIds[$pvp]) ? $pvpSkillIds[$pvp] : $pvp);
-}
 
 
 
@@ -1708,7 +1712,7 @@ function template_to_gwbbcode($text) {
 		$bin = preg_replace('@^([01]{' . $skill_size . '})@', '', $bin);
 
 		// Skill name
-		$skill_id   = getSkillIdPvP(binval($reg2[1]));
+		$skill_id   = binval($reg2[1]);
 		$skill      = gws_details($skill_id);
 		$skill_name = $skill['name'];
 		if ($skill === false) {
