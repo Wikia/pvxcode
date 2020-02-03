@@ -43,7 +43,7 @@ class SpecialPvXDownloadTemplate extends SpecialPage {
 		// to put php errors in the download file.
 		$name = 'Unnamed template';
 		if (isset($_GET['name'])) {
-			$name = $_GET['link'];
+			$name = $_GET['name'];
 		}
 		$build = '(template parameter was blank)';
 		if (isset($_GET['build'])) {
