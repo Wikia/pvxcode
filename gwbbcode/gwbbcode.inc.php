@@ -341,7 +341,7 @@ function build_replace($reg) {
 	} else if (!empty($attr_list['Spawning Power'])) {
 		$desc .= '<span class="expert">Spirits and minions you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>';
 	} else if (!empty($attr_list['Mysticism'])) {
-		$desc .= '<span class="expert">Whenever an Enchantment ends, you gain <b>' . $attr_list['Mysticism'] . '</b> Health and <b>' . floor($attr_list['Mysticism'] / 3) . '</b> Energy.</span><br/>';
+		$desc .= '<span class="expert">The energy cost of Dervish enchantments is reduced by <b>' . (4 * $attr_list['Mysticism']) . '%</b>.</span><br/>';
 		$desc .= '<span class="expert">In PvE, gain <b>+' . $attr_list['Mysticism'] . '</b> armor rating while enchanted.</span><br/>';
 	} else if (!empty($attr_list['Leadership'])) {
 		$desc .= '<span class="expert">You gain 2 Energy for each ally affected by one of your Shouts or Chants (maximum <b>' . floor($attr_list['Leadership'] / 2) . '</b> Energy).</span><br/>';
