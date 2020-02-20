@@ -47,46 +47,46 @@ $pvp_to_pve_skill_list = load(SKILLIDSPVP_PATH);
 // Prepares the page and then replaces gwBBCode with HTML
 //  This function is directly called by: extension\classes\PvXCode.php
 function parse_gwbbcode($text, $build_name = false) {
-	// If a build name is provided, assign it to all builds
-	//  This is so that any save build button has a decent title
-	if (!empty($build_name)) {
-		$text = preg_replace('#(\[build[^\]]*?) name="[^\]"]+"#isS', "\\1", $text); // Remove all build names
-		$text = preg_replace('#(\[build )#isS', "\\1name=\"$build_name\" ", $text); // Add build names
+
+	// Timer for the gwBBCode parse duration
+	$start = microtime(true);
+	
+	// 1. Add a build name if not specified. Default to the name provided by PvXCode.php.
+	//  This is used in the template download link as the file title.
+	if ( !empty($build_name) && !preg_match('#(\[build[^\]]*?) name="[^\]"]+"#isS', $text) ) {
+		$text = preg_replace('#(\[build )#is', "\\1name=\"$build_name\" ", $text);
 	}
 
-	// Timer for the actual gwBBCode parse duration
-	$start = microtime(true);
-
-	// 1: Replace all '['s inside [pre]..[/pre], or [nobb]..[/nobb] by '&#91;'
+	// 2: Replace all '['s inside [pre]..[/pre], or [nobb]..[/nobb] by '&#91;'
 	$text = preg_replace_callback('#\[pre\](.*?)\[\/pre\]#isS', 'pre_replace', $text);
 	$text = preg_replace_callback('#\[nobb\](.*?)\[\/nobb\]#isS', 'pre_replace', $text);
 
-	// 2: Replace all [Random Skill] by [some random skill name] each time the post is rendered
+	// 3: Replace all [Random Skill] by [some random skill name] each time the post is rendered
 	$text = preg_replace_callback('#\[Random Skill(.*?)\]#is', 'random_skill_replace', $text);
 
-	// 3: [rand seed=465468 players=2]
+	// 4: [rand seed=465468 players=2]
 	$text = preg_replace_callback('#\[rand([^\]]*)\]#isS', 'rand_replace', $text);
 
-	// 4: Manage [build=...], or [build_name;template_code]
+	// 5: Manage [build=...], or [build_name;template_code]
 	$text = preg_replace_callback('#\[build=([^\]]*)\]\]?(\[/build\])?\r?\n?#isS', 'build_id_replace', $text);
 	$text = preg_replace_callback('#\[(([^]\r\n]+)(;)([^];\r\n]+))\]\r?\n?#isS', 'build_id_replace', $text);
 
-	// 5: Replace all [skill_name] by [skill]skill_name[/skill] if skill_name is a valid skill name
+	// 6: Replace all [skill_name] by [skill]skill_name[/skill] if skill_name is a valid skill name
 	$text = preg_replace_callback('#\[(.+)\]#isSU', 'skill_name_replace', $text);
 
-	// 6: Manage [build]...[/build]
+	// 7: Manage [build]...[/build]
 	$text = preg_replace_callback('#\[build ([^\]]*)\](.*?)\[/build\]\r?\n?#isS', 'build_replace', $text);
 
-	// 7: Replace all [skillset=prof_short_name@attr_level]
+	// 8: Replace all [skillset=prof_short_name@attr_level]
 	$text = preg_replace_callback('#\[(\[?)skillset=(.*?)\]#isS', 'skillset_replace', $text);
 
-	// 8: Manage [skill]...[/skill]
+	// 9: Manage [skill]...[/skill]
 	$text = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\][ ]?#isS', 'skill_replace', $text);
 
-	// 9: Manage [gwbbcode version]
+	// 10: Manage [gwbbcode version]
 	$text = preg_replace('@\[gwbbcode version\]@i', GWBBCODE_VERSION, $text);
 
-	// 10: Manage [gwbbcode runtime]
+	// 11: Manage [gwbbcode runtime]
 	if (preg_match('@\[gwbbcode runtime\]@i', $text) !== false) {
 		$text = preg_replace('@\[gwbbcode runtime\]@i', 'Runtime = ' . round(microtime(true) - $start, 3) . ' seconds', $text); // Precise enough
 	}
@@ -210,14 +210,14 @@ function skill_name_replace($reg) {
 	list($all, $name) = $reg;
 	$name = html_safe_decode($name);
 
-	//'[[Skill Name]' => no icon
+	// '[[Skill Name]' => no icon
 	if ($name{0} == '[') {
 		$noicon = true;
 		$name = substr($name, 1);
 	} else
 		$noicon = false;
 
-	//"name@attr_value|shown_name" -> $attr_val, $shown_name and $name
+	// "name@attr_value|shown_name" -> $attr_val, $shown_name and $name
 	if (preg_match('/@([^\]:\|]+)/', $name, $reg)) {
 		$attr_val = preg_replace('@[^0-9+-]@', '', $reg[1]);
 	}
@@ -480,9 +480,8 @@ function build_replace($reg) {
 		$template .= str_repeat(str_repeat('0', $skill_bit_size), 8 - count($template_skills));
 	}
 
-	// Template: Build name as populated by template_to_gwbbcode() - note any user-specified names will be ignored.
+	// Template: Build name as populated by template_to_gwbbcode()
 	$build_name = gws_build_name($att);
-	$build_name = str_replace('{br}', '<br/>', str_replace('{br/}', '<br/>', str_replace('{BR}', '<br/>', str_replace('{BR/}', '<br/>', $build_name))));
 
 	// Template: Manage template save link
 	if (preg_match("/ nosave/i", $att)) {
@@ -493,7 +492,7 @@ function build_replace($reg) {
 			$template_code = bin_to_template($template . '0'); // Added a 0 since that's what GW does
 
 			// Prepare template name
-			$template_name = preg_replace('@[];]@', '', preg_replace('@<br/>.*@', '', $build_name));
+			$template_name = $build_name;
 		} else {
 			// Display error message beneath build template
 			$template_error_msg = htmlspecialchars($invalid_template);
@@ -1657,16 +1656,6 @@ function template_to_gwbbcode($text) {
 
 	// Add clean build name if any
 	if (!empty($build_name)) {
-		$syntax_options = array(
-			"nosave",
-			"box"
-		);
-		foreach ($syntax_options as $option) {
-			if (preg_match("/ $option/i", $build_name, $option_reg)) {
-				$ret .= $option_reg[0];
-				$build_name = preg_replace("/ $option/i", '', $build_name);
-			}
-		}
 		$ret .= ' name="' . str_replace('"', "''", $build_name) . '"';
 	}
 
