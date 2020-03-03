@@ -774,9 +774,9 @@ function skill_replace($reg) {
 
 		// Profession icon
 		if ($prof == '?') {
-			$prof_img = "$gwbbcode_img_path/img_interface/void2.gif";
+			$prof_img = "$gwbbcode_img_path/img_skin/No_profession.gif";
 		} else {
-			$prof_img = "$gwbbcode_img_path/img_interface/$profession.gif";
+			$prof_img = "$gwbbcode_img_path/img_skin/$profession.gif";
 		}
 	}
 
