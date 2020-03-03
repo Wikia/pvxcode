@@ -112,7 +112,7 @@ span.expert {
 div.pvx_attrib_list {
     position:absolute;
     background-color:#fafaf7;
-    background-image:url(/extensions/PvXCode/images/img_skin/skillbg.jpg);
+    background-image:url(../images/img_skin/skillbg.jpg);
     background-repeat:no-repeat;
     background-position:0 1px;
     height:149px;
@@ -157,43 +157,43 @@ div.pvx_attrib_bg img {
 
 /* Tooltips - Left column - sacrifice, energy, overcast, recharge, activation, adrenaline. */
 #pvx_attributes #pvx_sacr {
-    background-image:url(/extensions/PvXCode/images/img_skin/sacrifice.gif);
+    background-image:url(../images/img_skin/sacrifice.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_ener {
-    background-image:url(/extensions/PvXCode/images/img_skin/energy.gif);
+    background-image:url(../images/img_skin/energy.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_over {
-    background-image:url(/extensions/PvXCode/images/img_skin/overcast.gif);
+    background-image:url(../images/img_skin/overcast.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_rech {
-    background-image:url(/extensions/PvXCode/images/img_skin/recharge.gif);
+    background-image:url(../images/img_skin/recharge.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_cast {
-    background-image:url(/extensions/PvXCode/images/img_skin/activation.gif);
+    background-image:url(../images/img_skin/activation.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_eregen {
-    background-image:url(/extensions/PvXCode/images/img_skin/upkeep.gif);
+    background-image:url(../images/img_skin/upkeep.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 #pvx_attributes #pvx_adre {
-    background-image:url(/extensions/PvXCode/images/img_skin/adrenaline.gif);
+    background-image:url(../images/img_skin/adrenaline.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
@@ -302,40 +302,40 @@ div.pvx_attrib_bg img {
 
 /* Builds - Skills - Type icons */
 .pvx-type-du {
-    background-image:url(/extensions/PvXCode/images/img_skin/Dual-Attack.png);
+    background-image:url(../images/img_skin/Dual-Attack.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-en {
-    background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
+    background-image:url(../images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-he {
-    background-image:url(/extensions/PvXCode/images/img_skin/Hex-Spell.png);
+    background-image:url(../images/img_skin/Hex-Spell.png);
     height:20px;
     width:20px;
 }
 .pvx-type-le {
-    background-image:url(/extensions/PvXCode/images/img_skin/Lead-Attack.png);
+    background-image:url(../images/img_skin/Lead-Attack.png);
     height:20px;
     width:20px;
 }
 .pvx-type-of {
-    background-image:url(/extensions/PvXCode/images/img_skin/Off-Hand-Attack.png);
+    background-image:url(../images/img_skin/Off-Hand-Attack.png);
     height:20px;
     width:20px;
 }
 .pvx-type-wea {
-    background-image:url(/extensions/PvXCode/images/img_skin/Weapon-Spell.png);
+    background-image:url(../images/img_skin/Weapon-Spell.png);
     height:20px;
     width:20px;
 }
 
 .pvx-type-fl {
-    background-image:url(/extensions/PvXCode/images/img_skin/Enchantment-Spell.png);
+    background-image:url(../images/img_skin/Enchantment-Spell.png);
     height:20px;
     width:20px;
 }
