@@ -772,7 +772,7 @@ function skill_replace($reg) {
 			$elite_or_normal = 'normal_skill';
 		}
 
-		// Profession icon
+		// Profession icon -- FIXME: Investigate if this is required or used
 		if ($prof == '?') {
 			$prof_img = "$gwbbcode_img_path/img_skin/No_profession.gif";
 		} else {

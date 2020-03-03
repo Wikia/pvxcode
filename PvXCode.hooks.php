@@ -31,6 +31,8 @@ class PvXCodeHooks {
 	 */
 	public static function onRegistration() {
 		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
+		// define('GWBBCODE_IMG_PATH', __DIR__.'/images'); -- FIXME: LOCAL DEBUGGING ONLY, COMMENTED OUT
+		define('GWBBCODE_IMG_PATH', 'http://localhost/wiki/extensions/PvXCode/images'); // -- FIXME: LOCAL DEBUGGING ONLY
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
