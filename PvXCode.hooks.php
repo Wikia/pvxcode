@@ -2,7 +2,7 @@
 /**
  * Curse Inc.
  * PvX Code
- * Guildwiki / Guild Wars Template to PvXCode Handling
+ * Guild Wars Template to PvXCode Handling
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
@@ -31,8 +31,7 @@ class PvXCodeHooks {
 	 */
 	public static function onRegistration() {
 		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
-		// define('GWBBCODE_IMG_PATH', __DIR__.'/images'); -- FIXME: LOCAL DEBUGGING ONLY, COMMENTED OUT
-		define('GWBBCODE_IMG_PATH', 'http://localhost/wiki/extensions/PvXCode/images'); // -- FIXME: LOCAL DEBUGGING ONLY
+		define('GWBBCODE_IMG_PATH', __DIR__.'/images');
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
