@@ -772,11 +772,11 @@ function skill_replace($reg) {
 			$elite_or_normal = 'normal_skill';
 		}
 
-		// Profession icon -- FIXME: Investigate if this is required or used
+		// Profession icon - used on the faded tooltip background image
 		if ($prof == '?') {
-			$prof_img = "$gwbbcode_img_path/img_skin/No_profession.gif";
+			$prof_img = "No_profession-faded";
 		} else {
-			$prof_img = "$gwbbcode_img_path/img_skin/$profession.gif";
+			$prof_img = "$profession-faded";
 		}
 	}
 
