@@ -259,6 +259,9 @@ div.pvx_attrib_bg img {
     font-style:italic;
     font-size:11px;
 }
+.description:empty {
+    display: none;
+}
 
 /* Builds - Skills */
 .skill_box {
