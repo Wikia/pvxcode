@@ -26,6 +26,6 @@ class PvXCode {
 		$parsed_input = $parser->parse($input, $parser->getTitle(), $parser->getOptions(), true, false);
 		$title = $parser->getTitle()->getText();
 		$results = parse_gwbbcode($parsed_input->getText(), $title);
-		return str_replace('/template.php', Title::newFromText('DownloadTemplate', NS_SPECIAL)->getFullUrl(), $results);
+		return $results;
 	}
 }

@@ -3,5 +3,4 @@
 .*.swp
 .DS_Store
 .svn
-/vendor
 composer.lock

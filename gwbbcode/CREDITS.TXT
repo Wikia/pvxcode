@@ -6,8 +6,8 @@ for phpBB 2.0.15+
 liu.pi.vipi@gmail.com
 
 
-CREDITS
--------
+ORIGINAL gwBBCODE CREDITS
+-------------------------
 
 Project lead and coding: Liu Pi
 
@@ -33,3 +33,10 @@ Dian, Deis, Pt Freelancer [OT] and Felix Aurius [OT].
 Original skill database: dArtagnan, Himiko, Gao Shun and Huang
 
 And this project would have died a long time ago without the 950+ forums using it :)
+
+
+PVXCODE gwBBCODE REWRITE CREDITS
+--------------------------------
+January 2020.
+Lead: Chieftain Alex.
+Additional coding and bug reporting: Toraen, Phenaxkian.

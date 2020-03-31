@@ -1,7 +1,10 @@
 {
 	"name": "PvX Code",
-	"version": "1.0.0",
-	"author": "Hydra Wiki Platform Team",
+	"version": "2.0.0",
+	"author": [
+		"Hydra Wiki Platform Team",
+		"PvX Wiki 2010-2020 Contributors"
+	],
 	"descriptionmsg": "pvxcode_description",
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
@@ -33,7 +36,6 @@
 		},
 		"ext.PvXCode.js": {
 			"scripts": [
-				"js/pvxcode.js",
 				"js/overlib.js"
 			]
 		}

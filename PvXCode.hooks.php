@@ -2,7 +2,7 @@
 /**
  * Curse Inc.
  * PvX Code
- * Guildwiki / Guild Wars Template to PvXCode Handling
+ * Guild Wars Template to PvXCode Handling
  *
  * @author		Cameron Chunn
  * @copyright	(c) 2015 Curse Inc.
@@ -10,8 +10,10 @@
  * @package		PvXCode
  * @link		https://gitlab.com/hydrawiki
  *
+ * Purpose of this file:
+ *  Declares how the extension will interpret pvxbig tag
+ *  Loads the gwbbcode.inc.php file for builds and tooltips
 **/
-
 class PvXCodeHooks {
 	/**
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit
@@ -28,7 +30,8 @@ class PvXCodeHooks {
 	 * @return void
 	 */
 	public static function onRegistration() {
-		define('GWBBCODE_ROOT', __DIR__.'/vendor/gwbbcode');
+		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
+		define('GWBBCODE_IMG_PATH', __DIR__.'/images');
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
