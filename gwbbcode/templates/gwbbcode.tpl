@@ -12,7 +12,7 @@
     {skills}
     </div>
     <div class="template">
-        <div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/wiki/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="{gwbbcode_img_path}/img_skin/save.png" border="0" alt="save" /></a></div>
+        <div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="{gwbbcode_img_path}/img_skin/save.png" border="0" alt="save" /></a></div>
         <div class="template_name">Template code</div>
     </div>
 </div>
