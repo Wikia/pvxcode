@@ -31,7 +31,7 @@ class PvXCodeHooks {
 	 */
 	public static function onRegistration() {
 		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
-		define('GWBBCODE_IMG_PATH', __DIR__.'/images');
+		define('GWBBCODE_IMG_PATH', '/extensions/PvXCode/images');
 		require_once(GWBBCODE_ROOT.'/gwbbcode.inc.php');
 	}
 
