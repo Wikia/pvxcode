@@ -260,9 +260,11 @@ function skill_name_replace($reg) {
 // Process the [build] element
 function build_replace($reg) {
 	global $gwbbcode_tpl;
-	global $userdata;
-	$gwbbcode_root_path = GWBBCODE_ROOT;
-	$gwbbcode_img_path  = GWBBCODE_IMG_PATH;
+	global $userdata; // FIXME: Not sure what this is for in this context
+	$gwbbcode_images_folder_url = GWBBCODE_IMAGES_FOLDER_URL;
+	$pvx_wiki_page_url = PVX_WIKI_PAGE_URL;
+	$gw_wiki_page_url = GW_WIKI_PAGE_URL;
+
 	list($all, $att, $skills) = $reg;
 	$att           = str_replace("\n", "<br/>\n", html_safe_decode($att));
 	$attr_list_raw = attribute_list_raw($att);
@@ -575,8 +577,9 @@ function skillset_replace($reg) {
 // Process the [skill] elements
 function skill_replace($reg) {
 	global $gwbbcode_tpl;
-	$gwbbcode_root_path = GWBBCODE_ROOT;
-	$gwbbcode_img_path  = GWBBCODE_IMG_PATH;
+	$gwbbcode_images_folder_url = GWBBCODE_IMAGES_FOLDER_URL;
+	$pvx_wiki_page_url = PVX_WIKI_PAGE_URL;
+	$gw_wiki_page_url = GW_WIKI_PAGE_URL;
 
 	list($all, $att, $name) = $reg;
 	$att  = html_safe_decode($att);
