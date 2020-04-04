@@ -25,6 +25,7 @@ class PvXCode {
 		$parser->getOutput()->addModules('ext.PvXCode.js');
 		$title = $parser->getTitle()->getText();
 
+		// Using recursiveTagParse() instead of parse() to avoid wrapping result in a div and the associated processing time hidden HTML comment
 		$parsed_input = $parser->recursiveTagParse($input, $frame = false);
 		$results = parse_gwbbcode($parsed_input, $title);
 		return $results;
