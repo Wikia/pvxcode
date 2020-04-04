@@ -1,7 +1,7 @@
 <!-- BEGIN build -->
 <table><tr><td>
 <div class="build_container">
-    <div class="profession"><a href="{gw_wiki_page_url}/{primary}"><img src="{gwbbcode_images_folder_url}/img_skin/{primary}.gif" border="0" /></a><a href="{gw_wiki_page_url}/{secondary}"><img src="{gwbbcode_images_folder_url}/img_skin/{secondary}.gif" border="0" /></a><span><a href="{gw_wiki_page_url}/{primary}"><b>{primary}</b></a> / <a href="{gw_wiki_page_url}/{secondary}"><b>{secondary}</b></a></span></div>
+    <div class="profession"><a href="{gw_wiki_page_url}/{primary}"><img src="{gwbbcode_images_folder_url}/img_skin/{primary}.gif" border="0" /></a><a href="{gw_wiki_page_url}/{secondary}"><img src="{gwbbcode_images_folder_url}/img_skin/{secondary}.gif" border="0" /></a><span><a href="{gw_wiki_page_url}/{primary}"><b>{primary_display_name}</b></a> / <a href="{gw_wiki_page_url}/{secondary}"><b>{secondary_display_name}</b></a></span></div>
     <div class="attributes">
         {attributes}
     </div>
@@ -19,9 +19,11 @@
 </td></tr></table>{template_error_msg}
 <!-- END build -->
 
-<!-- BEGIN prof_icon -->
-
-<!-- END prof_icon -->
+<!-- BEGIN attribute -->
+        <div>
+            <div class="attribute_rank">{attribute_value}</div><div class="attribute_name"><a href="{gw_wiki_page_url}/{attribute_name}">{attribute_name}</a></div>
+        </div>
+<!-- END attribute -->
 
 <!-- BEGIN icon -->
 <div class="skill_box"><div class="skill_icon hovertooltip" data-tooltipid="load{load}"><div class="pvx_icon-{elite_or_normal}"><div class="pvx-type-{ty}"></div></div><a href="{gw_wiki_page_url}/{name_link}"><img src="{gwbbcode_images_folder_url}/img_skills/{id}.jpg" border="0" /></a></div><a href="{gw_wiki_page_url}/{name_link}">{name}</a></div>
@@ -40,32 +42,26 @@
 <!-- END noicon_showname -->
 
 <!-- BEGIN skill -->
-<div id="load{load}" style="display: none;">
-    <div class="pvx_overlib">
-        <div class="pvx_campaign">{chapter}</div>
-        <div class="pvx_mastery">{profession}. {attr_html}</div>
-        <div class="pvx_description" style="background-image:url('{gwbbcode_images_folder_url}/img_skin/{prof_img}.png');">
-            <div class="pvx_{elite_or_normal}">{name}</div>
-            <div class="pvx_type">{type}</div>
-            <div class="pvx_skill_info">{desc}{extra_desc}</div>
-        </div>
-        <div class="pvx_attrib_list">
-            <div class="pvx_attrib_bg">
-                <img src="{gwbbcode_images_folder_url}/img_thumb/{id}.jpg" height="40" width="40" border="0"><div id="pvx_attributes">{required}</div>
-            </div>
-        </div>
-    </div>
-</div>
+<span id="load{load}" style="display: none;"><!--
+    --><span class="pvx_overlib"><!--
+        --><span class="pvx_campaign">{chapter}</span><!--
+        --><span class="pvx_mastery">{profession}. {attr_html}</span><!--
+        --><span class="pvx_description" style="background-image:url('{gwbbcode_images_folder_url}/img_skin/{prof_img}.png');"><!--
+            --><span class="pvx_{elite_or_normal}">{name}</span><!--
+            --><span class="pvx_type">{type}</span><!--
+            --><span class="pvx_skill_info">{desc}{extra_desc}</span><!--
+        --></span><!--
+        --><span class="pvx_attrib_list"><!--
+            --><span class="pvx_attrib_bg"><!--
+                --><img src="{gwbbcode_images_folder_url}/img_thumb/{id}.jpg" height="40" width="40" border="0" /><span id="pvx_attributes">{required}</span><!--
+            --></span><!--
+        --></span><!--
+    --></span><!--
+--></span>
 <!-- END skill -->
 
-<!-- BEGIN attribute -->
-        <div>
-            <div class="attribute_rank">{attribute_value}</div><div class="attribute_name"><a href="{gw_wiki_page_url}/{attribute_name}">{attribute_name}</a></div>
-        </div>
-<!-- END attribute -->
-
 <!-- BEGIN requirement -->
-<div id="pvx_{type}">{value}</div>
+<span id="pvx_{type}">{value}</span>
 <!-- END requirement -->
 
 <!-- BEGIN modified_requirement_value -->

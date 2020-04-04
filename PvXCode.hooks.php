@@ -21,6 +21,7 @@ class PvXCodeHooks {
 	 * @return true
 	 */
 	public static function onParserFirstCallInit( Parser &$parser ) {
+		// Calls PvXCode.php within the classes folder
 		$parser->setHook('pvxbig', 'PvXCode::ParserRender');
 		return true;
 	}
