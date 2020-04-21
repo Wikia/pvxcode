@@ -77,11 +77,11 @@ function parse_gwbbcode($text, $build_name = false) {
 	// 7: Manage [build]...[/build]
 	$text = preg_replace_callback('#\[build ([^\]]*)\](.*?)\[/build\]\r?\n?#isS', 'build_replace', $text);
 
-	// 8: Replace all [skillset=prof_short_name@attr_level]
+	// 8: Replace all [skillset=attribute_name@attr_level]
 	$text = preg_replace_callback('#\[(\[?)skillset=(.*?)\]#isS', 'skillset_replace', $text);
 
 	// 9: Manage [skill]...[/skill]
-	$text = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\][ ]?#isS', 'skill_replace', $text);
+	$text = preg_replace_callback('#\[skill([^\]]*)\](.*?)\[/skill\]#isS', 'skill_replace', $text);
 
 	// 10: Manage [gwbbcode version]
 	$text = preg_replace('@\[gwbbcode version\]@i', GWBBCODE_VERSION, $text);
@@ -260,9 +260,10 @@ function skill_name_replace($reg) {
 // Process the [build] element
 function build_replace($reg) {
 	global $gwbbcode_tpl;
-	global $userdata;
-	$gwbbcode_root_path = GWBBCODE_ROOT;
-	$gwbbcode_img_path  = GWBBCODE_IMG_PATH;
+	$gwbbcode_images_folder_url = GWBBCODE_IMAGES_FOLDER_URL;
+	$pvx_wiki_page_url = PVX_WIKI_PAGE_URL;
+	$gw_wiki_page_url = GW_WIKI_PAGE_URL;
+
 	list($all, $att, $skills) = $reg;
 	$att           = str_replace("\n", "<br/>\n", html_safe_decode($att));
 	$attr_list_raw = attribute_list_raw($att);
@@ -271,7 +272,6 @@ function build_replace($reg) {
 
 	// Professions
 	$prof      = gws_build_profession($att);
-	$prof_imgs = '';
 	$cursor    = 'help';
 	if ($prof !== false) {
 		$primary   = gws_prof_name($prof['primary']);
@@ -280,24 +280,23 @@ function build_replace($reg) {
 			$secondary = 'No profession';
 		}
 
-		$showimg = '';
-		$prof_imgs .= str_replace('{profession}', $primary, $gwbbcode_tpl['prof_icon']);
+		// If the secondary profession is specified, remove impossible secondary profession primary attributes, or set them to 0 for skill description coherence
 		if ($secondary != 'No profession') {
-			$prof_imgs .= str_replace('{profession}', $secondary, $gwbbcode_tpl['prof_icon']);
-			// Remove secondary profession main attribute, or set it to 0 for skill description coherence
 			unset($attr_list_raw[gws_main_attribute($secondary)]);
 			$att .= ' ' . gws_attribute_name(gws_main_attribute($secondary)) . '=0';
 		}
-		unset($matches);
-		preg_match_all("#\{(.*?)\}#is", $prof_imgs, $matches);
-		foreach ($matches[0] as $r => $find) {
-			$replace   = ${$matches[1][$r]};
-			$prof_imgs = str_replace($find, $replace, $prof_imgs);
-		}
 	} else {
-		$showimg   = ' ;display: none';
-		$primary   = 'Any';
-		$secondary = 'Any';
+		$primary   = 'No profession';
+		$secondary = 'No profession';
+	}
+	// After validating profession names, use "Any" as the display name rather than "No profession" if not specified
+	$primary_display_name = $primary;
+	$secondary_display_name = $secondary;
+	if ($primary_display_name == 'No profession') {
+		$primary_display_name = 'Any';
+	}
+	if ($secondary_display_name == 'No profession') {
+		$secondary_display_name = 'Any';
 	}
 
 
@@ -330,16 +329,16 @@ function build_replace($reg) {
 	} else if (!empty($attr_list['Divine Favor'])) {
 		$desc .= '<span class="expert">Your allies are healed for ' . round(3.2 * $attr_list['Divine Favor']) . ' Health whenever you cast Monk spells on them.</span><br/>';
 	} else if (!empty($attr_list['Soul Reaping'])) {
-		$desc .= '<span class="expert">When they die near you, you gain <b>' . $attr_list['Soul Reaping'] . '</b> Energy per creature, or <b>' . floor($attr_list['Soul Reaping'] / 2) . '</b> Energy per Spirit under your control, up to 3 times every 15 seconds.</span><br/>';
+		$desc .= '<span class="expert">Gain <b>' . $attr_list['Soul Reaping'] . '</b> Energy whenever a non-Spirit creature near you dies, up to 3 times every 15 seconds.</span><br/>';
 	} else if (!empty($attr_list['Fast Casting'])) {
-		$desc .= '<span class="expert">You activate Spells <b>' . (100 - floor(pow(0.955, $attr_list['Fast Casting'])*100)) . '%</b> and Signets <b>' . (3 * $attr_list['Fast Casting']) . '%</b> faster. (No effect for non-Mesmer skills with a cast time less than 2 seconds.)</span><br/>';
+		$desc .= '<span class="expert">You activate Spells and Signets <b>' . (100 - floor(pow(0.955, $attr_list['Fast Casting'])*100)) . '%</b> faster. (No effect for non-Mesmer skills with a cast time less than 2 seconds.)</span><br/>';
 		$desc .= '<span class="expert">In PvE, the recharge time of your Mesmer Spells is reduced by <b>' . (3 * $attr_list['Fast Casting']) . '%</b>.</span><br/>';
 	} else if (!empty($attr_list['Energy Storage'])) {
 		$desc .= '<span class="expert">Your maximum Energy is raised by <b>' . (3 * $attr_list['Energy Storage']) . '</b>.</span><br/>';
 	} else if (!empty($attr_list['Critical Strikes'])) {
 		$desc .= '<span class="expert">You have an additional <b>' . $attr_list['Critical Strikes'] . '</b>% chance to critical hit. Whenever you critical hit, you get <b>' . round($attr_list['Critical Strikes'] / 5) . '</b> Energy.</span><br/>';
 	} else if (!empty($attr_list['Spawning Power'])) {
-		$desc .= '<span class="expert">Spirits and minions you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>';
+		$desc .= '<span class="expert">Creatures you create have <b>' . (4 * $attr_list['Spawning Power']) . '%</b> more Health, and weapon spells you cast last <b>' . (4 * $attr_list['Spawning Power']) . '%</b> longer.</span><br/>';
 	} else if (!empty($attr_list['Mysticism'])) {
 		$desc .= '<span class="expert">The energy cost of Dervish enchantments is reduced by <b>' . (4 * $attr_list['Mysticism']) . '%</b>.</span><br/>';
 		$desc .= '<span class="expert">In PvE, gain <b>+' . $attr_list['Mysticism'] . '</b> armor rating while enchanted.</span><br/>';
@@ -524,7 +523,7 @@ function build_replace($reg) {
 }
 
 // Replacement function 7:
-// Convert [skillset=prof_short_name@attr_level] tags to a list of skills of the appropriate attribute
+// Convert [skillset=attribute@attr_level] tags to a list of skills of the appropriate attribute
 function skillset_replace($reg) {
 	global $gwbbcode_tpl;
 	$tpl = $gwbbcode_tpl['skillset'];
@@ -575,8 +574,9 @@ function skillset_replace($reg) {
 // Process the [skill] elements
 function skill_replace($reg) {
 	global $gwbbcode_tpl;
-	$gwbbcode_root_path = GWBBCODE_ROOT;
-	$gwbbcode_img_path  = GWBBCODE_IMG_PATH;
+	$gwbbcode_images_folder_url = GWBBCODE_IMAGES_FOLDER_URL;
+	$pvx_wiki_page_url = PVX_WIKI_PAGE_URL;
+	$gw_wiki_page_url = GW_WIKI_PAGE_URL;
 
 	list($all, $att, $name) = $reg;
 	$att  = html_safe_decode($att);
@@ -1504,7 +1504,7 @@ function load($filename) {
 // Calculation function 32:
 // Organize skill by elite, profession, attribute and name (used by [rand seed="x"])
 function skill_sort_cmp($a, $b) {
-	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No profession');
+	static $prof_ids = Array('Warrior', 'Ranger', 'Monk', 'Necromancer', 'Mesmer', 'Elementalist', 'Assassin', 'Ritualist', 'Paragon', 'Dervish', 'No Profession');
 	if ($a['elite'] == $b['elite']) {
 		$a['prof_id'] = array_search($a['profession'], $prof_ids);
 		$b['prof_id'] = array_search($b['profession'], $prof_ids);

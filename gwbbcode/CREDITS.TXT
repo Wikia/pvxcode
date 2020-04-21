@@ -37,6 +37,6 @@ And this project would have died a long time ago without the 950+ forums using i
 
 PVXCODE gwBBCODE REWRITE CREDITS
 --------------------------------
-January 2020.
+January 2020 - April 2020.
 Lead: Chieftain Alex.
-Additional coding and bug reporting: Toraen, Phenaxkian.
+Additional coding and bug reporting: Toraen, Phenaxkian, Krschkr.

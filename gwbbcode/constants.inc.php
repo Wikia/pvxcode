@@ -1,6 +1,6 @@
 <?php
 //gwBBCode's version
-define('GWBBCODE_VERSION', '2.0.0.0');
+define('GWBBCODE_VERSION', '2.0.0.1');
 
 // DATABASE PATHS
 //  Skill ids to details
