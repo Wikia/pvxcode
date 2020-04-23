@@ -1481,6 +1481,6 @@
 'seven weapons stance'=>3426,
 'together as one'=>3427,
 'shadow theft'=>3428,
-'weapons of three forges'=>3429
+'weapons of three forges'=>3429,
 'vow of revolution'=>3430,
 );
