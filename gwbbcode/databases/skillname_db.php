@@ -1483,4 +1483,5 @@
 'shadow theft'=>3428,
 'weapons of three forges'=>3429,
 'vow of revolution'=>3430,
+'heroic refrain'=>3431
 );
