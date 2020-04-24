@@ -210,7 +210,7 @@ span.pvx_attrib_bg img {
     background-position:0 1px;
 }
 
-/* Ranger expertise energy reduction / Mesmer fast casting activation reduction recieve additional spans */
+/* Ranger expertise energy reduction / Dervish mysticism energy reduction / Mesmer fast casting activation reduction recieve additional spans */
 #pvx_attributes #pvx_cast span {
     color:#770077;
     text-decoration:underline;
