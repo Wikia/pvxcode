@@ -157,7 +157,7 @@ span.pvx_attrib_bg img {
 }
 
 /* Tooltips - Left column - sacrifice, energy, overcast, recharge, activation, adrenaline. */
-#pvx_attributes span {
+#pvx_attributes > span {
     display:block;
     width:18px;
     height:18px;
