@@ -12,11 +12,11 @@
     {skills}
     </div>
     <div class="template">
-        <div class="template_input"><input id="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="{pvx_wiki_page_url}/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="{gwbbcode_images_folder_url}/img_skin/save.png" border="0" alt="save" /></a></div>
+        <div class="template_input"><input class="gws_template_input" type="text" value="{template_code}" readonly="readonly" />&nbsp;<a href="{pvx_wiki_page_url}/Special:DownloadTemplate?build={template_code}&amp;name={build_name}"><img src="{gwbbcode_images_folder_url}/img_skin/save.png" border="0" alt="save" /></a></div>
         <div class="template_name">Template code</div>
     </div>
 </div>
-</td></tr></table>{template_error_msg}
+</td></tr></table><span class="build_template_error">{template_error_msg}</span>
 <!-- END build -->
 
 <!-- BEGIN attribute -->
@@ -53,7 +53,7 @@
         --></span><!--
         --><span class="pvx_attrib_list"><!--
             --><span class="pvx_attrib_bg"><!--
-                --><img src="{gwbbcode_images_folder_url}/img_thumb/{id}.jpg" height="40" width="40" border="0" /><span id="pvx_attributes">{required}</span><!--
+                --><img src="{gwbbcode_images_folder_url}/img_thumb/{id}.jpg" height="40" width="40" border="0" /><span class="pvx_attributes">{required}</span><!--
             --></span><!--
         --></span><!--
     --></span><!--
@@ -61,7 +61,7 @@
 <!-- END skill -->
 
 <!-- BEGIN requirement -->
-<span id="pvx_{type}">{value}</span>
+<span class="pvx_{type}">{value}</span>
 <!-- END requirement -->
 
 <!-- BEGIN modified_requirement_value -->
