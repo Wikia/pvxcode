@@ -519,7 +519,9 @@ function build_replace($reg) {
 			$tpl = str_replace($find, $replace, $tpl);
 		}
 	} while ($prev_tpl != $tpl);
-	return $tpl;
+
+	// Ensure there is a carriage return after [build][/build] tags so that bullets are always respected
+	return $tpl . "\r\n";
 }
 
 // Replacement function 7:
