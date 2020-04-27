@@ -149,7 +149,7 @@ span.pvx_attrib_bg img {
     width:40px;
 }
 
-#pvx_attributes {
+.pvx_attributes {
     display:block;
     margin:0;
     padding:0;
@@ -157,7 +157,7 @@ span.pvx_attrib_bg img {
 }
 
 /* Tooltips - Left column - sacrifice, energy, overcast, recharge, activation, adrenaline. */
-#pvx_attributes > span {
+.pvx_attributes > span {
     display:block;
     width:18px;
     height:18px;
@@ -168,55 +168,55 @@ span.pvx_attrib_bg img {
     margin-top:4px;
 }
 
-#pvx_attributes #pvx_sacr {
+.pvx_attributes .pvx_sacr {
     background-image:url(../images/img_skin/sacrifice.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_ener {
+.pvx_attributes .pvx_ener {
     background-image:url(../images/img_skin/energy.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_over {
+.pvx_attributes .pvx_over {
     background-image:url(../images/img_skin/overcast.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_rech {
+.pvx_attributes .pvx_rech {
     background-image:url(../images/img_skin/recharge.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_cast {
+.pvx_attributes .pvx_cast {
     background-image:url(../images/img_skin/activation.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_eregen {
+.pvx_attributes .pvx_eregen {
     background-image:url(../images/img_skin/upkeep.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
-#pvx_attributes #pvx_adre {
+.pvx_attributes .pvx_adre {
     background-image:url(../images/img_skin/adrenaline.gif);
     background-repeat:no-repeat;
     background-position:0 1px;
 }
 
 /* Ranger expertise energy reduction / Dervish mysticism energy reduction / Mesmer fast casting activation reduction recieve additional spans */
-#pvx_attributes #pvx_cast span {
+.pvx_attributes .pvx_cast span {
     color:#770077;
     text-decoration:underline;
 }
 
-#pvx_attributes #pvx_ener span {
+.pvx_attributes .pvx_ener span {
     color:#448800;
     text-decoration:underline;
 }
