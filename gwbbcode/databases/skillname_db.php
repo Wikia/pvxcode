@@ -1474,4 +1474,14 @@
 'lightning hammer (pvp)'=>3396,
 'elemental flame (pvp)'=>3397,
 'slippery ground (pvp)'=>3398,
+'time ward'=>3422,
+'soul taker'=>3423,
+'over the limit'=>3424,
+'judgment strike'=>3425,
+'seven weapons stance'=>3426,
+'together as one'=>3427,
+'shadow theft'=>3428,
+'weapons of three forges'=>3429,
+'vow of revolution'=>3430,
+'heroic refrain'=>3431
 );
