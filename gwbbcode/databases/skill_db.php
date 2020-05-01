@@ -32578,7 +32578,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'Shadow Step to target foe. For 5..17 seconds that foe\'s attributes are reduced by 1..4 and your attributes are increased by 1..4. This skill counts as a Lead Attack.',
+'desc'=>'Shadow Step to target foe. For 5..20 seconds that foe\'s attributes are reduced by 1..5 and your attributes are increased by 1..5. This skill counts as a Lead Attack.',
 'name_id'=>'shadow theft',
 ),
 3429=>
