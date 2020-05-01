@@ -32490,7 +32490,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'While you maintain this enchantment, your spells cast 15..19% faster, and recharge 15..19% faster, but you continuously gain Overcast.',
+'desc'=>'While you maintain this enchantment, your spells cast 15..19% faster, and recharge 15..50% faster, but you continuously gain Overcast.',
 'name_id'=>'over the limit',
 ),
 3425=>
@@ -32509,10 +32509,10 @@ array (
 'sacrifice'=>0,
 'overcast'=>0,
 'casting'=>1,
-'recharge'=>15,
+'recharge'=>8,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'Attack target and adjacent foes. Each attack that hits deals +13..19 Holy damage and knocks down attacking foes.',
+'desc'=>'Attack target and adjacent foes. Each attack that hits deals +13..30 Holy damage and knocks down attacking foes.',
 'name_id'=>'judgment strike',
 ),
 3426=>
@@ -32641,10 +32641,10 @@ array (
 'sacrifice'=>0,
 'overcast'=>0,
 'casting'=>1,
-'recharge'=>15,
+'recharge'=>10,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>' For 3..15 seconds, target non-spirit ally gains +1..5 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
+'desc'=>' For 3..15 seconds, target non-spirit ally gains +1..3 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
 'name_id'=>'heroic refrain',
 )
 ); ?>
