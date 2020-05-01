@@ -32490,7 +32490,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'While you maintain this enchantment, your spells cast 15..19% faster, and recharge 15..50% faster, but you continuously gain Overcast.',
+'desc'=>'While you maintain this enchantment, your spells cast 15..20% faster, and recharge 15..50% faster, but you continuously gain Overcast.',
 'name_id'=>'over the limit',
 ),
 3425=>
