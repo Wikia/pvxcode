@@ -32539,7 +32539,7 @@ array (
 ),
 3427=>
 array (
-'name'=>'"Together as one!"',
+'name'=>'"Together as One!"',
 'chapter'=>0,
 'profession'=>'Ranger',
 'prof'=>'R',
@@ -32552,7 +32552,7 @@ array (
 'eregen'=>0,
 'sacrifice'=>0,
 'overcast'=>0,
-'casting'=>1,
+'casting'=>0,
 'recharge'=>15,
 'pve_only'=>1,
 'elite'=>1,
