@@ -32471,7 +32471,7 @@ array (
 'desc'=>'For 3..25 seconds, your attacks sacrifice 15..19 health and deal +15..19 more damage.',
 'name_id'=>'soul taker',
 ),
-3434=>
+3424=>
 array (
 'name'=>'Over the Limit',
 'chapter'=>0,
