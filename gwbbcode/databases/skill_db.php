@@ -32644,7 +32644,7 @@ array (
 'recharge'=>10,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>' For 3..15 seconds, target non-spirit ally gains +1..3 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
+'desc'=>'For 3..15 seconds, target non-spirit ally gains +1..3 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
 'name_id'=>'heroic refrain',
 )
 ); ?>
