@@ -760,7 +760,7 @@ function skill_replace($reg) {
 
 		// Descriptions variables -> green and adapted to their attribute. (0..12..16 -> green 8)
 		$extra_desc = '';
-		gws_adapt_description($desc, $extra_desc, $name, $attribute, $attr_list, $type, $pve_only);
+		gws_adapt_description($desc, $extra_desc, $name, $attribute, $profession, $attr_list, $type, $pve_only)
 		$attr_html  = $attribute == 'No Attribute' ? $gwbbcode_tpl['tpl_skill_no_attr'] : $gwbbcode_tpl['tpl_skill_attr'];
 		$extra_desc = empty($extra_desc) ? '' : infuse_values($gwbbcode_tpl['tpl_extra_desc'], Array(
 			'extra_desc' => $extra_desc
@@ -1126,6 +1126,22 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 					}
 				}
 			}
+		} else if ($profession !== 'No Profession' && gws_main_attribute($profession) == $attribute ) {
+			// 2020 anniversary elite skills use profession primary attributes
+			if (isset($attr_list[$attribute])) {
+				$attr_lvl = $attr_list[$attribute];
+				if (preg_match_all('|([0-9]+)\.\.([0-9]+)|', $desc, $regs, PREG_SET_ORDER)) {
+					foreach ($regs as $fork) {
+						list($all, $val_0, $val_15) = $fork;
+						$pos = strpos($desc, $all);
+						$desc = substr_replace($desc, fork_val($val_0, $val_15, $attr_lvl), $pos, strlen($all));
+					}
+				}
+			}
+			// or adapt the 0..15 form to 0..12..16 values if the attribute level has not been specified
+			else {
+				$desc = preg_replace_callback('|([0-9]+)\.\.([0-9]+)|', 'desc_replace', $desc);
+			}
 		} else {
 			// Lightbringer, Sunspear, Asura, Dwarf, Ebon, Norn ranks are 0-10, but have no effect above rank 5.
 			if (isset($attr_list[$attribute])) {
@@ -1143,9 +1159,7 @@ function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_li
 	}
 
 	// Warrior: Take into account Strength
-	if (!empty($attr_list['Strength']) && strpos($type, 'Attack') !== false) {
-		$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
-	}
+	add_strength($desc, $extra_desc, $attr_list, $type, $name);
 
 	// Paragon: Take into account Leadership
 	add_leadership($extra_desc, $attr_list, $type, $name);
@@ -1213,6 +1227,17 @@ function fork_val_pve_only($val_0, $val_15, $attr_lvl, $rank_limit) {
 }
 
 // Calculation function 18:
+// Return a tooltip addition for the armor penetration gained from using an attack skill, unless that skill already has armor penetration
+function add_strength($desc, &$extra_desc, $attr_list, $type) {
+	if (isset($attr_list['Strength']) && $attr_list['Strength'] > 0 && strpos($type, 'Attack') !== false) {
+		// Strength does not stack with skills with inherent armor penetration
+		if (!preg_match('@[Tt]his (attack|axe attack) has ([0-9]+)% armor penetration@', $desc, $reg)) {
+			$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
+		}
+	}
+}
+
+// Calculation function 19:
 // Return a tooltip addition for the energy gained from using a skill depending on its type and level of Leadership
 function add_leadership(&$extra_desc, $attr_list, $type, $name) {
 	static $leadership_limited_gain_skills = Array(
@@ -1276,7 +1301,7 @@ function add_leadership(&$extra_desc, $attr_list, $type, $name) {
 	}
 }
 
-// Calculation function 19:
+// Calculation function 20:
 // Return a description of the real effect of a skill taking into account Divine Favor
 function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	if (isset($attr_list['Divine Favor']) && $attr_list['Divine Favor'] > 0) {
@@ -1310,7 +1335,7 @@ function add_divine_favor(&$desc, &$extra_desc, $attr_list, $name) {
 	}
 }
 
-// Calculation function 20:
+// Calculation function 21:
 // Return a description specifying how much health and armor does a Spirit, Minion or Summon have
 function add_spirit_health(&$desc, $attr_list) {
 	// Get Spirit's level
@@ -1379,7 +1404,7 @@ function add_spirit_health(&$desc, $attr_list) {
 	}
 }
 
-// Calculation function 21:
+// Calculation function 22:
 // Return the additional weapon spell duration depending on level of Spawning Power
 function add_weapon_duration(&$desc, $attr_list, $type) {
 	if ($type == 'Weapon Spell' && isset($attr_list['Spawning Power']) && $attr_list['Spawning Power'] > 0) {
@@ -1398,7 +1423,7 @@ function add_weapon_duration(&$desc, $attr_list, $type) {
  * HELPER CALCULATION FUNCTIONS - PROPERTIES
  ***************************************************************************/
 
-// Calculation function 22:
+// Calculation function 23:
 // Return the real energy cost of a skill depending on its type and level of Expertise
 //  Note: There is not a field in databases/skill_db.php containing whether the skill is a touch skill or not.
 function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
@@ -1410,7 +1435,7 @@ function calc_expertise($name, $attr_list, $type, $energy, $profession, $desc) {
 	return false;
 }
 
-// Calculation function 23:
+// Calculation function 24:
 // Return the real energy cost of a skill depending on its type, profession and level of Mysticism
 function calc_mysticism($attr_list, $type, $energy, $profession) {
 	if (isset($attr_list['Mysticism']) && $attr_list['Mysticism'] > 0 && $profession == 'Dervish' && strpos($type, 'Enchantment') !== false ) {
@@ -1421,7 +1446,7 @@ function calc_mysticism($attr_list, $type, $energy, $profession) {
 	return false;
 }
 
-// Calculation function 24:
+// Calculation function 25:
 // Return the real cast time of a skill depending on its type and level of Fast Casting
 function calc_fastcasting($attr_list, $type, $casting, $profession) {
 	if ((isset($attr_list['Fast Casting']) && $attr_list['Fast Casting'] > 0) && ($profession == 'Mesmer' || $casting >= 2)) {
@@ -1436,7 +1461,7 @@ function calc_fastcasting($attr_list, $type, $casting, $profession) {
 	return false;
 }
 
-// Calculation function 25:
+// Calculation function 26:
 // Return a skill description enriched with a div tag depending on the specified effect ('{target}', '{self}' or '{div}')
 function add_div_tag($effect, $desc) {
 	if ($effect == 'target' || $effect == 'self') {
@@ -1454,7 +1479,7 @@ function add_div_tag($effect, $desc) {
 	return $desc;
 }
 
-// Calculation function 26:
+// Calculation function 27:
 // Return $text with each "{var_name}" replaced by $values['var_name']
 function infuse_values($text, $values) {
 	foreach ($values as $name => $value) {
