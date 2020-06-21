@@ -1089,7 +1089,7 @@ function attr_points($attr_list) {
 // Calculation function 13:
 // Returns a description after adapting it's variables to an attribute value
 // PHP note: Using the ampersand before desc and extra_desc means the same variables get passed back to the source
-function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $attr_list, $type, $pve_only) {
+function gws_adapt_description(&$desc, &$extra_desc, $name, $attribute, $profession, $attr_list, $type, $pve_only) {
 	// Put some green around the fork
 	$desc = preg_replace_callback('|([0-9]+\.\.[0-9]+)|', 'fork_replace', $desc);
 
