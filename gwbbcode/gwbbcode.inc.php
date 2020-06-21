@@ -760,7 +760,7 @@ function skill_replace($reg) {
 
 		// Descriptions variables -> green and adapted to their attribute. (0..12..16 -> green 8)
 		$extra_desc = '';
-		gws_adapt_description($desc, $extra_desc, $name, $attribute, $profession, $attr_list, $type, $pve_only)
+		gws_adapt_description($desc, $extra_desc, $name, $attribute, $profession, $attr_list, $type, $pve_only);
 		$attr_html  = $attribute == 'No Attribute' ? $gwbbcode_tpl['tpl_skill_no_attr'] : $gwbbcode_tpl['tpl_skill_attr'];
 		$extra_desc = empty($extra_desc) ? '' : infuse_values($gwbbcode_tpl['tpl_extra_desc'], Array(
 			'extra_desc' => $extra_desc
