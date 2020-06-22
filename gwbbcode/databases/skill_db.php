@@ -32468,7 +32468,7 @@ array (
 'recharge'=>15,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'For 3..25 seconds, your attacks sacrifice 15..19 health and deal +15..19 more damage.',
+'desc'=>'For 3..30 seconds, your attacks sacrifice 15..20 health and deal +15..20 more damage.',
 'name_id'=>'soul taker',
 ),
 3424=>
@@ -32534,7 +32534,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'For 3..21 seconds, your weapon attributes are increased by +1..16 and you attack 33% faster.',
+'desc'=>'For 3..20 seconds, your weapon attributes are increased by +1..15 and you attack 33% faster.',
 'name_id'=>'seven weapons stance',
 ),
 3427=>
@@ -32622,7 +32622,7 @@ array (
 'recharge'=>20,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>'For 3..9 seconds, you have +1..4 energy regeneration. This skill reapplies itself every time you use a non-Dervish skill.',
+'desc'=>'For 3..10 seconds, you have +1..5 energy regeneration. This skill reapplies itself every time you use a non-Dervish skill.',
 'name_id'=>'vow of revolution',
 ),
 3431=>
@@ -32644,7 +32644,7 @@ array (
 'recharge'=>10,
 'pve_only'=>1,
 'elite'=>1,
-'desc'=>' For 3..15 seconds, target non-spirit ally gains +1..3 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
+'desc'=>'For 3..15 seconds, target non-spirit ally gains +1..3 to all attributes. This echo is reapplied every time a chant or shout ends on that ally.',
 'name_id'=>'heroic refrain',
 )
 ); ?>
