@@ -8708,7 +8708,7 @@ array (
 'recharge'=>25,
 'pve_only'=>0,
 'elite'=>1,
-'desc'=>'If Oath Shot hits, all of your skills except Oath Shot are recharged. If it misses, all of your skills are disabled for 10 seconds. (50% miss chance with Expertise 7 or less.)',
+'desc'=>'If Oath Shot hits, all of your skills except Oath Shot are recharged. If it misses, all of your skills are disabled for 10..4 seconds. (50% miss chance with Expertise 7 or less.)',
 'name_id'=>'oath shot',
 ),
 406=>

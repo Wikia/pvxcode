@@ -644,7 +644,7 @@ function skill_replace($reg) {
 		if ($sacrifice != 0) {
 			$required[] = infuse_values($gwbbcode_tpl['requirement'], Array(
 				'type' => 'sacr',
-				'value' => $sacrifice
+				'value' => $sacrifice . '%'
 			));
 		}
 
@@ -1231,8 +1231,12 @@ function fork_val_pve_only($val_0, $val_15, $attr_lvl, $rank_limit) {
 function add_strength($desc, &$extra_desc, $attr_list, $type) {
 	if (isset($attr_list['Strength']) && $attr_list['Strength'] > 0 && strpos($type, 'Attack') !== false) {
 		// Strength does not stack with skills with inherent armor penetration
-		if (!preg_match('@[Tt]his (attack|axe attack) has ([0-9]+)% armor penetration@', $desc, $reg)) {
-			$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
+		if (preg_match('@[Tt]his (attack|axe attack) has ([0-9]+)% armor penetration@', $desc, $reg)) {
+			if ($reg[2] < $strength) {
+				$extra_desc = 'This attack skill has <b>' . $strength . '</b>% armor penetration. Its inherent armor penetration is overwritten.';
+			}
+		} else {
+			$extra_desc = 'This attack skill has <b>' . $strength . '</b>% armor penetration.';
 		}
 	}
 }
