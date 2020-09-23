@@ -32,14 +32,13 @@ class PvXCodeHooks {
 	 */
 	public static function onRegistration() {
 		// Retrieve config settings from localSettings.php - probably a better way of doing this via "use MediaWiki\MediaWikiServices;"
-		global $wgServer;
-		global $wgScriptPath;
+		global $wgServer, $wgScriptPath, $wgExtensionAssetsPath;
 
 		// Local file path for includes
 		define('GWBBCODE_ROOT', __DIR__.'/gwbbcode');
 
 		// Website URL for the image folder within extension/PvXCode folder, e.g. '/extensions/PvXCode/images'/img_skills/83.jpg
-		define('GWBBCODE_IMAGES_FOLDER_URL', $wgServer.$wgScriptPath.'/extensions/PvXCode/images');
+		define('GWBBCODE_IMAGES_FOLDER_URL', $wgExtensionAssetsPath.'/PvXCode/images');
 
 		// Website URL for the page prefix, e.g. 'https://gwpvx.gamepedia.com/index.php?title='/Archive:Team_-_Frostmaw_Searing_Spike
 		define('PVX_WIKI_PAGE_URL', $wgServer.$wgScriptPath );
