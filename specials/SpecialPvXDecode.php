@@ -21,14 +21,7 @@ class SpecialPvXDecode extends SpecialPage {
 	 * @return    void
 	 */
 	public function __construct() {
-		global $wgRequest, $wgUser;
-
 		parent::__construct( 'PvXDecode' );
-
-		$this->wgRequest = $wgRequest;
-		$this->wgUser = $wgUser;
-		$this->output = $this->getOutput();
-
 		$this->DB = wfGetDB( DB_PRIMARY );
 
 		require_once( GWBBCODE_ROOT . '/gwbbcode.inc.php' );
@@ -38,22 +31,25 @@ class SpecialPvXDecode extends SpecialPage {
 	 * Main Execute for the Specil Page
 	 * @param $par - Not used, but expected to be there by mediawiki.
 	 * @return void - echos to page.
+	 * @throws MWException
 	 */
 	public function execute( $par = null ) {
-		$name = $this->wgRequest->getText( 'wpName' );
-		$build = $this->wgRequest->getText( 'wpBuild' );
+		$request = $this->getRequest();
+		$output = $this->getOutput();
+		$name = $request->getText( 'wpName' );
+		$build = $request->getText( 'wpBuild' );
 
 		if ( $build ) {
-			if ( strlen( $name ) > 1 ) {
+			if ( strlen( $name ) >= 1 ) {
 				$rout = template_to_gwbbcode( $name . ";" . $build );
 			} else {
 				$rout = template_to_gwbbcode( $build );
 			}
 
-			$this->output->addWikiText( "== Preview ==" );
-			$this->output->addWikiText( "<pvxbig>" . $rout . "</pvxbig>" );
-			$this->output->addHtml( "<br>" );
-			$this->output->addWikiText( "== PvXcode ==" );
+			$output->addWikiTextAsContent( "== Preview ==" );
+			$output->addWikiTextAsContent( "<pvxbig>" . $rout . "</pvxbig>" );
+			$output->addHtml( "<br>" );
+			$output->addWikiTextAsContent( "== PvXcode ==" );
 			$out =
 				"<p><textarea cols='80' rows='10' wrap='virtual'>\n<pvxbig>\n" . $rout . "\n</pvxbig>\n</textarea></p>";
 
@@ -76,7 +72,7 @@ class SpecialPvXDecode extends SpecialPage {
 		}
 		$this->setHeaders();
 
-		$this->output->addHtml( $out );
+		$output->addHTML( $out );
 	}
 
 	/**
@@ -84,7 +80,7 @@ class SpecialPvXDecode extends SpecialPage {
 	 *
 	 * @return string
 	 */
-	protected function getGroupName() {
+	protected function getGroupName(): string {
 		// Change to display in a different category on Special:SpecialPages.
 		return 'pvx';
 	}
