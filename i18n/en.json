@@ -1,11 +1,13 @@
 {
-	"@metadata": {
-		"authors": ["Cameron Chunn"]
-	},
-	"pvxcode": "PvX Code",
-	"pvxconvert": "PvX Convert",
-	"pvxdecode": "PvX Decode",
-	"action-pvxcode": "perform PvX Code actions",
-	"specialpages-group-pvx": "PvX",
-	"pvxcode_description": "Guild Wars Template to PvXCode handling"
+    "@metadata": {
+        "authors": [
+            "Cameron Chunn"
+        ]
+    },
+    "pvxcode": "PvX Code",
+    "pvxconvert": "PvX Convert",
+    "pvxdecode": "PvX Decode",
+    "action-pvxcode": "perform PvX Code actions",
+    "specialpages-group-pvx": "PvX",
+    "pvxcode_description": "Guild Wars Template to PvXCode handling"
 }
