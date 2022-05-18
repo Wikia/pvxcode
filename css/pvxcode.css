@@ -1,410 +1,409 @@
 /* pvxcode.css */
 /* TOOLTIPS */
 span.pvx_overlib {
-    display:block;
-    position:relative;
-    border:1px;
-    border-color:#78796c;
-    border-style:solid;
-    width:420px;
-    background-color:#ffffff;
-    position:relative;
-    padding:1px;
+	display: block;
+	position: relative;
+	border: 1px solid #78796c;
+	width: 420px;
+	background-color: #ffffff;
+	padding: 1px;
 }
 
 /* Tooltips - Bottom right text */
 span.pvx_campaign {
-    display:block;
-    bottom:0px;
-    right:-1px;
-    position:absolute;
-    height:18px;
-    background-color:#78796c;
-    overflow:hidden;
-    z-index:2;
-    color:#FFFFFF;
-    font-family:Tahoma;
-    font-weight:bold;
-    font-size:12px;
-    text-transform:capitalize;
-    text-align:center;
-    letter-spacing:1px;
-    vertical-align:top;
-    padding-left:13px;
-    padding-right:9px;
+	display: block;
+	bottom: 0;
+	right: -1px;
+	position: absolute;
+	height: 18px;
+	background-color: #78796c;
+	overflow: hidden;
+	z-index: 2;
+	color: #FFFFFF;
+	font-family: Tahoma;
+	font-weight: bold;
+	font-size: 12px;
+	text-transform: capitalize;
+	text-align: center;
+	letter-spacing: 1px;
+	vertical-align: top;
+	padding-left: 13px;
+	padding-right: 9px;
 }
 
 /* Tooltips - Text after description (profession, attribute, rank) */
 span.pvx_mastery {
-    display:block;
-    bottom:13px;
-    left:65px;
-    position:absolute;
-    height:17px;
-    overflow:hidden;
-    z-index:2;
-    color:#78796c;
-    font-family:Tahoma;
-    font-weight:bold;
-    font-size:12px;
-    vertical-align:bottom;
+	display: block;
+	bottom: 13px;
+	left: 65px;
+	position: absolute;
+	height: 17px;
+	overflow: hidden;
+	z-index: 2;
+	color: #78796c;
+	font-family: Tahoma;
+	font-weight: bold;
+	font-size: 12px;
+	vertical-align: bottom;
 }
 
 /* Tooltips - Skill name, type, description. */
 span.pvx_description {
-    display:block;
-    position:relative;
-    background-color:#fafaf7;
-    background-repeat:no-repeat;
-    background-position:right top;
-    z-index:1;
-    margin-left:64px;
-    margin-bottom:32px;
-    min-height:120px;
+	display: block;
+	position: relative;
+	background-color: #fafaf7;
+	background-repeat: no-repeat;
+	background-position: right top;
+	z-index: 1;
+	margin-left: 64px;
+	margin-bottom: 32px;
+	min-height: 120px;
 }
 
 span.pvx_normal_skill {
-    display:block;
-    position:relative;
-    color:#252525;
-    height:22px;
-    font-family:Tahoma;
-    font-size:18px;
-    font-weight:bold;
-    top:7px;
-    margin-top:1px;
+	display: block;
+	position: relative;
+	color: #252525;
+	height: 22px;
+	font-family: Tahoma;
+	font-size: 18px;
+	font-weight: bold;
+	top: 7px;
+	margin-top: 1px;
 }
 
 span.pvx_elite_skill {
-    display:block;
-    position:relative;
-    color:#e8a400;
-    height:22px;
-    font-family:Tahoma;
-    font-size:18px;
-    font-weight:bold;
-    top:7px;
-    margin-top:1px;
+	display: block;
+	position: relative;
+	color: #e8a400;
+	height: 22px;
+	font-family: Tahoma;
+	font-size: 18px;
+	font-weight: bold;
+	top: 7px;
+	margin-top: 1px;
 }
 
 span.pvx_type {
-    display:block;
-    position:relative;
-    color:#757575;
-    font-family:Tahoma;
-    font-size:13px;
-    font-weight:bold;
-    margin-top:6px;
+	display: block;
+	position: relative;
+	color: #757575;
+	font-family: Tahoma;
+	font-size: 13px;
+	font-weight: bold;
+	margin-top: 6px;
 }
 
 span.pvx_skill_info {
-    display:block;
-    font-family:Tahoma;
-    font-size:12px;
-    position:relative;
-    margin-top:6px;
-    margin-right:6px;
-    margin-bottom:40px;
+	display: block;
+	font-family: Tahoma;
+	font-size: 12px;
+	position: relative;
+	margin-top: 6px;
+	margin-right: 6px;
+	margin-bottom: 40px;
 }
 
 span.variable {
-    color:#299900; font-weight:bold;
-    font-family:verdana, Helvetica, sans-serif;
+	color: #299900;
+	font-weight: bold;
+	font-family: verdana, Helvetica, sans-serif;
 }
 
 span.expert {
-    color:#025577;
+	color: #025577;
 }
 
 /* Tooltips - Left column - Box, icon */
 span.pvx_attrib_list {
-    display:block;
-    position:absolute;
-    background-color:#fafaf7;
-    background-image:url(../images/img_skin/skillbg.jpg);
-    background-repeat:no-repeat;
-    background-position:0 1px;
-    height:149px;
-    width:64px;
-    left:1px;
-    top:1px;
-    z-index:1000;
+	display: block;
+	position: absolute;
+	background-color: #fafaf7;
+	background-image: url(../images/img_skin/skillbg.jpg);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
+	height: 149px;
+	width: 64px;
+	left: 1px;
+	top: 1px;
+	z-index: 1000;
 }
 
 span.pvx_attrib_bg {
-    display:block;
-    position:absolute;
-    height:126px;
-    width:42px;
-    left:10px;
-    top:10px;
-    z-index:1;
-    margin:1px;
-    margin-top:2px;
+	display: block;
+	position: absolute;
+	height: 126px;
+	width: 42px;
+	left: 10px;
+	top: 10px;
+	z-index: 1;
+	margin: 2px 1px 1px;
 }
 
 span.pvx_attrib_bg img {
-    padding:1px;
-    height:40px;
-    width:40px;
+	padding: 1px;
+	height: 40px;
+	width: 40px;
 }
 
 .pvx_attributes {
-    display:block;
-    margin:0;
-    padding:0;
-    padding-left:1px;
+	display: block;
+	margin: 0;
+	padding: 0 0 0 1px;
 }
 
 /* Tooltips - Left column - sacrifice, energy, overcast, recharge, activation, adrenaline. */
 .pvx_attributes > span {
-    display:block;
-    width:18px;
-    height:18px;
-    font-size:11px;
-    font-weight:bold;
-    font-family:Tahoma;
-    padding-left:15px;
-    margin-top:4px;
+	display: block;
+	width: 18px;
+	height: 18px;
+	font-size: 11px;
+	font-weight: bold;
+	font-family: Tahoma;
+	padding-left: 15px;
+	margin-top: 4px;
 }
 
 .pvx_attributes .pvx_sacr {
-    background-image:url(../images/img_skin/sacrifice.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/sacrifice.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_ener {
-    background-image:url(../images/img_skin/energy.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/energy.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_over {
-    background-image:url(../images/img_skin/overcast.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/overcast.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_rech {
-    background-image:url(../images/img_skin/recharge.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/recharge.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_cast {
-    background-image:url(../images/img_skin/activation.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/activation.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_eregen {
-    background-image:url(../images/img_skin/upkeep.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/upkeep.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 .pvx_attributes .pvx_adre {
-    background-image:url(../images/img_skin/adrenaline.gif);
-    background-repeat:no-repeat;
-    background-position:0 1px;
+	background-image: url(../images/img_skin/adrenaline.gif);
+	background-repeat: no-repeat;
+	background-position: 0 1px;
 }
 
 /* Ranger expertise energy reduction / Dervish mysticism energy reduction / Mesmer fast casting activation reduction recieve additional spans */
 .pvx_attributes .pvx_cast span {
-    color:#770077;
-    text-decoration:underline;
+	color: #770077;
+	text-decoration: underline;
 }
 
 .pvx_attributes .pvx_ener span {
-    color:#448800;
-    text-decoration:underline;
+	color: #448800;
+	text-decoration: underline;
 }
 
 
 /* BUILDS */
 /* Builds - Container */
 .build_container {
-    width:650px;
-    margin:0;
-    padding:0;
+	width: 650px;
+	margin: 0;
+	padding: 0;
 }
 
 /* Builds - Profession and name */
 .profession, .attributes, .description {
-    width:597px;
+	width: 597px;
 }
 
 .profession span {
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:15px;
-    position:relative;
-    bottom:0px;
-    left:5px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	position: relative;
+	bottom: 0;
+	left: 5px;
 }
 
 /* Builds - Attribute list */
 .attribute_name, .attribute_rank {
-    margin-top:3px;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:13px;
-    padding:2px 5px;
+	margin-top: 3px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	padding: 2px 5px;
 }
 
 .attribute_name {
-    background-color:#fafafa;
-    border-bottom:1px solid #ddd;
-    border-right:1px solid #ddd;
+	background-color: #fafafa;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
 }
 
 .attribute_rank {
-    float:right;
+	float: right;
 }
 
 /* Builds - Description */
 .description {
-    background-color:#fafafa;
-    border-bottom:1px solid #ddd;
-    border-right:1px solid #ddd;
-    box-sizing:border-box;
-    padding:2px 5px;
-    font-style:italic;
-    font-size:11px;
+	background-color: #fafafa;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	box-sizing: border-box;
+	padding: 2px 5px;
+	font-style: italic;
+	font-size: 11px;
 }
+
 .description:empty {
-    display: none;
+	display: none;
 }
 
 /* Builds - Skills */
 .skill_box {
-    width:70px;
-    height:127px;
-    background-color:#f6f6f6;
-    border:1px solid #ddd;
-    border-top-color:#fafafa;
-    border-left-color:#fafafa;
-    float:left;
-    margin-right:3px;
-    margin-top:3px;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:10px;
-    text-align:center;
-    vertical-align:text-bottom;
-    line-height:13px;
-    position:relative;
+	width: 70px;
+	height: 127px;
+	background-color: #f6f6f6;
+	border: 1px solid #ddd;
+	border-top-color: #fafafa;
+	border-left-color: #fafafa;
+	float: left;
+	margin-right: 3px;
+	margin-top: 3px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-align: center;
+	vertical-align: text-bottom;
+	line-height: 13px;
+	position: relative;
 }
 
 .skill_icon {
-    height:64px;
-    width:64px;
-    background-color:#ffffff;
-    margin:3px;
-    margin-bottom:7px;
+	height: 64px;
+	width: 64px;
+	background-color: #ffffff;
+	margin: 3px 3px 7px;
 }
 
 /* Builds - Skills - Extra div to move the type icons if elite, to avoid the elite border */
 .pvx_icon-normal_skill {
-    position:absolute;
-    top:3px;
-    right:4px;
+	position: absolute;
+	top: 3px;
+	right: 4px;
 }
 
 .pvx_icon-elite_skill {
-    position:absolute;
-    top:6px;
-    right:6px;
+	position: absolute;
+	top: 6px;
+	right: 6px;
 }
 
 /* Builds - Skills - Type icons */
 .pvx-type-du {
-    background-image:url(../images/img_skin/Dual-Attack.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Dual-Attack.png);
+	height: 20px;
+	width: 20px;
 }
 
 .pvx-type-en {
-    background-image:url(../images/img_skin/Enchantment-Spell.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Enchantment-Spell.png);
+	height: 20px;
+	width: 20px;
 }
 
 .pvx-type-he {
-    background-image:url(../images/img_skin/Hex-Spell.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Hex-Spell.png);
+	height: 20px;
+	width: 20px;
 }
+
 .pvx-type-le {
-    background-image:url(../images/img_skin/Lead-Attack.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Lead-Attack.png);
+	height: 20px;
+	width: 20px;
 }
+
 .pvx-type-of {
-    background-image:url(../images/img_skin/Off-Hand-Attack.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Off-Hand-Attack.png);
+	height: 20px;
+	width: 20px;
 }
+
 .pvx-type-wea {
-    background-image:url(../images/img_skin/Weapon-Spell.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Weapon-Spell.png);
+	height: 20px;
+	width: 20px;
 }
 
 .pvx-type-fl {
-    background-image:url(../images/img_skin/Enchantment-Spell.png);
-    height:20px;
-    width:20px;
+	background-image: url(../images/img_skin/Enchantment-Spell.png);
+	height: 20px;
+	width: 20px;
 }
 
 /* Builds - Template link at the bottom */
 /*  Note: Skill boxes float, so we need a clear here. */
 .template {
-    width:597px;
-    clear:both;
-    background-color:#fafafa;
-    border-bottom:1px solid #ddd;
-    border-right:1px solid #ddd;
-    margin-top:3px;
-    padding-top:2px;
-    padding-bottom:3px;
-    box-sizing:border-box;
+	width: 597px;
+	clear: both;
+	background-color: #fafafa;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	margin-top: 3px;
+	padding-top: 2px;
+	padding-bottom: 3px;
+	box-sizing: border-box;
 }
 
 .template_name {
-    font-family:Arial;
-    font-weight:bold;
-    font-size:12px;
-    margin-left:5px;
-    margin-right:5px;
-    letter-spacing:1px;
-    margin-top:2px;
-    color:#666666;
+	font-family: Arial;
+	font-weight: bold;
+	font-size: 12px;
+	margin-left: 5px;
+	margin-right: 5px;
+	letter-spacing: 1px;
+	margin-top: 2px;
+	color: #666666;
 }
 
 .template_input {
-    float:right;
-    padding-right:4px;
+	float: right;
+	padding-right: 4px;
 }
 
 .template input {
-    font-family:courier;
-    font-weight:normal;
-    font-size:12px;
-    background-color:#ffffff;
-    height:15px;
-    border:1px solid #dddddd;
-    color:#333333;
-    margin-top:2px;
-    width:368px;
-    padding-left:2px;
-    vertical-align:top;
+	font-family: courier;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #ffffff;
+	height: 15px;
+	border: 1px solid #dddddd;
+	color: #333333;
+	margin-top: 2px;
+	width: 368px;
+	padding-left: 2px;
+	vertical-align: top;
 }
 
 .template img {
-    display:inline;
-    vertical-align:top;
-    margin-top:2px;
-    margin-left:0px;
-    margin-right:0px;
-    width:66px;
-    height:19px;
+	display: inline;
+	vertical-align: top;
+	margin-top: 2px;
+	margin-left: 0;
+	margin-right: 0;
+	width: 66px;
+	height: 19px;
 }
