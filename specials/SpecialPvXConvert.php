@@ -22,12 +22,6 @@ class SpecialPvXConvert extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct( 'PvXConvert' );
-
-		$this->wgRequest = $this->getRequest();
-		$this->wgUser = $this->getUser();
-		$this->output = $this->getOutput();
-
-		$this->DB = wfGetDB( DB_PRIMARY );
 	}
 
 	/**
@@ -35,17 +29,20 @@ class SpecialPvXConvert extends SpecialPage {
 	 *
 	 * @param $par - Not used, but expected to be there by mediawiki.
 	 * @return void - echos to page.
+	 * @throws MWException
 	 */
 	public function execute( $par = null ) {
-		$name = $this->wgRequest->getText( 'wpName' );
-		$build = $this->wgRequest->getText( 'wpBuild' );
+		$request = $this->getRequest();
+		$output = $this->getOutput();
+		$name = $request->getText( 'wpName' );
+		$build = $request->getText( 'wpBuild' );
 
 		if ( $build ) {
 			$rout = $this->formatBuild( $build, $name );
-			$this->output->addWikiText( "== Preview ==" );
-			$this->output->addWikiText( $rout );
-			$this->output->addHtml( "<br>" );
-			$this->output->addWikiText( "== PvXcode ==" );
+			$output->addWikiTextAsContent( "== Preview ==" );
+			$output->addWikiTextAsContent( $rout );
+			$output->addHtml( "<br>" );
+			$output->addWikiTextAsContent( "== PvXcode ==" );
 			$out = "<p><textarea cols='80' rows='10' wrap='virtual'>" . $rout . "</textarea></p>";
 		} else {
 			$out = '<p>
@@ -56,8 +53,8 @@ class SpecialPvXConvert extends SpecialPage {
 					&nbsp;&nbsp;|&nbsp;Wilderness&nbsp;Survival&nbsp;|&nbsp;12&nbsp;+&nbsp;1&nbsp;+&nbsp;3<br>
 					&nbsp;&nbsp;|&nbsp;Expertise&nbsp;|&nbsp;12&nbsp;+&nbsp;1<br>
 					}}<br>
-					{{skill bar|Echo|Dust Trap|Barbed Trap|Flame Trap|Trappers Speed|
-					Troll Unguent|Whirling Defense|Resurrection Signet}}</code>
+					{{skill bar|Echo|Dust Trap|Barbed Trap|Flame Trap|Trappers Speed|Troll
+					Unguent|Whirling Defense|Resurrection Signet}}</code>
 					<p>Enter old style GuildWiki &quot;Attributes and Skills&quot; template:</p>
 					<form action="' . $_SERVER["PHP_SELF"] . '" method="get">
 					<input name="title" type="hidden" value="Special:PvXconvert" />
@@ -69,7 +66,7 @@ class SpecialPvXConvert extends SpecialPage {
 		}
 		$this->setHeaders();
 
-		$this->output->addHtml( $out );
+		$output->addHtml( $out );
 	}
 
 	/**
