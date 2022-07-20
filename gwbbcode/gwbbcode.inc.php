@@ -224,7 +224,7 @@ function skill_name_replace( $reg ) {
 	$name = html_safe_decode( $name );
 
 	// '[[Skill Name]' => no icon
-	if ( $name{0} == '[' ) {
+	if ( $name[0] == '[' ) {
 		$noicon = true;
 		$name = substr( $name, 1 );
 	} else {
