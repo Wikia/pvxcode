@@ -1557,13 +1557,13 @@ function add_strength( $desc, &$extra_desc, $attr_list, $type ) {
 	if ( isset( $attr_list['Strength'] ) && $attr_list['Strength'] > 0 && strpos( $type, 'Attack' ) !== false ) {
 		// Strength does not stack with skills with inherent armor penetration
 		if ( preg_match( '@[Tt]his (attack|axe attack) has ([0-9]+)% armor penetration@', $desc, $reg ) ) {
-			if ( $reg[2] < $strength ) {
+			if ( $reg[2] < $attr_list['Strength']  ) {
 				$extra_desc =
-					'This attack skill has <b>' . $strength .
+					'This attack skill has <b>' . $attr_list['Strength'] .
 					'</b>% armor penetration. Its inherent armor penetration is overwritten.';
 			}
 		} else {
-			$extra_desc = 'This attack skill has <b>' . $strength . '</b>% armor penetration.';
+			$extra_desc = 'This attack skill has <b>' . $attr_list['Strength'] . '</b>% armor penetration.';
 		}
 	}
 }

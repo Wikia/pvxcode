@@ -24,7 +24,6 @@ class SpecialPvXDecode extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct( 'PvXDecode' );
-		$this->DB = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection( DB_PRIMARY );
 
 		require_once( GWBBCODE_ROOT . '/gwbbcode.inc.php' );
 	}
