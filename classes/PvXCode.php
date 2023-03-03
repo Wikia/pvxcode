@@ -24,7 +24,7 @@ class PvXCode {
 	public static function parserRender( string $input, array $args, Parser $parser, string $frame ) {
 		$parser->getOutput()->addModuleStyles( 'ext.PvXCode.css' );
 		$parser->getOutput()->addModules( 'ext.PvXCode.js' );
-		$title = $parser->getTitle()->getText();
+		$title = $parser->getPage()->getText();
 
 		// Using recursiveTagParse() instead of parse() to avoid wrapping result
 		// in a div and the associated processing time hidden HTML comment
