@@ -1,6 +1,5 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
 
 /**
  * Curse Inc.
