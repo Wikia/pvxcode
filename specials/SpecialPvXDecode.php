@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Curse Inc.
  * PvX Code
@@ -22,7 +23,6 @@ class SpecialPvXDecode extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct( 'PvXDecode' );
-		$this->DB = wfGetDB( DB_PRIMARY );
 
 		require_once( GWBBCODE_ROOT . '/gwbbcode.inc.php' );
 	}

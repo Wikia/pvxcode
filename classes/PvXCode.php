@@ -24,12 +24,13 @@ class PvXCode {
 	public static function parserRender( string $input, array $args, Parser $parser, string $frame ) {
 		$parser->getOutput()->addModuleStyles( 'ext.PvXCode.css' );
 		$parser->getOutput()->addModules( 'ext.PvXCode.js' );
-		$title = $parser->getTitle()->getText();
+		$title = TitleValue::newFromPage( $parser->getPage() );
+		$text = $title->getText();
 
 		// Using recursiveTagParse() instead of parse() to avoid wrapping result
 		// in a div and the associated processing time hidden HTML comment
 		$parsed_input = $parser->recursiveTagParse( $input, $frame = false );
 
-		return parseGwbbcode( $parsed_input, $title );
+		return parseGwbbcode( $parsed_input, $text );
 	}
 }
