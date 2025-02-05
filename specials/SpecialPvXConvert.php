@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\SpecialPage\SpecialPage;
+
 /**
  * Curse Inc.
  * PvX Code
@@ -29,7 +31,6 @@ class SpecialPvXConvert extends SpecialPage {
 	 *
 	 * @param $par - Not used, but expected to be there by mediawiki.
 	 * @return void - echos to page.
-	 * @throws MWException
 	 */
 	public function execute( $par = null ) {
 		$request = $this->getRequest();

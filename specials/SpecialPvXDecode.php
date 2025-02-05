@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\SpecialPage\SpecialPage;
 
 /**
  * Curse Inc.
@@ -24,14 +25,13 @@ class SpecialPvXDecode extends SpecialPage {
 	public function __construct() {
 		parent::__construct( 'PvXDecode' );
 
-		require_once( GWBBCODE_ROOT . '/gwbbcode.inc.php' );
+		require_once GWBBCODE_ROOT . '/gwbbcode.inc.php';
 	}
 
 	/**
 	 * Main Execute for the Specil Page
 	 * @param $par - Not used, but expected to be there by mediawiki.
 	 * @return void - echos to page.
-	 * @throws MWException
 	 */
 	public function execute( $par = null ) {
 		$request = $this->getRequest();

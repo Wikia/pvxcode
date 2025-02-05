@@ -1,4 +1,8 @@
 <?php
+
+use MediaWiki\Parser\Parser;
+use MediaWiki\Title\TitleValue;
+
 /**
  * Curse Inc.
  * PvX Code
@@ -11,7 +15,6 @@
  * @link        https://gitlab.com/hydrawiki
  *
  */
-
 class PvXCode {
 	/**
 	 * Parser Renderer
@@ -22,8 +25,8 @@ class PvXCode {
 	 * @return array|string|string[]|null
 	 */
 	public static function parserRender( string $input, array $args, Parser $parser, string $frame ) {
-		$parser->getOutput()->addModuleStyles( 'ext.PvXCode.css' );
-		$parser->getOutput()->addModules( 'ext.PvXCode.js' );
+		$parser->getOutput()->addModuleStyles( [ 'ext.PvXCode.css' ] );
+		$parser->getOutput()->addModules( [ 'ext.PvXCode.js' ] );
 		$title = TitleValue::newFromPage( $parser->getPage() );
 		$text = $title->getText();
 

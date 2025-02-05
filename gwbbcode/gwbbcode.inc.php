@@ -18,7 +18,7 @@
  *   All images, skill names and descriptions are (C) ArenaNet.
  ***************************************************************************/
 
-require_once( GWBBCODE_ROOT . '/constants.inc.php' );
+require_once GWBBCODE_ROOT . '/constants.inc.php';
 
 /***************************************************************************
  * GLOBALS
@@ -38,7 +38,6 @@ if ( !file_exists( SKILLIDSPVP_PATH ) ) {
 	die( "Missing pvp skill id database." );
 }
 $pvp_to_pve_skill_list = load( SKILLIDSPVP_PATH );
-
 
 /***************************************************************************
  * MAIN FUNCTION
@@ -261,10 +260,9 @@ function skill_name_replace( $reg ) {
 		}
 
 		// Handle the difference between [[shock] and [shock]
-		if ( $noicon )
+		if ( $noicon ) {
 			// PHP note: Use of double quotes replaces variables inside with their values
 			// PHP note: Use of single quotes shows the variable names like JS would.
-		{
 			return "[skill noicon$attr$show]" . $name . '[/skill]';
 		} else {
 			return "[skill$attr]" . $name . '[/skill]';
@@ -318,7 +316,6 @@ function build_replace( $reg ) {
 		$secondary_display_name = 'Any';
 	}
 
-
 	// Attributes
 	$attributes = '';
 	foreach ( $attr_list_raw as $attribute_name => $attribute_value ) {
@@ -333,7 +330,6 @@ function build_replace( $reg ) {
 	}
 	$attributes = preg_replace( '/\s*\\+\s*/', ' + ', $attributes );
 	$skills = str_replace( '[skill', '[skill ' . $att, $skills );
-
 
 	// Build description
 	$desc = preg_match( '|desc=\\"([^"]+)\\"|', $att, $reg ) ? $reg[1] : '';
@@ -579,8 +575,8 @@ function build_replace( $reg ) {
 			arsort( $attr_primary );
 			foreach ( $attr_runes as $attr => $rune ) {
 				if ( $rune < 3 ) {
-					$attr_primary[$attr] --;
-					$attr_runes[$attr] ++;
+					$attr_primary[$attr]--;
+					$attr_runes[$attr]++;
 					break;
 				}
 			}
@@ -1557,7 +1553,7 @@ function add_strength( $desc, &$extra_desc, $attr_list, $type ) {
 	if ( isset( $attr_list['Strength'] ) && $attr_list['Strength'] > 0 && strpos( $type, 'Attack' ) !== false ) {
 		// Strength does not stack with skills with inherent armor penetration
 		if ( preg_match( '@[Tt]his (attack|axe attack) has ([0-9]+)% armor penetration@', $desc, $reg ) ) {
-			if ( $reg[2] < $attr_list['Strength']  ) {
+			if ( $reg[2] < $attr_list['Strength'] ) {
 				$extra_desc =
 					'This attack skill has <b>' . $attr_list['Strength'] .
 					'</b>% armor penetration. Its inherent armor penetration is overwritten.';
@@ -1906,7 +1902,7 @@ function load( $filename ) {
 	if ( !file_exists( $filename ) ) {
 		return false;
 	} else {
-		return require( $filename );
+		return require $filename;
 	}
 }
 
@@ -2336,5 +2332,3 @@ function bin_to_template( $bin ) {
 
 	return $ret;
 }
-
-?>
