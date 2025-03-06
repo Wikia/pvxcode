@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\SpecialPage\SpecialPage;
+
 /**
  * Curse Inc.
  * PvX Code

@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\Parser;
+
 /**
  * Curse Inc.
  * PvX Code
@@ -18,9 +21,8 @@
 class PvXCodeHooks {
 	/**
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit
-	 * @param Parser &$parser
+	 * @param \MediaWiki\Parser\Parser &$parser
 	 * @return true
-	 * @throws MWException
 	 */
 	public static function onParserFirstCallInit( Parser &$parser ): bool {
 		// Calls PvXCode.php within the classes folder
@@ -33,10 +35,13 @@ class PvXCodeHooks {
 	 * Include the third party gwbbcode library on extension regiation.
 	 * @return void
 	 */
-	public static function onRegistration() {
+	public static function onRegistration(): void {
 		// Retrieve config settings from localSettings.php -
-		// probably a better way of doing this via "use MediaWiki\MediaWikiServices;"
-		global $wgServer, $wgScriptPath, $wgExtensionAssetsPath;
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$wgServer = $config->get( 'Server' );
+		$wgScriptPath = $config->get( 'ScriptPath' );
+		$wgExtensionAssetsPath = $config->get( 'ExtensionAssetsPath' );
+
 
 		// Local file path for includes
 		define( 'GWBBCODE_ROOT', __DIR__ . '/gwbbcode' );
@@ -53,6 +58,6 @@ class PvXCodeHooks {
 		define( 'GW_WIKI_PAGE_URL', 'https://wiki.guildwars.com/wiki' );
 
 		// Load main script
-		require_once( GWBBCODE_ROOT . '/gwbbcode.inc.php' );
+		require_once GWBBCODE_ROOT . '/gwbbcode.inc.php';
 	}
 }
