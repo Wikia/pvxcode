@@ -535,7 +535,7 @@ function build_replace( $reg ) {
 
 		// Primary attributes
 		if ( $prof_attr_list[$attr] == $primary ) {
-			$bonus_level = array_sum( explode( '+', $bonus ) );
+			$bonus_level = @array_sum( explode( '+', $bonus ) );
 			// Invalid attribute level bonus
 			if ( $bonus_level > 4 || $bonus_level < 0 || ( $bonus_level == 4 && !$available_helmet ) ) {
 				$invalid_template = "Invalid attribute level bonus";
