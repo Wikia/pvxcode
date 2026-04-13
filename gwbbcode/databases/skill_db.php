@@ -8282,7 +8282,7 @@
 			'type' => 'Sword Attack',
 			'ty' => 'sw',
 			'energy' => 0,
-			'adrenaline' => 10,
+			'adrenaline' => 9.6,
 			'eregen' => 0,
 			'sacrifice' => 0,
 			'overcast' => 0,
@@ -12928,7 +12928,7 @@
 			'eregen' => 0,
 			'sacrifice' => 0,
 			'overcast' => 0,
-			'casting' => 0.25,
+			'casting' => 1,
 			'recharge' => 5,
 			'pve_only' => 0,
 			'elite' => 1,
@@ -20148,7 +20148,7 @@
 			'recharge' => 6,
 			'pve_only' => 0,
 			'elite' => 0,
-			'desc' => 'All adjacent foes are struck for 10..40 earth damage. For 30 seconds, your attacks deal earth damage. When this Enchantment ends, all adjacent foes are Blinded for 1..4 seconds.',
+			'desc' => 'All nearby foes are struck for 10..40 earth damage. For 30 seconds, your attacks deal earth damage. When this Enchantment ends, all nearby foes are Blinded for 1..4 seconds.',
 			'name_id' => 'dust cloak',
 		],
 	1498 =>
@@ -23316,7 +23316,7 @@
 			'recharge' => 20,
 			'pve_only' => 0,
 			'elite' => 0,
-			'desc' => 'Target foe takes 25 holy damage for each Enchantment on you (maximum 30..100 holy damage).',
+			'desc' => 'Target foe takes 25 holy damage for each Enchantment on you (maximum 30..120 holy damage).',
 			'name_id' => 'signet of mystic wrath',
 		],
 	1690 =>
@@ -23426,7 +23426,7 @@
 			'recharge' => 3,
 			'pve_only' => 0,
 			'elite' => 1,
-			'desc' => 'If this attack hits, you strike for +5..20 damage. If your target is under the effects of an Enchantment, this attack cannot be blocked.',
+			'desc' => 'If this attack hits, you strike for +7..25 damage. If your target is under the effects of an Enchantment, this attack cannot be blocked.',
 			'name_id' => 'magehunter strike',
 		],
 	1695 =>
@@ -29872,7 +29872,7 @@
 			'recharge' => 15,
 			'pve_only' => 0,
 			'elite' => 0,
-			'desc' => 'If this attack hits, target foe takes +5..20 damage. If that foe is not using a Skill, Sloth Hunter\'s Shot does an additional +5..15 damage.',
+			'desc' => 'If this attack hits, target foe takes +5..15 damage. If that foe is not using a Skill, Sloth Hunter\'s Shot does an additional +5..20 damage.',
 			'name_id' => 'sloth hunters shot (pvp)',
 		],
 	2959 =>
@@ -32160,7 +32160,7 @@
 			'recharge' => 10,
 			'pve_only' => 0,
 			'elite' => 0,
-			'desc' => 'All adjacent foes are struck for 10..40 earth damage. For 30 seconds, your attacks deal earth damage. When this Enchantment ends, all adjacent foes are Blinded for 1..4 seconds.',
+			'desc' => 'All nearby foes are struck for 10..40 earth damage. For 30 seconds, your attacks deal earth damage. When this Enchantment ends, all nearby foes are Blinded for 1..4 seconds.',
 			'name_id' => 'dust cloak (pvp)',
 		],
 	3348 =>

@@ -457,7 +457,6 @@
 	'quickening zephyr' => 475,
 	'natures renewal' => 476,
 	'muddy terrain' => 477,
-	'claim resource' => 565,
 	'mark of insecurity' => 570,
 	'disrupting dagger' => 571,
 	'deadly paradox' => 572,
