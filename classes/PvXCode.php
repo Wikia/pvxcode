@@ -1,5 +1,7 @@
 <?php
 
+use Fandom\Includes\Config\FandomConfigNames;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\TitleValue;
 
@@ -25,8 +27,15 @@ class PvXCode {
 	 * @return array|string|string[]|null
 	 */
 	public static function parserRender( string $input, array $args, Parser $parser, string $frame ) {
-		$parser->getOutput()->addModuleStyles( [ 'ext.PvXCode.css' ] );
-		$parser->getOutput()->addModules( [ 'ext.PvXCode.js' ] );
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$utilityMode = $config->get( 'PvxCodeUtility' )
+			&& $config->get( FandomConfigNames::EnableUtilityFramework );
+
+		if ( !$utilityMode ) {
+			$parser->getOutput()->addModuleStyles( [ 'ext.PvXCode.css' ] );
+			$parser->getOutput()->addModules( [ 'ext.PvXCode.js' ] );
+		}
+
 		$title = TitleValue::newFromPage( $parser->getPage() );
 		$text = $title->getText();
 
@@ -34,6 +43,11 @@ class PvXCode {
 		// in a div and the associated processing time hidden HTML comment
 		$parsed_input = $parser->recursiveTagParse( $input, $frame = false );
 
-		return parseGwbbcode( $parsed_input, $text );
+		$output = parseGwbbcode( $parsed_input, $text, $utilityMode );
+
+		// In utility mode the output contains <fandom-util.PvxCode .../> tags
+		// that must be processed by ParserTagHookHandler — that only happens if
+		// we run them through the parser again.
+		return $utilityMode ? $parser->recursiveTagParse( $output, false ) : $output;
 	}
 }
