@@ -46,11 +46,18 @@ $pvp_to_pve_skill_list = load( SKILLIDSPVP_PATH );
 /**
  * Prepares the page and then replaces gwBBCode with HTML
  * This function is directly called by: extension\classes\PvXCode.php
- * @param $text
- * @param bool $build_name
+ * @param string $text
+ * @param string|false $build_name
+ * @param bool $utilityMode When true, builds and skills are rendered as
+ *   <fandom-util.PvxCode ...> tags via {@see parseGwbbcodeUtility} instead of
+ *   the legacy HTML pipeline.
  * @return array|string|string[]|null
  */
-function parseGwbbcode( $text, $build_name = false ) {
+function parseGwbbcode( $text, $build_name = false, bool $utilityMode = false ) {
+	if ( $utilityMode ) {
+		return parseGwbbcodeUtility( $text, $build_name );
+	}
+
 	// Timer for the gwBBCode parse duration
 	$start = microtime( true );
 
@@ -97,6 +104,47 @@ function parseGwbbcode( $text, $build_name = false ) {
 				'Runtime = ' . round( microtime( true ) - $start, 3 ) . ' seconds',
 				$text
 			);
+	}
+
+	return $text;
+}
+
+/**
+ * Utility-Framework variant of {@see parseGwbbcode}. Runs the same pipeline,
+ * but routes [build] and [skill] to the utility-mode callbacks that emit
+ * <fandom-util.PvxCode .../> tags. Other constructs ([Random Skill], [rand],
+ * [build=…], [skillset=…], [pre], [nobb], [gwbbcode …]) keep their legacy
+ * behaviour per the spec clarifications.
+ *
+ * @param string $text
+ * @param string|false $build_name
+ * @return array|string|string[]|null
+ */
+function parseGwbbcodeUtility( $text, $build_name = false ) {
+	$start = microtime( true );
+
+	if ( !empty( $build_name ) && !preg_match( '#(\[build[^\]]*?) name="[^\]"]+"#isS', $text ) ) {
+		$text = preg_replace( '#(\[build )#is', "\\1name=\"$build_name\" ", $text );
+	}
+
+	$text = preg_replace_callback( '#\[pre\](.*?)\[\/pre\]#isS', 'pre_replace', $text );
+	$text = preg_replace_callback( '#\[nobb\](.*?)\[\/nobb\]#isS', 'pre_replace', $text );
+	$text = preg_replace_callback( '#\[Random Skill(.*?)\]#is', 'random_skill_replace', $text );
+	$text = preg_replace_callback( '#\[rand([^\]]*)\]#isS', 'rand_replace', $text );
+	$text = preg_replace_callback( '#\[build=([^\]]*)\]\]?(\[/build\])?\r?\n?#isS', 'build_id_replace', $text );
+	$text = preg_replace_callback( '#\[(([^]\r\n]+)(;)([^];\r\n]+))\]\r?\n?#isS', 'build_id_replace', $text );
+	$text = preg_replace_callback( '#\[(.+)\]#isSU', 'skill_name_replace', $text );
+	$text = preg_replace_callback( '#\[build ([^\]]*)\](.*?)\[/build\]\r?\n?#isS', 'build_replace_utility', $text );
+	$text = preg_replace_callback( '#\[(\[?)skillset=(.*?)\]#isS', 'skillset_replace', $text );
+	$text = preg_replace_callback( '#\[skill([^\]]*)\](.*?)\[/skill\]#isS', 'skill_replace_utility', $text );
+
+	$text = preg_replace( '@\[gwbbcode version\]@i', GWBBCODE_VERSION, $text );
+	if ( preg_match( '@\[gwbbcode runtime\]@i', $text ) !== false ) {
+		$text = preg_replace(
+			'@\[gwbbcode runtime\]@i',
+			'Runtime = ' . round( microtime( true ) - $start, 3 ) . ' seconds',
+			$text
+		);
 	}
 
 	return $text;
@@ -2331,4 +2379,87 @@ function bin_to_template( $bin ) {
 	}
 
 	return $ret;
+}
+
+
+/***************************************************************************
+ * UTILITY-FRAMEWORK MODE REPLACEMENT FUNCTIONS
+ *
+ * When $wgPvxCodeUtility (and $wgEnableUtilityFramework) are on, [build] and
+ * [skill] bbcode is rendered as <fandom-util.PvxCode .../> tags that the
+ * Fandom\GameUtility\ParserTagHookHandler turns into a placeholder for the
+ * @fandom-utility/pvx-code Utility Framework package.
+ ***************************************************************************/
+
+/**
+ * Builds a self-closing <fandom-util.PvxCode .../> tag from the given
+ * attribute map. Empty / null / false values are dropped so attributes never
+ * render as ` foo=""`. Values are HTML-attribute-escaped.
+ *
+ * @param array<string, string|null|false> $attrs
+ * @return string
+ */
+function gwbbcode_utility_tag( array $attrs ): string {
+	$rendered = '';
+	foreach ( $attrs as $name => $value ) {
+		if ( $value === null || $value === false || $value === '' ) {
+			continue;
+		}
+		$rendered .= ' ' . $name . '="' . htmlspecialchars( (string)$value, ENT_QUOTES, 'UTF-8' ) . '"';
+	}
+	return '<fandom-util.PvxCode' . $rendered . ' />';
+}
+
+/**
+ * Utility-mode replacement for [build]...[/build]. Emits a single
+ * <fandom-util.PvxCode primary=... attributes=... skills=... name=... /> tag.
+ *
+ * @param array $reg preg match: [ full, attribute string, skills body ]
+ * @return string
+ */
+function build_replace_utility( $reg ): string {
+	[ , $att, $skills_body ] = $reg;
+	$att = html_safe_decode( $att );
+
+	$prof = gws_build_profession( $att );
+	$primary = $prof !== false ? $prof['professions'] : '';
+
+	// Preserve user-typed short forms ("hea=8 smi=2 ..."). attribute_list_raw
+	// canonicalises to long names; convert back via gws_attribute_name.
+	$attrPairs = [];
+	foreach ( attribute_list_raw( $att ) as $longName => $value ) {
+		$short = gws_attribute_name( $longName );
+		if ( $short !== false ) {
+			$attrPairs[] = $short . '=' . $value;
+		}
+	}
+
+	$skills = [];
+	if ( preg_match_all( '#\[skill[^\]]*\](.*?)\[/skill\]#isS', $skills_body, $matches ) ) {
+		foreach ( $matches[1] as $name ) {
+			$skills[] = html_safe_decode( $name );
+		}
+	}
+
+	return gwbbcode_utility_tag( [
+		'primary' => $primary,
+		'attributes' => implode( ' ', $attrPairs ),
+		'skills' => implode( '|', $skills ),
+		'name' => gws_build_name( $att ),
+	] );
+}
+
+/**
+ * Utility-mode replacement for [skill]...[/skill]. Per-skill bbcode attributes
+ * (noicon, show, attribute overrides) are intentionally dropped — the utility
+ * re-derives them from the surrounding build context.
+ *
+ * @param array $reg preg match: [ full, attribute string, skill name ]
+ * @return string
+ */
+function skill_replace_utility( $reg ): string {
+	[ , , $name ] = $reg;
+	$name = html_safe_decode( $name );
+
+	return gwbbcode_utility_tag( [ 'skill' => $name ] );
 }
