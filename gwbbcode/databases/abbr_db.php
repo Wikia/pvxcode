@@ -12,4 +12,5 @@
 	'spear of fury' => 'Spear of Fury (Kurzick)',
 	'summon spirits' => 'Summon Spirits (Kurzick)',
 	'triple shot' => 'Triple Shot (Kurzick)',
+	'help' => '"Help Me!"',
 ];
